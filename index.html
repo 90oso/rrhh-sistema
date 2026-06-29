@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Digital Integrado de RRHH</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121824;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #94a3b8;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+        .card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: left;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #3b82f6;
+        }
+        .card h3 {
+            margin: 0 0 10px 0;
+            color: #f1f5f9;
+        }
+        .card p {
+            margin: 0;
+            font-size: 14px;
+            color: #94a3b8;
+            text-align: left;
+        }
+        .status {
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .ready { background-color: #065f46; color: #34d399; }
+        .pending { background-color: #78350f; color: #fbbf24; }
+    </style>
+</head>
+<body>
+
+    <h1>Sistema de Recursos Humanos</h1>
+    <p>Centralización, automatización y análisis del talento humano (300 colaboradores)</p>
+
+    <div class="grid">
+        <a href="frontend/modulo1-reclutamiento/index.html" class="card">
+            <h3>Módulo 1 — Reclutamiento</h3>
+            <p>Formulario de postulantes, filtros de candidatos y pipeline de estados.</p>
+            <span class="status ready">Disponible</span>
+        </a>
+
+        <a href="frontend/modulo2-personal/index.html" class="card">
+            <h3>Módulo 2 — Personal</h3>
+            <p>Ingreso de empleados, historial clínico/laboral y organigrama interactivo.</p>
+            <span class="status ready">Disponible</span>
+        </a>
+
+        <a href="frontend/modulo3-control/index.html" class="card">
+            <h3>Módulo 3 — Control Diario</h3>
+            <p>Marcación de asistencia móvil con Geofencing (GPS) vía Supabase.</p>
+            <span class="status ready">Disponible</span>
+        </a>
+
+        <a href="frontend/modulo4-desarrollo/index.html" class="card">
+            <h3>Módulo 4 — Desarrollo</h3>
+            <p>Capacitaciones y evaluación de desempeño por competencias.</p>
+            <span class="status pending">En Desarrollo</span>
+        </a>
+
+        <a href="frontend/modulo5-salida/index.html" class="card">
+            <h3>Módulo 5 — Salida</h3>
+            <p>Registro de bajas, entrevistas de salida y checklist de offboarding.</p>
+            <span class="status pending">En Desarrollo</span>
+        </a>
+
+        <a href="frontend/modulo6-reportes/index.html" class="card">
+            <h3>Módulo 6 — Reportes Gerenciales</h3>
+            <p>Indicadores clave, tasas de rotación y gráficos en tiempo real con Chart.js.</p>
+            <span class="status pending">En Desarrollo</span>
+        </a>
+    </div>
+
+</body>
+</html>
