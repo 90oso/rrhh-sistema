@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 2 — Personal · RRHH Sistema</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.2.0/dist/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ═══ RESET ═══ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F1F5F9;--surface:#fff;--border:#E2E8F0;--border-l:#F1F5F9;
+  --text:#1E293B;--text2:#374151;--text3:#64748B;--text4:#94A3B8;
+  --sidebar:#0F172A;--blue:#2563EB;--blue-h:#1D4ED8;
+  --green:#16A34A;--green-h:#15803D;--red:#DC2626;
+  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+
+/* ═══ LAYOUT ═══ */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:220px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+
+/* ═══ SIDEBAR ═══ */
+.logo{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo-mark{font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:6px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+.nav-section{padding:12px 0 4px}
+.nav-label{padding:6px 16px;font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:rgba(255,255,255,.55);font-size:13px;transition:all .12s;border-left:2px solid transparent;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.85)}
+.nav-item.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--blue)}
+.nav-item i{font-size:16px;width:18px}
+.nav-badge{margin-left:auto;background:rgba(59,130,246,.3);color:#93C5FD;font-size:10px;padding:1px 6px;border-radius:99px}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.user-av{width:30px;height:30px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;color:rgba(255,255,255,.85);font-weight:500}
+.user-role{font-size:10px;color:rgba(255,255,255,.35)}
+
+/* ═══ TOPBAR ═══ */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;flex-shrink:0}
+.topbar-l{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text3)}
+.page-title{color:var(--text);font-weight:500;font-size:15px}
+.topbar-r{display:flex;align-items:center;gap:12px}
+.search-wrap{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:#fff}
+.search-wrap input{border:none;outline:none;font-size:13px;color:var(--text2);width:180px;background:transparent;font-family:inherit}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:16px;position:relative}
+.icon-btn:hover{background:#F8FAFC}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
+.av-top{width:32px;height:32px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+
+/* ═══ STATS ═══ */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.stat-label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:600;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;color:var(--text4);margin-top:4px}
+.trend-up{font-size:11px;color:var(--green);margin-top:4px}
+
+/* ═══ CARDS / ROW ═══ */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card-mb{margin-bottom:14px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:600;color:var(--text)}
+
+/* ═══ TABLE ═══ */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--border-l);color:var(--text2);vertical-align:middle;font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFBFD}
+.empty-row td{text-align:center;padding:28px;color:var(--text4);font-size:13px}
+
+/* ═══ AVATAR ═══ */
+.av{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.av-xl{width:52px;height:52px;font-size:17px}
+.av-lg{width:40px;height:40px;font-size:14px}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;white-space:nowrap}
+.b-gray{background:#F1F5F9;color:#475569}
+.b-blue{background:#EFF6FF;color:#1D4ED8}
+.b-yellow{background:#FFFBEB;color:#92400E}
+.b-purple{background:#F5F3FF;color:#5B21B6}
+.b-green{background:#F0FDF4;color:#15803D}
+.b-red{background:#FEF2F2;color:#B91C1C}
+.b-orange{background:#FFF7ED;color:#C2410C}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;cursor:pointer;font-weight:500;transition:all .12s;white-space:nowrap;font-family:inherit}
+.btn:hover{background:#F8FAFC;border-color:#CBD5E1}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{background:var(--blue-h);border-color:var(--blue-h)}
+.btn-success{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-success:hover{background:var(--green-h);border-color:var(--green-h)}
+.btn-blue-o{color:var(--blue);border-color:#BFDBFE;background:#fff}
+.btn-blue-o:hover{background:#EFF6FF}
+.btn-danger{color:var(--red);border-color:#FECACA;background:#fff}
+.btn-danger:hover{background:#FEF2F2}
+.btn-warn{color:#D97706;border-color:#FDE68A;background:#fff}
+.btn-warn:hover{background:#FFFBEB}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ═══ MODALS ═══ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;border:1px solid var(--border);padding:22px;width:560px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:slideUp .15s}
+.modal-wide{width:700px}
+.modal-sm{width:380px}
+@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:18px}
+.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px}
+.modal-close:hover{background:#F8FAFC}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-l)}
+
+/* ═══ FORMS ═══ */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-group{margin-bottom:12px}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px}
+.req{color:var(--red)}
+.form-control{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .12s;font-family:inherit}
+.form-control:focus{border-color:#93C5FD;box-shadow:0 0 0 3px rgba(147,197,253,.2)}
+.form-control.err{border-color:#FECACA}
+select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px;padding-right:30px}
+textarea.form-control{resize:vertical;min-height:72px}
+.form-hint{font-size:11px;color:var(--text4);margin-top:3px}
+.section-hd{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-l)}
+
+/* ═══ ORGANIGRAMA ═══ */
+.org-wrap{overflow-x:auto;padding:10px 0 4px;text-align:center}
+.org-tree{display:inline-block;text-align:center}
+.org-node-root{display:flex;flex-direction:column;align-items:center}
+.org-box{display:inline-block;padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;background:#fff;box-shadow:var(--shadow);min-width:110px;cursor:pointer;transition:all .12s;position:relative}
+.org-box:hover{border-color:#93C5FD;box-shadow:0 0 0 3px rgba(147,197,253,.2)}
+.org-box.top-node{border-color:#6366F1;background:#F5F3FF}
+.ob-name{font-size:12px;font-weight:600;color:var(--text)}
+.ob-role{font-size:10px;color:var(--text3);margin-top:1px}
+.ob-dept{font-size:10px;color:var(--text4)}
+.org-connector-v{width:1px;height:20px;background:#CBD5E1;margin:0 auto}
+.org-connector-h{height:1px;background:#CBD5E1;position:absolute;top:0;left:0;right:0}
+.org-children{display:flex;gap:8px;position:relative;padding-top:20px}
+.org-child{display:flex;flex-direction:column;align-items:center;position:relative}
+.org-child::before{content:'';position:absolute;top:0;left:50%;width:1px;height:20px;background:#CBD5E1}
+
+/* ═══ PERFIL PANEL ═══ */
+.profile-field{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border-l);font-size:13px}
+.profile-field:last-of-type{border-bottom:none}
+.pf-lbl{color:var(--text3)}
+.pf-val{color:var(--text);font-weight:500;text-align:right;max-width:60%}
+.hist-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-l);font-size:12px}
+.hist-item:last-child{border-bottom:none}
+.hist-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:14px}
+.tab{padding:8px 16px;font-size:13px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:all .12s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ═══ CONFIRM ═══ */
+.confirm-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 14px}
+.confirm-title{font-size:15px;font-weight:600;text-align:center;margin-bottom:6px}
+.confirm-body{font-size:13px;color:var(--text3);text-align:center;line-height:1.5}
+
+/* ═══ TOAST ═══ */
+#toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#1E293B;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(8px);transition:all .25s;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok{background:#15803D}
+.toast.err{background:#B91C1C}
+
+/* ═══ STATUS ═══ */
+#db-status{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-radius:99px;padding:4px 12px;font-size:11px;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);z-index:50;transition:opacity .5s}
+#db-status.hidden{opacity:0;pointer-events:none}
+.sdot{width:7px;height:7px;border-radius:50%}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:28px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══ FILTER CHIPS ═══ */
+.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.filter-lbl{font-size:12px;color:var(--text3)}
+.chip{padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;color:var(--text3);font-weight:500;transition:all .12s}
+.chip:hover{border-color:#93C5FD;color:var(--blue)}
+.chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1100px){
+  .row{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+  .sidebar{width:56px}
+  .logo-mark span,.logo-sub,.nav-item span,.user-info,.nav-label,.nav-badge{display:none}
+  .nav-item{justify-content:center;padding:10px}
+}
+</style>
+</head>
+<body>
+
+<div id="db-status">
+  <div class="sdot" id="sdot" style="background:#F59E0B"></div>
+  <span id="stxt">Conectando...</span>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-mark"><i class="ti ti-building-community"></i><span>RRHH Sistema</span></div>
+      <div class="logo-sub">Gestión de Talento Humano</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Módulos</div>
+      <a class="nav-item" href="../modulo1-reclutamiento/index.html"><i class="ti ti-user-search"></i><span>Reclutamiento</span></a>
+      <div class="nav-item active"><i class="ti ti-users"></i><span>Personal</span><span class="nav-badge" id="badge-total">—</span></div>
+      <a class="nav-item" href="../modulo3-control/index.html"><i class="ti ti-clock-check"></i><span>Control Diario</span></a>
+      <a class="nav-item" href="../modulo4-desarrollo/index.html"><i class="ti ti-school"></i><span>Desarrollo</span></a>
+      <a class="nav-item" href="../modulo5-salida/index.html"><i class="ti ti-door-exit"></i><span>Salida</span></a>
+      <a class="nav-item" href="../modulo6-reportes/index.html"><i class="ti ti-chart-bar"></i><span>Reportes</span></a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Sistema</div>
+      <div class="nav-item"><i class="ti ti-settings"></i><span>Configuración</span></div>
+      <div class="nav-item"><i class="ti ti-help-circle"></i><span>Ayuda</span></div>
+    </div>
+    <div class="sb-footer">
+      <div class="user-av">AG</div>
+      <div class="user-info">
+        <div class="user-name">Ana García</div>
+        <div class="user-role">Gerente RRHH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-l">
+        <i class="ti ti-home" style="font-size:14px"></i>
+        <span style="color:#CBD5E1">/</span>
+        <span class="page-title">Personal</span>
+      </div>
+      <div class="topbar-r">
+        <div class="search-wrap">
+          <i class="ti ti-search" style="font-size:14px;color:var(--text3)"></i>
+          <input id="search-input" placeholder="Buscar empleado..." oninput="renderTabla()">
+        </div>
+        <div class="icon-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
+        <div class="av-top">AG</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Headcount activo</div>
+          <div class="stat-val" id="st-activo">—</div>
+          <div class="stat-sub" id="st-total-sub">de — empleados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Departamentos</div>
+          <div class="stat-val" id="st-deptos">—</div>
+          <div class="stat-sub" id="st-deptos-lista">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Contratos indefinidos</div>
+          <div class="stat-val" id="st-indef">—</div>
+          <div class="stat-sub" id="st-indef-pct">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Nuevos este mes</div>
+          <div class="stat-val" id="st-nuevos">—</div>
+          <div class="trend-up" id="st-nuevo-nombre">—</div>
+        </div>
+      </div>
+
+      <!-- ROW: DIRECTORIO + ORGANIGRAMA/PERFIL -->
+      <div class="row">
+
+        <!-- COL IZQUIERDA: DIRECTORIO -->
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="card-hd">
+            <div class="card-title">Directorio de empleados</div>
+            <button class="btn btn-primary btn-sm" onclick="abrirNuevo()">
+              <i class="ti ti-plus"></i>Nuevo empleado
+            </button>
+          </div>
+          <div class="filter-row">
+            <span class="filter-lbl">Estado:</span>
+            <div class="chip active" onclick="filtrarPor('todos',this)">Todos</div>
+            <div class="chip" onclick="filtrarPor('Activo',this)">Activo</div>
+            <div class="chip" onclick="filtrarPor('Suspendido',this)">Suspendido</div>
+            <div class="chip" onclick="filtrarPor('Inactivo',this)">Inactivo</div>
+          </div>
+          <div class="tbl-wrap" style="flex:1">
+            <table>
+              <thead>
+                <tr>
+                  <th>Empleado</th>
+                  <th>Cargo</th>
+                  <th>Contrato</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tbody"><tr><td colspan="5"><div class="spinner"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- COL DERECHA: ORGANIGRAMA + PERFIL -->
+        <div>
+          <!-- ORGANIGRAMA -->
+          <div class="card card-mb">
+            <div class="card-hd">
+              <div class="card-title">Organigrama</div>
+              <span style="font-size:12px;color:var(--text3)">Basado en jefe directo</span>
+            </div>
+            <div class="org-wrap" id="org-wrap">
+              <div class="spinner"></div>
+            </div>
+          </div>
+
+          <!-- PERFIL -->
+          <div class="card" id="perfil-card">
+            <div id="perfil-content">
+              <div style="text-align:center;padding:24px;color:var(--text4)">
+                <i class="ti ti-user-circle" style="font-size:32px;display:block;margin-bottom:8px"></i>
+                Selecciona un empleado para ver su perfil
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /content -->
+  </div>
+</div>
+
+<!-- ══ MODAL: NUEVO / EDITAR EMPLEADO ══ -->
+<div class="overlay" id="modal-form">
+  <div class="modal modal-wide">
+    <button class="modal-close" onclick="cerrarModal('modal-form')"><i class="ti ti-x"></i></button>
+    <div class="modal-title" id="form-title">Nuevo empleado</div>
+
+    <div class="section-hd" style="margin-top:0">Datos personales</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nombre completo <span class="req">*</span></label>
+        <input class="form-control" id="f-nombre" placeholder="Ej: Roberto Sánchez">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Correo electrónico <span class="req">*</span></label>
+        <input class="form-control" id="f-email" type="email" placeholder="correo@empresa.com">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Teléfono</label>
+        <input class="form-control" id="f-telefono" placeholder="+507 6000-0000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contacto de emergencia</label>
+        <input class="form-control" id="f-emergencia" placeholder="Nombre · Teléfono">
+      </div>
+    </div>
+
+    <div class="section-hd">Información laboral</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Cargo <span class="req">*</span></label>
+        <input class="form-control" id="f-cargo" placeholder="Ej: Analista TI">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Departamento <span class="req">*</span></label>
+        <input class="form-control" id="f-depto" placeholder="Ej: TI" list="deptos-list">
+        <datalist id="deptos-list"></datalist>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Jefe directo</label>
+        <select class="form-control" id="f-jefe">
+          <option value="">Sin jefe directo (nivel raíz)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo de contrato <span class="req">*</span></label>
+        <select class="form-control" id="f-contrato">
+          <option>Indefinido</option>
+          <option>Temporal</option>
+          <option>Servicios</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Salario base (USD)</label>
+        <input class="form-control" id="f-salario" type="number" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha de ingreso <span class="req">*</span></label>
+        <input class="form-control" id="f-ingreso" type="date">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="f-estado">
+          <option>Activo</option>
+          <option>Suspendido</option>
+          <option>Inactivo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notas adicionales</label>
+        <input class="form-control" id="f-notas" placeholder="Observaciones...">
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-form')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-guardar" onclick="guardar()">
+        <i class="ti ti-check"></i><span id="btn-txt">Guardar empleado</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: HISTORIAL ══ -->
+<div class="overlay" id="modal-hist">
+  <div class="modal modal-wide">
+    <button class="modal-close" onclick="cerrarModal('modal-hist')"><i class="ti ti-x"></i></button>
+    <div class="modal-title" id="hist-nombre">Historial del empleado</div>
+    <div class="tabs">
+      <div class="tab active" onclick="tabHist('cap',this)">Capacitaciones</div>
+      <div class="tab" onclick="tabHist('eval',this)">Evaluaciones</div>
+      <div class="tab" onclick="tabHist('mov',this)">Movimientos</div>
+    </div>
+    <div id="hist-content"><div class="spinner"></div></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-hist')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CAMBIAR ESTADO ══ -->
+<div class="overlay" id="modal-estado">
+  <div class="modal modal-sm">
+    <button class="modal-close" onclick="cerrarModal('modal-estado')"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Cambiar estado</div>
+    <div class="form-group">
+      <label class="form-label">Empleado</label>
+      <div id="estado-nombre" style="font-size:14px;font-weight:500;padding:6px 0;color:var(--text)"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nuevo estado <span class="req">*</span></label>
+      <select class="form-control" id="estado-nuevo">
+        <option>Activo</option>
+        <option>Suspendido</option>
+        <option>Inactivo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Motivo</label>
+      <textarea class="form-control" id="estado-motivo" placeholder="Razón del cambio de estado..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-estado')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEstado()"><i class="ti ti-check"></i>Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CONFIRM ══ -->
+<div class="overlay" id="modal-confirm">
+  <div class="modal modal-sm">
+    <div class="confirm-icon" id="c-icon"><i class="ti ti-alert-triangle"></i></div>
+    <div class="confirm-title" id="c-title">¿Confirmar?</div>
+    <div class="confirm-body" id="c-body"></div>
+    <div class="modal-footer" style="justify-content:center;gap:12px">
+      <button class="btn" onclick="cerrarModal('modal-confirm')">Cancelar</button>
+      <button class="btn btn-danger" id="c-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
+<script>
+// ── SUPABASE ──
+const SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';
+const SUPABASE_ANON_KEY = 'TU_ANON_KEY';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── ESTADO ──
+let empleados = [];
+let filtroEstado = 'todos';
+let empleadoSeleccionado = null;
+let editandoId = null;
+let histEmpleadoId = null;
+let histTab = 'cap';
+let estadoCambioId = null;
+
+// ── COLORES AVATAR ──
+const AV_COLORS = ['#8B5CF6','#3B82F6','#EC4899','#0EA5E9','#10B981','#F59E0B','#6366F1','#14B8A6','#EF4444','#F97316'];
+function avColor(id) { return AV_COLORS[(id||0) % AV_COLORS.length]; }
+function iniciales(nombre) { return (nombre||'??').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase(); }
+function fmtFecha(iso) { if(!iso) return '—'; const d=new Date(iso+'T12:00:00'); return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtMoney(n) { if(!n && n!==0) return '—'; return '$'+Number(n).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// ── BADGE ──
+function estadoBadge(e) {
+  const m = {Activo:'b-green',Suspendido:'b-yellow',Inactivo:'b-gray'};
+  return `<span class="badge ${m[e]||'b-gray'}">${e}</span>`;
+}
+function contratoBadge(c) {
+  const m = {Indefinido:'b-blue',Temporal:'b-purple',Servicios:'b-orange'};
+  return `<span class="badge ${m[c]||'b-gray'}">${c}</span>`;
+}
+
+// ── INICIO ──
+async function iniciar() {
+  const { error } = await db.from('empleados').select('id').limit(1);
+  const dot = document.getElementById('sdot');
+  const txt = document.getElementById('stxt');
+  const st  = document.getElementById('db-status');
+  if (error) {
+    dot.style.background = '#F59E0B';
+    txt.textContent = 'Modo demo — configura Supabase para persistencia';
+    setTimeout(()=>st.classList.add('hidden'),4000);
+    empleados = datosDemo();
+    renderizarTodo();
+  } else {
+    dot.style.background = '#22C55E';
+    txt.textContent = 'Conectado a Supabase';
+    setTimeout(()=>st.classList.add('hidden'),2000);
+    await cargar();
+    suscribirRealtime();
+  }
+}
+
+async function cargar() {
+  const { data, error } = await db.from('empleados').select('*').order('created_at', {ascending:false});
+  if (error) { toast('Error al cargar: '+error.message,'err'); return; }
+  empleados = data || [];
+  renderizarTodo();
+}
+
+function suscribirRealtime() {
+  db.channel('empleados')
+    .on('postgres_changes',{event:'*',schema:'public',table:'empleados'}, ()=>cargar())
+    .subscribe();
+}
+
+// ── DATOS DEMO ──
+function datosDemo() {
+  return [
+    {id:1,nombre:'Ana García',email:'ana@empresa.com',telefono:'+507 6100-0001',cargo:'Gerente RRHH',departamento:'RRHH',jefe_directo_id:null,tipo_contrato:'Indefinido',salario_base:3500,fecha_ingreso:'2020-01-15',estado:'Activo',contacto_emergencia:'Pedro García · +507 6200-0001',notas:''},
+    {id:2,nombre:'Carlos Mora',email:'carlos@empresa.com',telefono:'+507 6100-0002',cargo:'Analista TI',departamento:'TI',jefe_directo_id:1,tipo_contrato:'Indefinido',salario_base:2200,fecha_ingreso:'2021-03-10',estado:'Activo',contacto_emergencia:'Luisa Mora · +507 6200-0002',notas:''},
+    {id:3,nombre:'Lucía Pérez',email:'lucia@empresa.com',telefono:'+507 6100-0003',cargo:'Diseñadora',departamento:'Marketing',jefe_directo_id:1,tipo_contrato:'Temporal',salario_base:1800,fecha_ingreso:'2022-06-01',estado:'Activo',contacto_emergencia:'',notas:''},
+    {id:4,nombre:'Roberto Sánchez',email:'roberto@empresa.com',telefono:'+507 6100-0004',cargo:'Dev Backend',departamento:'TI',jefe_directo_id:2,tipo_contrato:'Indefinido',salario_base:2800,fecha_ingreso:'2021-08-15',estado:'Activo',contacto_emergencia:'+507 6000-1234',notas:''},
+    {id:5,nombre:'María Jiménez',email:'maria@empresa.com',telefono:'+507 6100-0005',cargo:'Contadora',departamento:'Finanzas',jefe_directo_id:1,tipo_contrato:'Indefinido',salario_base:2400,fecha_ingreso:'2020-11-20',estado:'Activo',contacto_emergencia:'',notas:''},
+    {id:6,nombre:'Diego Vargas',email:'diego@empresa.com',telefono:'+507 6100-0006',cargo:'Vendedor',departamento:'Comercial',jefe_directo_id:1,tipo_contrato:'Servicios',salario_base:1500,fecha_ingreso:'2023-02-01',estado:'Activo',contacto_emergencia:'',notas:''},
+    {id:7,nombre:'Patricia López',email:'patricia@empresa.com',telefono:'+507 6100-0007',cargo:'Asistente RRHH',departamento:'RRHH',jefe_directo_id:1,tipo_contrato:'Temporal',salario_base:1200,fecha_ingreso:'2023-09-15',estado:'Activo',contacto_emergencia:'',notas:''},
+    {id:8,nombre:'Fernando Ruiz',email:'fernando@empresa.com',telefono:'+507 6100-0008',cargo:'Supervisor',departamento:'Operaciones',jefe_directo_id:1,tipo_contrato:'Indefinido',salario_base:2600,fecha_ingreso:'2022-04-10',estado:'Activo',contacto_emergencia:'',notas:''},
+  ];
+}
+
+// ── RENDER GENERAL ──
+function renderizarTodo() {
+  actualizarStats();
+  renderTabla();
+  renderOrganigrama();
+  llenarSelectJefe();
+  llenarDatalistDeptos();
+  if (empleadoSeleccionado) {
+    const e = empleados.find(x=>x.id===empleadoSeleccionado);
+    if (e) mostrarPerfil(e.id); else limpiarPerfil();
+  }
+  document.getElementById('badge-total').textContent = empleados.filter(e=>e.estado==='Activo').length;
+}
+
+// ── STATS ──
+function actualizarStats() {
+  const activos = empleados.filter(e=>e.estado==='Activo');
+  const total = empleados.length;
+  const deptos = [...new Set(activos.map(e=>e.departamento).filter(Boolean))];
+  const indef = activos.filter(e=>e.tipo_contrato==='Indefinido').length;
+  const pctIndef = activos.length ? Math.round((indef/activos.length)*100) : 0;
+
+  // Nuevos este mes
+  const ahora = new Date();
+  const nuevos = empleados.filter(e => {
+    if (!e.fecha_ingreso) return false;
+    const d = new Date(e.fecha_ingreso);
+    return d.getMonth()===ahora.getMonth() && d.getFullYear()===ahora.getFullYear();
+  });
+
+  document.getElementById('st-activo').textContent = activos.length;
+  document.getElementById('st-total-sub').textContent = `de ${total} empleados`;
+  document.getElementById('st-deptos').textContent = deptos.length;
+  document.getElementById('st-deptos-lista').textContent = deptos.slice(0,4).join(' · ') + (deptos.length>4?'...':'');
+  document.getElementById('st-indef').textContent = indef;
+  document.getElementById('st-indef-pct').textContent = `${pctIndef}% de la plantilla activa`;
+  document.getElementById('st-nuevos').textContent = nuevos.length;
+  document.getElementById('st-nuevo-nombre').textContent = nuevos.length ? nuevos.map(e=>e.nombre.split(' ')[0]).join(', ') : 'Ninguno este mes';
+}
+
+// ── TABLA ──
+function renderTabla() {
+  const busqueda = (document.getElementById('search-input').value||'').toLowerCase();
+  const lista = empleados.filter(e => {
+    const matchE = filtroEstado==='todos' || e.estado===filtroEstado;
+    const matchB = !busqueda ||
+      (e.nombre||'').toLowerCase().includes(busqueda) ||
+      (e.cargo||'').toLowerCase().includes(busqueda) ||
+      (e.departamento||'').toLowerCase().includes(busqueda) ||
+      (e.email||'').toLowerCase().includes(busqueda);
+    return matchE && matchB;
+  });
+
+  const tbody = document.getElementById('tbody');
+  if (!lista.length) {
+    tbody.innerHTML=`<tr class="empty-row"><td colspan="5"><i class="ti ti-users-off" style="font-size:24px;display:block;margin:0 auto 8px;color:#CBD5E1"></i>Sin empleados</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = lista.map(e => {
+    const ini = iniciales(e.nombre);
+    const col = avColor(e.id);
+    const jefe = e.jefe_directo_id ? (empleados.find(x=>x.id===e.jefe_directo_id)||{}).nombre||'—' : '—';
+    const activo = empleadoSeleccionado===e.id;
+    return `<tr style="${activo?'background:#EFF6FF':''}" onclick="mostrarPerfil(${e.id})" style="cursor:pointer">
+      <td>
+        <div style="display:flex;align-items:center;gap:9px">
+          <div class="av" style="background:${col}">${ini}</div>
+          <div>
+            <div style="font-weight:500;font-size:13px">${e.nombre}</div>
+            <div style="font-size:11px;color:var(--text4)">${e.departamento||'—'}</div>
+          </div>
+        </div>
+      </td>
+      <td>${e.cargo||'—'}</td>
+      <td>${contratoBadge(e.tipo_contrato||'Indefinido')}</td>
+      <td>${estadoBadge(e.estado||'Activo')}</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-sm" onclick="event.stopPropagation();mostrarPerfil(${e.id})" title="Ver perfil"><i class="ti ti-eye"></i></button>
+          <button class="btn btn-sm btn-blue-o" onclick="event.stopPropagation();editarEmpleado(${e.id})" title="Editar"><i class="ti ti-edit"></i></button>
+          <button class="btn btn-sm btn-warn" onclick="event.stopPropagation();abrirCambioEstado(${e.id})" title="Cambiar estado"><i class="ti ti-toggle-right"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filtrarPor(estado, el) {
+  filtroEstado = estado;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderTabla();
+}
+
+// ── PERFIL ──
+function mostrarPerfil(id) {
+  empleadoSeleccionado = id;
+  const e = empleados.find(x=>x.id===id);
+  if (!e) return;
+  const ini = iniciales(e.nombre);
+  const col = avColor(e.id);
+  const jefe = e.jefe_directo_id ? (empleados.find(x=>x.id===e.jefe_directo_id)||{}).nombre||'—' : 'Sin jefe directo';
+
+  document.getElementById('perfil-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border-l)">
+      <div class="av av-xl" style="background:${col}">${ini}</div>
+      <div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:3px">${e.nombre}</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:7px">${e.cargo||'—'} · Depto. ${e.departamento||'—'}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${estadoBadge(e.estado||'Activo')} ${contratoBadge(e.tipo_contrato||'Indefinido')}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;margin-bottom:12px">
+      <div><span style="color:var(--text4)">Ingreso: </span><span style="font-weight:500">${fmtFecha(e.fecha_ingreso)}</span></div>
+      <div><span style="color:var(--text4)">Jefe: </span><span style="font-weight:500">${jefe}</span></div>
+      <div><span style="color:var(--text4)">Salario: </span><span style="font-weight:500">${fmtMoney(e.salario_base)}</span></div>
+      <div><span style="color:var(--text4)">Contacto: </span><span style="font-weight:500">${e.contacto_emergencia||'—'}</span></div>
+      <div><span style="color:var(--text4)">Email: </span><span style="font-weight:500">${e.email||'—'}</span></div>
+      <div><span style="color:var(--text4)">Teléfono: </span><span style="font-weight:500">${e.telefono||'—'}</span></div>
+    </div>
+    <div style="font-size:12px;color:var(--text3);padding:8px 10px;background:#F8FAFC;border-radius:8px;display:flex;align-items:center;justify-content:space-between">
+      <span>Historial: capacitaciones · evaluaciones · movimientos</span>
+      <button class="btn btn-sm btn-blue-o" onclick="abrirHistorial(${e.id})">Ver historial →</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-primary" onclick="editarEmpleado(${e.id})"><i class="ti ti-edit"></i>Editar</button>
+      <button class="btn btn-sm btn-warn" onclick="abrirCambioEstado(${e.id})"><i class="ti ti-toggle-right"></i>Cambiar estado</button>
+    </div>`;
+
+  // Resaltar fila seleccionada
+  document.querySelectorAll('#tbody tr').forEach(tr=>{
+    tr.style.background = '';
+    const idTr = tr.getAttribute('onclick');
+    if (idTr && idTr.includes(`mostrarPerfil(${id})`)) tr.style.background = '#EFF6FF';
+  });
+}
+
+function limpiarPerfil() {
+  empleadoSeleccionado = null;
+  document.getElementById('perfil-content').innerHTML = `<div style="text-align:center;padding:24px;color:var(--text4)"><i class="ti ti-user-circle" style="font-size:32px;display:block;margin-bottom:8px"></i>Selecciona un empleado para ver su perfil</div>`;
+}
+
+// ── ORGANIGRAMA ──
+function renderOrganigrama() {
+  const wrap = document.getElementById('org-wrap');
+  const activos = empleados.filter(e=>e.estado!=='Inactivo');
+
+  // Construir árbol: nodos raíz = sin jefe
+  const raices = activos.filter(e=>!e.jefe_directo_id || !activos.find(x=>x.id===e.jefe_directo_id));
+  if (!raices.length) { wrap.innerHTML='<div style="color:var(--text4);font-size:13px;padding:16px">Sin empleados activos</div>'; return; }
+
+  function nodoHtml(emp, depth=0) {
+    const hijos = activos.filter(e=>e.jefe_directo_id===emp.id);
+    const ini = iniciales(emp.nombre);
+    const col = avColor(emp.id);
+    const esRaiz = depth===0;
+    const boxStyle = esRaiz ? 'border-color:#6366F1;background:#F5F3FF;' : '';
+    let html = `<div class="org-child" style="align-items:center${depth===0?';margin:0 auto':''}">
+      ${depth>0?'':''}
+      <div class="org-box" style="${boxStyle}" onclick="mostrarPerfil(${emp.id})" title="${emp.nombre}">
+        <div class="ob-name">${emp.nombre.split(' ').slice(0,2).join(' ')}</div>
+        <div class="ob-role">${emp.cargo||'—'}</div>
+        <div class="ob-dept">${emp.departamento||''}</div>
+      </div>`;
+    if (hijos.length) {
+      html += `<div style="width:1px;height:16px;background:#CBD5E1;margin:0 auto"></div>
+      <div style="display:flex;gap:8px;position:relative">
+        <div style="position:absolute;top:0;left:20px;right:20px;height:1px;background:#CBD5E1"></div>
+        ${hijos.map(h=>nodoHtml(h, depth+1)).join('')}
+      </div>`;
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  const html = raices.length===1
+    ? `<div class="org-tree"><div class="org-node-root">${nodoHtml(raices[0])}</div></div>`
+    : `<div class="org-tree"><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">${raices.map(r=>nodoHtml(r)).join('')}</div></div>`;
+
+  wrap.innerHTML = html;
+}
+
+// ── FORMULARIO NUEVO/EDITAR ──
+function llenarSelectJefe(excluirId=null) {
+  const sel = document.getElementById('f-jefe');
+  const actual = sel.value;
+  sel.innerHTML = '<option value="">Sin jefe directo (nivel raíz)</option>';
+  empleados.filter(e=>e.id!==excluirId && e.estado!=='Inactivo').forEach(e=>{
+    const opt = document.createElement('option');
+    opt.value = e.id;
+    opt.textContent = `${e.nombre} — ${e.cargo||''}`;
+    sel.appendChild(opt);
+  });
+  sel.value = actual;
+}
+
+function llenarDatalistDeptos() {
+  const dl = document.getElementById('deptos-list');
+  const deptos = [...new Set(empleados.map(e=>e.departamento).filter(Boolean))];
+  dl.innerHTML = deptos.map(d=>`<option value="${d}">`).join('');
+}
+
+function abrirNuevo() {
+  editandoId = null;
+  document.getElementById('form-title').textContent = 'Nuevo empleado';
+  document.getElementById('btn-txt').textContent = 'Guardar empleado';
+  ['f-nombre','f-email','f-telefono','f-cargo','f-depto','f-emergencia','f-salario','f-notas'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-contrato').value = 'Indefinido';
+  document.getElementById('f-estado').value = 'Activo';
+  document.getElementById('f-ingreso').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-jefe').value = '';
+  llenarSelectJefe();
+  llenarDatalistDeptos();
+  abrirModal('modal-form');
+  setTimeout(()=>document.getElementById('f-nombre').focus(),150);
+}
+
+function editarEmpleado(id) {
+  const e = empleados.find(x=>x.id===id);
+  if (!e) return;
+  editandoId = id;
+  document.getElementById('form-title').textContent = 'Editar empleado';
+  document.getElementById('btn-txt').textContent = 'Guardar cambios';
+  document.getElementById('f-nombre').value = e.nombre||'';
+  document.getElementById('f-email').value = e.email||'';
+  document.getElementById('f-telefono').value = e.telefono||'';
+  document.getElementById('f-cargo').value = e.cargo||'';
+  document.getElementById('f-depto').value = e.departamento||'';
+  document.getElementById('f-emergencia').value = e.contacto_emergencia||'';
+  document.getElementById('f-salario').value = e.salario_base||'';
+  document.getElementById('f-ingreso').value = e.fecha_ingreso||'';
+  document.getElementById('f-contrato').value = e.tipo_contrato||'Indefinido';
+  document.getElementById('f-estado').value = e.estado||'Activo';
+  document.getElementById('f-notas').value = e.notas||'';
+  llenarSelectJefe(id);
+  llenarDatalistDeptos();
+  document.getElementById('f-jefe').value = e.jefe_directo_id||'';
+  abrirModal('modal-form');
+}
+
+async function guardar() {
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const email  = document.getElementById('f-email').value.trim();
+  const cargo  = document.getElementById('f-cargo').value.trim();
+  const depto  = document.getElementById('f-depto').value.trim();
+  const ingreso= document.getElementById('f-ingreso').value;
+
+  let ok=true;
+  [{id:'f-nombre',v:nombre},{id:'f-email',v:email},{id:'f-cargo',v:cargo},{id:'f-depto',v:depto},{id:'f-ingreso',v:ingreso}].forEach(({id,v})=>{
+    const el=document.getElementById(id);
+    if(!v){el.classList.add('err');ok=false;}else el.classList.remove('err');
+  });
+  if(!ok){toast('Completa los campos obligatorios','err');return;}
+
+  const jefeVal = document.getElementById('f-jefe').value;
+  const datos = {
+    nombre, email, cargo, departamento:depto,
+    jefe_directo_id: jefeVal ? Number(jefeVal) : null,
+    tipo_contrato: document.getElementById('f-contrato').value,
+    salario_base: parseFloat(document.getElementById('f-salario').value)||null,
+    fecha_ingreso: ingreso||null,
+    estado: document.getElementById('f-estado').value,
+    contacto_emergencia: document.getElementById('f-emergencia').value.trim()||null,
+    telefono: document.getElementById('f-telefono').value.trim()||null,
+    notas: document.getElementById('f-notas').value.trim()||null,
+  };
+
+  const btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+
+  if (esDemo()) {
+    if (editandoId) {
+      const idx = empleados.findIndex(e=>e.id===editandoId);
+      if(idx>=0) empleados[idx]={...empleados[idx],...datos};
+      toast('Cambios guardados (demo)');
+    } else {
+      empleados.unshift({id:Date.now(),...datos});
+      toast(`${nombre} agregado (demo)`,'ok');
+    }
+    renderizarTodo();
+    cerrarModal('modal-form');
+    btn.disabled=false;
+    return;
+  }
+
+  if (editandoId) {
+    const {error}=await db.from('empleados').update(datos).eq('id',editandoId);
+    if(error){toast('Error: '+error.message,'err');btn.disabled=false;return;}
+    toast(`${nombre} actualizado`,'ok');
+  } else {
+    const {error}=await db.from('empleados').insert([datos]);
+    if(error){toast('Error: '+error.message,'err');btn.disabled=false;return;}
+    toast(`${nombre} registrado`,'ok');
+  }
+  cerrarModal('modal-form');
+  btn.disabled=false;
+}
+
+// ── CAMBIO DE ESTADO ──
+function abrirCambioEstado(id) {
+  const e = empleados.find(x=>x.id===id);
+  if (!e) return;
+  estadoCambioId = id;
+  document.getElementById('estado-nombre').textContent = e.nombre;
+  document.getElementById('estado-nuevo').value = e.estado||'Activo';
+  document.getElementById('estado-motivo').value = '';
+  abrirModal('modal-estado');
+}
+
+async function guardarEstado() {
+  const id = estadoCambioId;
+  const e = empleados.find(x=>x.id===id);
+  if (!e) return;
+  const nuevo = document.getElementById('estado-nuevo').value;
+  const motivo = document.getElementById('estado-motivo').value.trim();
+
+  if (esDemo()) {
+    const idx = empleados.findIndex(x=>x.id===id);
+    if(idx>=0) empleados[idx].estado=nuevo;
+    renderizarTodo();
+    if(empleadoSeleccionado===id) mostrarPerfil(id);
+    toast(`Estado de ${e.nombre} cambiado a ${nuevo}`,'ok');
+    cerrarModal('modal-estado');
+    return;
+  }
+  const {error}=await db.from('empleados').update({estado:nuevo}).eq('id',id);
+  if(error){toast('Error: '+error.message,'err');return;}
+  // Registrar movimiento en historial
+  await db.from('movimientos_empleado').insert([{
+    empleado_id:id, tipo:'Cambio de estado', descripcion:`Estado cambiado a ${nuevo}. ${motivo}`, fecha:new Date().toISOString().split('T')[0]
+  }]);
+  toast(`Estado de ${e.nombre} actualizado`,'ok');
+  cerrarModal('modal-estado');
+}
+
+// ── HISTORIAL ──
+function abrirHistorial(id) {
+  histEmpleadoId = id;
+  const e = empleados.find(x=>x.id===id);
+  document.getElementById('hist-nombre').textContent = `Historial — ${e?e.nombre:''}`;
+  // Resetear tabs
+  document.querySelectorAll('#modal-hist .tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  histTab='cap';
+  cargarHistorial();
+  abrirModal('modal-hist');
+}
+
+function tabHist(tab, el) {
+  histTab = tab;
+  document.querySelectorAll('#modal-hist .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  cargarHistorial();
+}
+
+async function cargarHistorial() {
+  const contenido = document.getElementById('hist-content');
+  contenido.innerHTML = '<div class="spinner"></div>';
+
+  if (esDemo()) {
+    const demos = {
+      cap: [{icon:'ti-certificate',bg:'#EFF6FF',color:'#2563EB',desc:'Seguridad Industrial — 8h',fecha:'Mar 2026',estado:'Completado'},
+             {icon:'ti-certificate',bg:'#F0FDF4',color:'#15803D',desc:'Excel Avanzado — 16h',fecha:'Ene 2026',estado:'Completado'}],
+      eval: [{icon:'ti-star',bg:'#FFFBEB',color:'#D97706',desc:'Evaluación Q1 2026 — Promedio: 4.2/5',fecha:'Abr 2026',estado:''},
+              {icon:'ti-star',bg:'#FFFBEB',color:'#D97706',desc:'Evaluación Q4 2025 — Promedio: 3.9/5',fecha:'Dic 2025',estado:''}],
+      mov: [{icon:'ti-arrows-exchange',bg:'#F5F3FF',color:'#5B21B6',desc:'Cambio de cargo: Junior → Semi Senior',fecha:'Feb 2026',estado:''},
+             {icon:'ti-login',bg:'#F0FDF4',color:'#15803D',desc:'Ingreso a la empresa',fecha:'Ago 2021',estado:''}],
+    };
+    renderHistorial(demos[histTab]||[]);
+    return;
+  }
+
+  const tablas = {cap:'capacitaciones_empleado',eval:'evaluaciones_empleado',mov:'movimientos_empleado'};
+  const {data,error}=await db.from(tablas[histTab]).select('*').eq('empleado_id',histEmpleadoId).order('fecha',{ascending:false});
+  if(error){contenido.innerHTML=`<div style="color:var(--text4);text-align:center;padding:20px">No hay datos aún en esta sección</div>`;return;}
+  renderHistorial((data||[]).map(r=>({
+    icon:histTab==='cap'?'ti-certificate':histTab==='eval'?'ti-star':'ti-arrows-exchange',
+    bg:histTab==='cap'?'#EFF6FF':histTab==='eval'?'#FFFBEB':'#F5F3FF',
+    color:histTab==='cap'?'#2563EB':histTab==='eval'?'#D97706':'#5B21B6',
+    desc:r.descripcion||r.nombre||'—',
+    fecha:fmtFecha(r.fecha),
+    estado:r.estado||''
+  })));
+}
+
+function renderHistorial(items) {
+  const contenido = document.getElementById('hist-content');
+  if(!items.length){contenido.innerHTML='<div style="color:var(--text4);text-align:center;padding:20px;font-size:13px">Sin registros en este historial</div>';return;}
+  contenido.innerHTML=items.map(i=>`
+    <div class="hist-item">
+      <div class="hist-icon" style="background:${i.bg};color:${i.color}"><i class="ti ${i.icon}"></i></div>
+      <div>
+        <div style="font-weight:500;color:var(--text2)">${i.desc}</div>
+        <div style="color:var(--text4);margin-top:2px">${i.fecha}${i.estado?` · <span style="font-weight:500">${i.estado}</span>`:''}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── HELPERS ──
+function esDemo(){return SUPABASE_URL.includes('TU_PROYECTO');}
+function abrirModal(id){document.getElementById(id).classList.add('open');}
+function cerrarModal(id){document.getElementById(id).classList.remove('open');}
+
+document.querySelectorAll('.overlay').forEach(bg=>{
+  bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open');});
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));
+});
+
+function toast(msg,tipo=''){
+  const wrap=document.getElementById('toast-wrap');
+  const el=document.createElement('div');
+  el.className=`toast ${tipo==='ok'?'ok':tipo==='err'?'err':''}`;
+  el.innerHTML=`<i class="ti ${tipo==='ok'?'ti-check':tipo==='err'?'ti-x':'ti-info-circle'}"></i>${msg}`;
+  wrap.appendChild(el);
+  setTimeout(()=>el.classList.add('show'),10);
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},3000);
+}
+
+// ── ARRANCAR ──
+iniciar();
+</script>
+</body>
+</html>

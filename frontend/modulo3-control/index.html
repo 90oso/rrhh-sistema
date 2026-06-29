@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 3 — Control Diario · RRHH Sistema</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.2.0/dist/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ═══ RESET & BASE ═══ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F1F5F9;--surface:#fff;--border:#E2E8F0;--border-l:#F1F5F9;
+  --text:#1E293B;--text2:#374151;--text3:#64748B;--text4:#94A3B8;
+  --sidebar:#0F172A;--blue:#2563EB;--blue-h:#1D4ED8;
+  --green:#16A34A;--green-h:#15803D;--red:#DC2626;
+  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+
+/* ═══ LAYOUT ═══ */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:220px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+
+/* ═══ SIDEBAR ═══ */
+.logo{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo-mark{font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:6px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+.nav-section{padding:12px 0 4px}
+.nav-label{padding:6px 16px;font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:rgba(255,255,255,.55);font-size:13px;transition:all .12s;border-left:2px solid transparent;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.85)}
+.nav-item.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--blue)}
+.nav-item i{font-size:16px;width:18px}
+.nav-badge{margin-left:auto;background:rgba(59,130,246,.3);color:#93C5FD;font-size:10px;padding:1px 6px;border-radius:99px}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.user-av{width:30px;height:30px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;color:rgba(255,255,255,.85);font-weight:500}
+.user-role{font-size:10px;color:rgba(255,255,255,.35)}
+
+/* ═══ TOPBAR ═══ */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;flex-shrink:0}
+.topbar-l{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text3)}
+.page-title{color:var(--text);font-weight:500;font-size:15px}
+.topbar-r{display:flex;align-items:center;gap:12px}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:16px;position:relative}
+.icon-btn:hover{background:#F8FAFC}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
+.av-top{width:32px;height:32px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+
+/* ═══ DATE HEADER ═══ */
+.date-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.date-title{font-size:18px;font-weight:600;color:var(--text)}
+.date-sub{font-size:12px;color:var(--text3);margin-top:3px}
+.progress-row{display:flex;align-items:center;gap:10px}
+.prog-bar{width:130px;height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:var(--blue);border-radius:99px;transition:width .4s}
+.prog-pct{font-size:12px;color:var(--text3);font-weight:500}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:18px}
+.tab{padding:9px 16px;font-size:13px;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:all .12s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab:hover:not(.active){color:var(--text)}
+
+/* ═══ CARDS / GRID ═══ */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card-mb{margin-bottom:14px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:600;color:var(--text)}
+
+/* ═══ TABLE ═══ */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--border-l);color:var(--text2);vertical-align:middle;font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFBFD}
+.empty-row td{text-align:center;padding:28px;color:var(--text4)}
+
+/* ═══ AVATAR ═══ */
+.av{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;white-space:nowrap}
+.b-gray{background:#F1F5F9;color:#475569}
+.b-blue{background:#EFF6FF;color:#1D4ED8}
+.b-yellow{background:#FFFBEB;color:#92400E}
+.b-purple{background:#F5F3FF;color:#5B21B6}
+.b-green{background:#F0FDF4;color:#15803D}
+.b-red{background:#FEF2F2;color:#B91C1C}
+.b-orange{background:#FFF7ED;color:#9A3412}
+.b-sky{background:#F0F9FF;color:#0369A1}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;cursor:pointer;font-weight:500;transition:all .12s;white-space:nowrap;font-family:inherit}
+.btn:hover{background:#F8FAFC;border-color:#CBD5E1}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{background:var(--blue-h);border-color:var(--blue-h)}
+.btn-success{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-success:hover{background:var(--green-h)}
+.btn-danger{color:var(--red);border-color:#FECACA;background:#fff}
+.btn-danger:hover{background:#FEF2F2}
+.btn-sky{color:#0369A1;border-color:#BAE6FD;background:#fff}
+.btn-sky:hover{background:#F0F9FF}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ═══ GEO PANEL ═══ */
+.geo-panel{background:#0F172A;border-radius:12px;padding:20px;color:#fff;margin-bottom:14px}
+.geo-title{font-size:13px;font-weight:600;color:rgba(255,255,255,.9);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.geo-sub{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:16px}
+.geo-phone{background:#1E293B;border-radius:20px;padding:16px;margin-bottom:16px;border:1px solid rgba(255,255,255,.08)}
+.geo-phone-bar{height:4px;width:40px;background:rgba(255,255,255,.15);border-radius:99px;margin:0 auto 16px}
+.geo-circle{width:90px;height:90px;border-radius:50%;border:2px dashed rgba(59,130,246,.5);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;position:relative;transition:all .4s}
+.geo-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .3s}
+.geo-dot.inside{background:#22C55E;box-shadow:0 0 0 5px rgba(34,197,94,.2)}
+.geo-dot.outside{background:#EF4444;box-shadow:0 0 0 5px rgba(239,68,68,.2)}
+.geo-label{text-align:center;font-size:11px;color:rgba(255,255,255,.5);margin-bottom:12px;min-height:32px;display:flex;align-items:center;justify-content:center}
+.geo-btn{width:100%;padding:10px;border-radius:10px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.geo-btn.enabled{background:#22C55E;color:#fff}
+.geo-btn.enabled:hover{background:#16A34A}
+.geo-btn.disabled{background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);cursor:not-allowed}
+.geo-btn.marcado{background:rgba(34,197,94,.2);color:#4ADE80;cursor:default}
+.geo-info{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px;font-size:11px;color:rgba(255,255,255,.5)}
+.pulse-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ═══ DEMO INFO BOX ═══ */
+.info-box{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:var(--radius);padding:14px;margin-bottom:0}
+.info-box-title{font-size:12px;font-weight:600;color:#1D4ED8;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.info-box-body{font-size:12px;color:#1D4ED8;line-height:1.6}
+
+/* ═══ FORMS ═══ */
+.form-group{margin-bottom:12px}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px}
+.req{color:var(--red)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-control{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .12s;font-family:inherit}
+.form-control:focus{border-color:#93C5FD;box-shadow:0 0 0 3px rgba(147,197,253,.2)}
+.form-control.err{border-color:#FECACA}
+select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px;padding-right:30px}
+textarea.form-control{resize:vertical;min-height:72px}
+
+/* ═══ MODALS ═══ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;border:1px solid var(--border);padding:22px;width:480px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:slideUp .15s}
+.modal-sm{width:380px}
+@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:18px}
+.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px}
+.modal-close:hover{background:#F8FAFC}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-l)}
+.section-hd{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-l)}
+
+/* ═══ SALDO VACACIONES ═══ */
+.vac-saldo{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600}
+
+/* ═══ TOAST ═══ */
+#toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#1E293B;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(8px);transition:all .25s;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok{background:#15803D}
+.toast.err{background:#B91C1C}
+
+/* ═══ STATUS ═══ */
+#db-status{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-radius:99px;padding:4px 12px;font-size:11px;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);z-index:50;transition:opacity .5s}
+#db-status.hidden{opacity:0;pointer-events:none}
+.sdot{width:7px;height:7px;border-radius:50%}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:24px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══ REALTIME INDICATOR ═══ */
+.rt-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);padding:3px 8px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:99px}
+.rt-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;animation:pulse 2s infinite}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1000px){.row{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .sidebar{width:56px}
+  .logo-mark span,.logo-sub,.nav-item span,.user-info,.nav-label,.nav-badge{display:none}
+  .nav-item{justify-content:center;padding:10px}
+}
+</style>
+</head>
+<body>
+
+<div id="db-status">
+  <div class="sdot" id="sdot" style="background:#F59E0B"></div>
+  <span id="stxt">Conectando...</span>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-mark"><i class="ti ti-building-community"></i><span>RRHH Sistema</span></div>
+      <div class="logo-sub">Gestión de Talento Humano</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Módulos</div>
+      <a class="nav-item" href="../modulo1-reclutamiento/index.html"><i class="ti ti-user-search"></i><span>Reclutamiento</span></a>
+      <a class="nav-item" href="../modulo2-personal/index.html"><i class="ti ti-users"></i><span>Personal</span></a>
+      <div class="nav-item active"><i class="ti ti-clock-check"></i><span>Control Diario</span><span class="nav-badge" id="badge-presentes">—</span></div>
+      <a class="nav-item" href="../modulo4-desarrollo/index.html"><i class="ti ti-school"></i><span>Desarrollo</span></a>
+      <a class="nav-item" href="../modulo5-salida/index.html"><i class="ti ti-door-exit"></i><span>Salida</span></a>
+      <a class="nav-item" href="../modulo6-reportes/index.html"><i class="ti ti-chart-bar"></i><span>Reportes</span></a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Sistema</div>
+      <div class="nav-item"><i class="ti ti-settings"></i><span>Configuración</span></div>
+      <div class="nav-item"><i class="ti ti-help-circle"></i><span>Ayuda</span></div>
+    </div>
+    <div class="sb-footer">
+      <div class="user-av">AG</div>
+      <div class="user-info">
+        <div class="user-name">Ana García</div>
+        <div class="user-role">Gerente RRHH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-l">
+        <i class="ti ti-home" style="font-size:14px"></i>
+        <span style="color:#CBD5E1">/</span>
+        <span class="page-title">Control Diario</span>
+      </div>
+      <div class="topbar-r">
+        <div class="rt-badge"><div class="rt-dot"></div>Tiempo real · Supabase</div>
+        <div class="icon-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
+        <div class="av-top">AG</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DATE HEADER -->
+      <div class="date-header">
+        <div>
+          <div class="date-title" id="fecha-hoy">—</div>
+          <div class="date-sub" id="fecha-sub">Cargando asistencia...</div>
+        </div>
+        <div class="progress-row">
+          <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+          <span class="prog-pct" id="prog-pct">0%</span>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <div class="tab active" onclick="cambiarTab('asistencia',this)">Asistencia</div>
+        <div class="tab" onclick="cambiarTab('ausencias',this)">Ausencias</div>
+        <div class="tab" onclick="cambiarTab('vacaciones',this)">Vacaciones</div>
+      </div>
+
+      <!-- ══════════ TAB: ASISTENCIA ══════════ -->
+      <div id="tab-asistencia">
+        <div class="row">
+
+          <!-- TABLA ASISTENCIA -->
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-title">Registro del día</div>
+              <div class="rt-badge" style="font-size:11px"><div class="rt-dot"></div>Actualizado en tiempo real</div>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Empleado</th>
+                    <th>Estado</th>
+                    <th>Hora marcación</th>
+                    <th>Método</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-asist"><tr><td colspan="5"><div class="spinner"></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- GEO PANEL + INFO -->
+          <div>
+            <div class="geo-panel">
+              <div class="geo-title"><i class="ti ti-map-pin" style="color:#3B82F6"></i>Marcación móvil con geofencing</div>
+              <div class="geo-sub">El empleado abre el link móvil en su celular para marcar asistencia</div>
+              <div class="geo-phone">
+                <div class="geo-phone-bar"></div>
+                <div class="geo-circle" id="geo-circle">
+                  <div class="geo-dot inside" id="geo-dot">
+                    <i class="ti ti-user" style="font-size:9px;color:#fff"></i>
+                  </div>
+                  <div style="position:absolute;inset:0;border-radius:50%;background:rgba(34,197,94,.06)" id="geo-bg"></div>
+                </div>
+                <div class="geo-label" id="geo-label">Dentro del radio · <span id="geo-dist">42</span> m de la empresa</div>
+                <button class="geo-btn enabled" id="geo-btn" onclick="marcarAsistenciaDemo()">
+                  <i class="ti ti-check"></i> Marcar mi asistencia
+                </button>
+              </div>
+              <div class="geo-info">
+                <div class="pulse-dot" id="geo-pulse" style="background:#22C55E"></div>
+                <span id="geo-info-txt">Radio permitido: 150 m &nbsp;·&nbsp; Coordenadas empresa configuradas</span>
+              </div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-box-title"><i class="ti ti-info-circle"></i>Demo de geofencing</div>
+              <div class="info-box-body">Para la presentación, las coordenadas se configuran al salón de clases. En producción el celular del empleado envía su ubicación GPS real y el sistema calcula la distancia con la fórmula Haversine.</div>
+              <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn btn-sm btn-sky" onclick="simularDentro()"><i class="ti ti-map-pin"></i>Simular dentro</button>
+                <button class="btn btn-sm btn-danger" onclick="simularFuera()"><i class="ti ti-map-pin-off"></i>Simular fuera</button>
+                <a class="btn btn-sm btn-primary" href="marcacion-movil.html" target="_blank"><i class="ti ti-device-mobile"></i>Abrir link móvil</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══════════ TAB: AUSENCIAS ══════════ -->
+      <div id="tab-ausencias" style="display:none">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">Registro de ausencias</div>
+            <button class="btn btn-primary btn-sm" onclick="abrirAusencia()"><i class="ti ti-plus"></i>Registrar ausencia</button>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Empleado</th><th>Fecha</th><th>Tipo</th><th>Días</th><th>Observación</th><th></th></tr>
+              </thead>
+              <tbody id="tbody-aus"><tr><td colspan="6"><div class="spinner"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ TAB: VACACIONES ══════════ -->
+      <div id="tab-vacaciones" style="display:none">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">Solicitudes de vacaciones</div>
+            <button class="btn btn-primary btn-sm" onclick="abrirVacacion()"><i class="ti ti-plus"></i>Nueva solicitud</button>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Empleado</th><th>Desde</th><th>Hasta</th><th>Días</th><th>Saldo restante</th><th>Estado</th><th>Acciones</th></tr>
+              </thead>
+              <tbody id="tbody-vac"><tr><td colspan="7"><div class="spinner"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div>
+</div>
+
+<!-- ══ MODAL: REGISTRAR AUSENCIA ══ -->
+<div class="overlay" id="modal-ausencia">
+  <div class="modal modal-sm">
+    <button class="modal-close" onclick="cerrarModal('modal-ausencia')"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Registrar ausencia</div>
+    <div class="form-group">
+      <label class="form-label">Empleado <span class="req">*</span></label>
+      <select class="form-control" id="aus-empleado"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Fecha <span class="req">*</span></label>
+        <input class="form-control" id="aus-fecha" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Días <span class="req">*</span></label>
+        <input class="form-control" id="aus-dias" type="number" min="1" value="1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipo de ausencia <span class="req">*</span></label>
+      <select class="form-control" id="aus-tipo">
+        <option>Incapacidad</option>
+        <option>Personal</option>
+        <option>No justificada</option>
+        <option>Feriado</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Observación</label>
+      <textarea class="form-control" id="aus-obs" placeholder="Detalles adicionales..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-ausencia')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarAusencia()"><i class="ti ti-check"></i>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SOLICITAR VACACIONES ══ -->
+<div class="overlay" id="modal-vacacion">
+  <div class="modal modal-sm">
+    <button class="modal-close" onclick="cerrarModal('modal-vacacion')"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Nueva solicitud de vacaciones</div>
+    <div class="form-group">
+      <label class="form-label">Empleado <span class="req">*</span></label>
+      <select class="form-control" id="vac-empleado" onchange="calcularSaldo()"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Desde <span class="req">*</span></label>
+        <input class="form-control" id="vac-desde" type="date" onchange="calcularDias()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Hasta <span class="req">*</span></label>
+        <input class="form-control" id="vac-hasta" type="date" onchange="calcularDias()">
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#F8FAFC;border-radius:8px;margin-bottom:12px;font-size:13px">
+      <span style="color:var(--text3)">Días solicitados:</span>
+      <span id="vac-dias-calc" style="font-weight:600;color:var(--text)">—</span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#F0FDF4;border-radius:8px;margin-bottom:12px;font-size:13px;border:1px solid #BBF7D0">
+      <span style="color:var(--green)">Saldo disponible:</span>
+      <span id="vac-saldo-calc" style="font-weight:600;color:var(--green)">— días</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Motivo / comentario</label>
+      <textarea class="form-control" id="vac-motivo" placeholder="Opcional..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-vacacion')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarVacacion()"><i class="ti ti-check"></i>Enviar solicitud</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: MARCAR MANUAL ══ -->
+<div class="overlay" id="modal-marcar">
+  <div class="modal modal-sm">
+    <button class="modal-close" onclick="cerrarModal('modal-marcar')"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Registrar asistencia manual</div>
+    <div class="form-group">
+      <label class="form-label">Empleado <span class="req">*</span></label>
+      <select class="form-control" id="mk-empleado"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Hora marcación</label>
+        <input class="form-control" id="mk-hora" type="time" value="08:00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="mk-estado">
+          <option value="Presente">Presente</option>
+          <option value="Tardanza">Tardanza</option>
+          <option value="Ausente">Ausente</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Método</label>
+      <select class="form-control" id="mk-metodo">
+        <option>Manual RRHH</option>
+        <option>Móvil GPS</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-marcar')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarMarcacion()"><i class="ti ti-check"></i>Registrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<!-- ════════════════ JAVASCRIPT ════════════════ -->
+<script>
+// ── SUPABASE ──
+const SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';
+const SUPABASE_ANON_KEY = 'TU_ANON_KEY';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── ESTADO ──
+let empleados = [];
+let asistencias = []; // del día actual
+let ausencias = [];
+let vacaciones = [];
+let tabActual = 'asistencia';
+let geoDentro = true;
+let geoMarcado = false;
+
+// ── CONSTANTES ──
+const HOY = new Date().toISOString().split('T')[0];
+const DIAS_VAC_BASE = 30; // días anuales de vacaciones por empleado
+const AV_COLORS = ['#8B5CF6','#3B82F6','#EC4899','#0EA5E9','#10B981','#F59E0B','#6366F1','#14B8A6','#EF4444','#F97316'];
+
+function avColor(id){return AV_COLORS[(id||0)%AV_COLORS.length];}
+function iniciales(nombre){return(nombre||'??').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();}
+function fmtHora(iso){if(!iso)return'—';try{const d=new Date(iso);return d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',hour12:true});}catch{return iso;}}
+function fmtFecha(iso){if(!iso)return'—';const d=new Date(iso+'T12:00:00');return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtFechaCorta(iso){if(!iso)return'—';const d=new Date(iso+'T12:00:00');return d.toLocaleDateString('es',{day:'2-digit',month:'short'});}
+function diasEntre(desde,hasta){if(!desde||!hasta)return 0;const d1=new Date(desde),d2=new Date(hasta);return Math.max(0,Math.round((d2-d1)/86400000)+1);}
+
+// ── INICIO ──
+async function iniciar() {
+  const {error}=await db.from('empleados').select('id').limit(1);
+  const dot=document.getElementById('sdot'),txt=document.getElementById('stxt'),st=document.getElementById('db-status');
+  if(error){
+    dot.style.background='#F59E0B';
+    txt.textContent='Modo demo — configura Supabase para persistencia';
+    setTimeout(()=>st.classList.add('hidden'),4000);
+    empleados=datosDemo().empleados;
+    asistencias=datosDemo().asistencias;
+    ausencias=datosDemo().ausencias;
+    vacaciones=datosDemo().vacaciones;
+    renderizarTodo();
+  } else {
+    dot.style.background='#22C55E';
+    txt.textContent='Conectado a Supabase';
+    setTimeout(()=>st.classList.add('hidden'),2000);
+    await cargarTodo();
+    suscribirRealtime();
+  }
+  mostrarFecha();
+  llenarSelectEmpleados();
+}
+
+async function cargarTodo(){
+  const [r1,r2,r3,r4]=await Promise.all([
+    db.from('empleados').select('*').eq('estado','Activo').order('nombre'),
+    db.from('asistencia_diaria').select('*').eq('fecha',HOY),
+    db.from('ausencias').select('*,empleados(nombre)').order('fecha',{ascending:false}),
+    db.from('vacaciones').select('*,empleados(nombre)').order('created_at',{ascending:false}),
+  ]);
+  empleados=r1.data||[];
+  asistencias=r2.data||[];
+  ausencias=r3.data||[];
+  vacaciones=r4.data||[];
+  renderizarTodo();
+}
+
+function suscribirRealtime(){
+  db.channel('control-diario')
+    .on('postgres_changes',{event:'*',schema:'public',table:'asistencia_diaria'},()=>cargarTodo())
+    .on('postgres_changes',{event:'*',schema:'public',table:'ausencias'},()=>cargarTodo())
+    .on('postgres_changes',{event:'*',schema:'public',table:'vacaciones'},()=>cargarTodo())
+    .subscribe();
+}
+
+// ── DATOS DEMO ──
+function datosDemo(){
+  const emps=[
+    {id:1,nombre:'Ana García',cargo:'Gerente RRHH',departamento:'RRHH'},
+    {id:2,nombre:'Carlos Mora',cargo:'Analista TI',departamento:'TI'},
+    {id:3,nombre:'Lucía Pérez',cargo:'Diseñadora',departamento:'Marketing'},
+    {id:4,nombre:'Roberto Sánchez',cargo:'Dev Backend',departamento:'TI'},
+    {id:5,nombre:'María Jiménez',cargo:'Contadora',departamento:'Finanzas'},
+    {id:6,nombre:'Diego Vargas',cargo:'Vendedor',departamento:'Comercial'},
+    {id:7,nombre:'Patricia López',cargo:'Asistente RRHH',departamento:'RRHH'},
+    {id:8,nombre:'Fernando Ruiz',cargo:'Supervisor',departamento:'Operaciones'},
+  ];
+  const asist=[
+    {id:1,empleado_id:1,fecha:HOY,estado:'Presente',hora_marcacion:new Date().toISOString().replace(/T\d{2}/,'T08'),metodo:'Móvil GPS',lat:8.994,lng:-79.519,distancia_m:42},
+    {id:2,empleado_id:2,fecha:HOY,estado:'Presente',hora_marcacion:new Date().toISOString().replace(/T\d{2}/,'T08'),metodo:'Móvil GPS',lat:8.994,lng:-79.519,distancia_m:65},
+    {id:3,empleado_id:3,fecha:HOY,estado:'Ausente',hora_marcacion:null,metodo:null,lat:null,lng:null,distancia_m:null},
+    {id:4,empleado_id:4,fecha:HOY,estado:'Presente',hora_marcacion:new Date().toISOString().replace(/T\d{2}/,'T07'),metodo:'Móvil GPS',lat:8.994,lng:-79.519,distancia_m:31},
+    {id:5,empleado_id:5,fecha:HOY,estado:'Tardanza',hora_marcacion:new Date().toISOString().replace(/T\d{2}/,'T09'),metodo:'Móvil GPS',lat:8.994,lng:-79.519,distancia_m:88},
+  ];
+  const aus=[
+    {id:1,empleado_id:3,empleados:{nombre:'Lucía Pérez'},fecha:HOY,tipo:'Incapacidad',dias:1,observacion:'Certificado médico presentado'},
+    {id:2,empleado_id:6,empleados:{nombre:'Diego Vargas'},fecha:'2026-05-02',tipo:'No justificada',dias:1,observacion:'Sin aviso previo'},
+    {id:3,empleado_id:4,empleados:{nombre:'Roberto Sánchez'},fecha:'2026-04-28',tipo:'Personal',dias:1,observacion:'Trámite bancario'},
+  ];
+  const vac=[
+    {id:1,empleado_id:2,empleados:{nombre:'Carlos Mora'},desde:'2026-05-19',hasta:'2026-05-23',dias:5,saldo_restante:10,estado:'Pendiente',motivo:''},
+    {id:2,empleado_id:5,empleados:{nombre:'María Jiménez'},desde:'2026-06-02',hasta:'2026-06-06',dias:5,saldo_restante:15,estado:'Pendiente',motivo:''},
+    {id:3,empleado_id:1,empleados:{nombre:'Ana García'},desde:'2026-05-12',hasta:'2026-05-14',dias:3,saldo_restante:12,estado:'Aprobado',motivo:''},
+  ];
+  return{empleados:emps,asistencias:asist,ausencias:aus,vacaciones:vac};
+}
+
+// ── RENDER GENERAL ──
+function renderizarTodo(){
+  actualizarHeader();
+  renderAsistencia();
+  renderAusencias();
+  renderVacaciones();
+  llenarSelectEmpleados();
+}
+
+// ── HEADER ──
+function mostrarFecha(){
+  const ahora=new Date();
+  const diaSem=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'][ahora.getDay()];
+  const fechaStr=diaSem+', '+ahora.toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('fecha-hoy').textContent=fechaStr;
+}
+
+function actualizarHeader(){
+  const presentes=asistencias.filter(a=>a.estado==='Presente'||a.estado==='Tardanza').length;
+  const total=empleados.length||8;
+  const pct=total?Math.round((presentes/total)*100):0;
+  document.getElementById('fecha-sub').textContent=`${presentes} de ${total} empleados marcaron asistencia hoy`;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('badge-presentes').textContent=presentes;
+}
+
+// ── TABLA ASISTENCIA ──
+function renderAsistencia(){
+  const tbody=document.getElementById('tbody-asist');
+
+  // Construir registro combinado empleados + asistencias del día
+  const filas=empleados.map(emp=>{
+    const reg=asistencias.find(a=>a.empleado_id===emp.id);
+    return{emp,reg};
+  });
+  // Agregar empleados sin asistencia registrada (Pendiente)
+  const sinReg=empleados.filter(e=>!asistencias.find(a=>a.empleado_id===e.id));
+
+  const todasFilas=[
+    ...asistencias.map(a=>({emp:empleados.find(e=>e.id===a.empleado_id)||{id:a.empleado_id,nombre:'—',departamento:''},reg:a})),
+    ...sinReg.map(e=>({emp:e,reg:null})),
+  ];
+
+  if(!todasFilas.length){
+    tbody.innerHTML=`<tr class="empty-row"><td colspan="5">Sin empleados activos</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML=todasFilas.map(({emp,reg})=>{
+    const ini=iniciales(emp.nombre);
+    const col=avColor(emp.id);
+    const estado=reg?reg.estado:'Pendiente';
+    const hora=reg&&reg.hora_marcacion?fmtHora(reg.hora_marcacion):'—';
+    const metodo=reg&&reg.metodo?reg.metodo:'—';
+
+    let badgeE='',badgeM='';
+    if(estado==='Presente') badgeE=`<span class="badge b-green"><i class="ti ti-check" style="font-size:10px"></i> Presente</span>`;
+    else if(estado==='Tardanza') badgeE=`<span class="badge b-orange">Tardanza</span>`;
+    else if(estado==='Ausente') badgeE=`<span class="badge b-red"><i class="ti ti-x" style="font-size:10px"></i> Ausente</span>`;
+    else badgeE=`<span class="badge b-gray">Pendiente</span>`;
+
+    if(metodo==='Móvil GPS'||metodo==='Geofencing') badgeM=`<span class="badge b-sky"><i class="ti ti-map-pin" style="font-size:10px"></i> Móvil GPS</span>`;
+    else if(metodo==='Manual RRHH') badgeM=`<span class="badge b-blue">Manual</span>`;
+    else if(metodo&&metodo!=='—') badgeM=`<span class="badge b-gray">${metodo}</span>`;
+    else badgeM=`<span style="color:var(--text4)">—</span>`;
+
+    const accion=estado==='Pendiente'
+      ?`<button class="btn btn-sm" onclick="abrirMarcarManual(${emp.id})" title="Registrar"><i class="ti ti-edit"></i></button>`
+      :`<button class="btn btn-sm" onclick="eliminarMarcacion(${reg?reg.id:0})" title="Anular"><i class="ti ti-trash"></i></button>`;
+
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:${col}">${ini}</div><div><div style="font-weight:500;font-size:13px">${emp.nombre}</div><div style="font-size:11px;color:var(--text4)">${emp.departamento||''}</div></div></div></td>
+      <td>${badgeE}</td>
+      <td style="${hora==='—'?'color:var(--text4)':''}">${hora}</td>
+      <td>${badgeM}</td>
+      <td>${accion}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── TABLA AUSENCIAS ──
+function renderAusencias(){
+  const tbody=document.getElementById('tbody-aus');
+  if(!ausencias.length){tbody.innerHTML=`<tr class="empty-row"><td colspan="6"><i class="ti ti-calendar-off" style="font-size:22px;display:block;margin:0 auto 6px;color:#CBD5E1"></i>Sin ausencias registradas</td></tr>`;return;}
+  const tipoBadge={Incapacidad:'b-yellow',Personal:'b-gray','No justificada':'b-red',Feriado:'b-blue',Otro:'b-gray'};
+  tbody.innerHTML=ausencias.map(a=>{
+    const emp=empleados.find(e=>e.id===a.empleado_id)||{};
+    const nombre=a.empleados?a.empleados.nombre:emp.nombre||'—';
+    const ini=iniciales(nombre);
+    const col=avColor(a.empleado_id);
+    const tb=tipoBadge[a.tipo]||'b-gray';
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:${col}">${ini}</div>${nombre}</div></td>
+      <td>${fmtFecha(a.fecha)}</td>
+      <td><span class="badge ${tb}">${a.tipo}</span></td>
+      <td>${a.dias||1}</td>
+      <td style="color:var(--text3)">${a.observacion||'—'}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="eliminarAusencia(${a.id})" title="Eliminar"><i class="ti ti-trash"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── TABLA VACACIONES ──
+function renderVacaciones(){
+  const tbody=document.getElementById('tbody-vac');
+  if(!vacaciones.length){tbody.innerHTML=`<tr class="empty-row"><td colspan="7"><i class="ti ti-beach" style="font-size:22px;display:block;margin:0 auto 6px;color:#CBD5E1"></i>Sin solicitudes de vacaciones</td></tr>`;return;}
+  tbody.innerHTML=vacaciones.map(v=>{
+    const emp=empleados.find(e=>e.id===v.empleado_id)||{};
+    const nombre=v.empleados?v.empleados.nombre:emp.nombre||'—';
+    const ini=iniciales(nombre);
+    const col=avColor(v.empleado_id);
+    const esPend=v.estado==='Pendiente';
+    const estBadge=v.estado==='Aprobado'?'b-green':v.estado==='Rechazado'?'b-red':'b-yellow';
+    const acciones=esPend
+      ?`<button class="btn btn-sm btn-success" onclick="cambiarVacacion(${v.id},'Aprobado')"><i class="ti ti-check"></i>Aprobar</button> <button class="btn btn-sm btn-danger" onclick="cambiarVacacion(${v.id},'Rechazado')">Rechazar</button>`
+      :`<span style="color:var(--text4);font-size:12px">—</span>`;
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:${col}">${ini}</div>${nombre}</div></td>
+      <td>${fmtFechaCorta(v.desde)}</td>
+      <td>${fmtFechaCorta(v.hasta)}</td>
+      <td style="font-weight:500">${v.dias}</td>
+      <td><span class="vac-saldo" style="background:#F0FDF4;color:#15803D">${v.saldo_restante} días</span></td>
+      <td><span class="badge ${estBadge}">${v.estado}</span></td>
+      <td>${acciones}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── TABS ──
+function cambiarTab(tab,el){
+  tabActual=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['asistencia','ausencias','vacaciones'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'':'none');
+}
+
+// ── GEO DEMO ──
+function simularDentro(){
+  geoDentro=true;
+  const dot=document.getElementById('geo-dot');
+  const circle=document.getElementById('geo-circle');
+  const bg=document.getElementById('geo-bg');
+  const label=document.getElementById('geo-label');
+  const btn=document.getElementById('geo-btn');
+  const pulse=document.getElementById('geo-pulse');
+  const infoTxt=document.getElementById('geo-info-txt');
+  dot.className='geo-dot inside';
+  circle.style.borderColor='rgba(34,197,94,.5)';
+  bg.style.background='rgba(34,197,94,.06)';
+  label.innerHTML='Dentro del radio · <span id="geo-dist">42</span> m de la empresa';
+  pulse.style.background='#22C55E';
+  infoTxt.textContent='Radio permitido: 150 m · Coordenadas empresa configuradas';
+  if(!geoMarcado){
+    btn.className='geo-btn enabled';
+    btn.innerHTML='<i class="ti ti-check"></i> Marcar mi asistencia';
+    btn.onclick=marcarAsistenciaDemo;
+    btn.disabled=false;
+  }
+}
+
+function simularFuera(){
+  geoDentro=false;
+  const dot=document.getElementById('geo-dot');
+  const circle=document.getElementById('geo-circle');
+  const bg=document.getElementById('geo-bg');
+  const label=document.getElementById('geo-label');
+  const btn=document.getElementById('geo-btn');
+  const pulse=document.getElementById('geo-pulse');
+  const infoTxt=document.getElementById('geo-info-txt');
+  dot.className='geo-dot outside';
+  dot.style.transform='translateX(30px) translateY(-20px)';
+  setTimeout(()=>dot.style.transform='',400);
+  circle.style.borderColor='rgba(239,68,68,.5)';
+  bg.style.background='rgba(239,68,68,.04)';
+  const dist=Math.floor(250+Math.random()*300);
+  label.innerHTML=`<span style="color:#FCA5A5">Fuera del radio · ${dist} m de la empresa<br><small>Marcación bloqueada</small></span>`;
+  pulse.style.background='#EF4444';
+  infoTxt.textContent=`Distancia actual: ${dist} m — Radio máximo: 150 m`;
+  btn.className='geo-btn disabled';
+  btn.innerHTML='<i class="ti ti-map-pin-off"></i> Fuera del radio — bloqueado';
+  btn.onclick=null;
+  btn.disabled=true;
+}
+
+async function marcarAsistenciaDemo(){
+  if(!geoDentro||geoMarcado) return;
+  geoMarcado=true;
+  const btn=document.getElementById('geo-btn');
+  btn.className='geo-btn marcado';
+  btn.innerHTML='<i class="ti ti-check"></i> ¡Asistencia marcada!';
+  btn.disabled=true;
+  toast('✓ Asistencia marcada con GPS','ok');
+
+  // Registrar en asistencias del día (demo: primer empleado disponible que no haya marcado)
+  const sinMarcar=empleados.find(e=>!asistencias.find(a=>a.empleado_id===e.id));
+  if(sinMarcar){
+    if(esDemo()){
+      asistencias.push({id:Date.now(),empleado_id:sinMarcar.id,fecha:HOY,estado:'Presente',hora_marcacion:new Date().toISOString(),metodo:'Móvil GPS',lat:8.994,lng:-79.519,distancia_m:42});
+    } else {
+      await db.from('asistencia_diaria').insert([{empleado_id:sinMarcar.id,fecha:HOY,estado:'Presente',hora_marcacion:new Date().toISOString(),metodo:'Móvil GPS',lat:8.994,lng:-79.519,distancia_m:42,aprobado:true}]);
+    }
+    renderAsistencia();
+    actualizarHeader();
+  }
+}
+
+// ── MARCACIÓN MANUAL ──
+function abrirMarcarManual(empId){
+  document.getElementById('mk-empleado').value=empId;
+  document.getElementById('mk-hora').value=new Date().toTimeString().slice(0,5);
+  document.getElementById('mk-estado').value='Presente';
+  abrirModal('modal-marcar');
+}
+
+async function guardarMarcacion(){
+  const empId=parseInt(document.getElementById('mk-empleado').value);
+  const hora=document.getElementById('mk-hora').value;
+  const estado=document.getElementById('mk-estado').value;
+  const metodo=document.getElementById('mk-metodo').value;
+  if(!empId){toast('Selecciona un empleado','err');return;}
+
+  const fechaHora=HOY+'T'+hora+':00';
+  if(esDemo()){
+    asistencias=asistencias.filter(a=>a.empleado_id!==empId);
+    asistencias.push({id:Date.now(),empleado_id:empId,fecha:HOY,estado,hora_marcacion:fechaHora,metodo,lat:null,lng:null,distancia_m:null});
+  } else {
+    await db.from('asistencia_diaria').upsert([{empleado_id:empId,fecha:HOY,estado,hora_marcacion:fechaHora,metodo,aprobado:true}],{onConflict:'empleado_id,fecha'});
+  }
+  const emp=empleados.find(e=>e.id===empId);
+  toast(`${emp?emp.nombre:''} registrado como ${estado}`,'ok');
+  cerrarModal('modal-marcar');
+  renderAsistencia();
+  actualizarHeader();
+}
+
+async function eliminarMarcacion(id){
+  if(esDemo()){asistencias=asistencias.filter(a=>a.id!==id);}
+  else{await db.from('asistencia_diaria').delete().eq('id',id);}
+  toast('Registro eliminado');
+  renderAsistencia();
+  actualizarHeader();
+}
+
+// ── AUSENCIAS ──
+function abrirAusencia(){
+  document.getElementById('aus-fecha').value=HOY;
+  document.getElementById('aus-dias').value=1;
+  document.getElementById('aus-tipo').value='Incapacidad';
+  document.getElementById('aus-obs').value='';
+  abrirModal('modal-ausencia');
+}
+
+async function guardarAusencia(){
+  const empId=parseInt(document.getElementById('aus-empleado').value);
+  const fecha=document.getElementById('aus-fecha').value;
+  const dias=parseInt(document.getElementById('aus-dias').value)||1;
+  const tipo=document.getElementById('aus-tipo').value;
+  const obs=document.getElementById('aus-obs').value.trim();
+  if(!empId||!fecha){toast('Completa los campos obligatorios','err');return;}
+
+  const datos={empleado_id:empId,fecha,dias,tipo,observacion:obs||null};
+  if(esDemo()){
+    const emp=empleados.find(e=>e.id===empId);
+    ausencias.unshift({id:Date.now(),...datos,empleados:{nombre:emp?emp.nombre:'—'}});
+    // Si es hoy, actualizar asistencia
+    if(fecha===HOY){
+      asistencias=asistencias.filter(a=>a.empleado_id!==empId);
+      asistencias.push({id:Date.now()+1,empleado_id:empId,fecha:HOY,estado:'Ausente',hora_marcacion:null,metodo:tipo,lat:null,lng:null});
+    }
+  } else {
+    await db.from('ausencias').insert([datos]);
+    if(fecha===HOY){
+      await db.from('asistencia_diaria').upsert([{empleado_id:empId,fecha:HOY,estado:'Ausente',hora_marcacion:null,metodo:tipo,aprobado:true}],{onConflict:'empleado_id,fecha'});
+    }
+  }
+  const emp=empleados.find(e=>e.id===empId);
+  toast(`Ausencia registrada para ${emp?emp.nombre:''}`,'ok');
+  cerrarModal('modal-ausencia');
+  renderizarTodo();
+}
+
+async function eliminarAusencia(id){
+  if(esDemo()){ausencias=ausencias.filter(a=>a.id!==id);}
+  else{await db.from('ausencias').delete().eq('id',id);}
+  toast('Ausencia eliminada');
+  renderAusencias();
+}
+
+// ── VACACIONES ──
+function abrirVacacion(){
+  const hoy=HOY;
+  document.getElementById('vac-desde').value=hoy;
+  document.getElementById('vac-hasta').value=hoy;
+  document.getElementById('vac-motivo').value='';
+  document.getElementById('vac-dias-calc').textContent='—';
+  calcularSaldo();
+  abrirModal('modal-vacacion');
+}
+
+function calcularDias(){
+  const desde=document.getElementById('vac-desde').value;
+  const hasta=document.getElementById('vac-hasta').value;
+  const d=diasEntre(desde,hasta);
+  document.getElementById('vac-dias-calc').textContent=d?d+' días':'—';
+  calcularSaldo();
+}
+
+function calcularSaldo(){
+  const empId=parseInt(document.getElementById('vac-empleado').value);
+  const usados=vacaciones.filter(v=>v.empleado_id===empId&&v.estado==='Aprobado').reduce((s,v)=>s+(v.dias||0),0);
+  const saldo=Math.max(0,DIAS_VAC_BASE-usados);
+  document.getElementById('vac-saldo-calc').textContent=saldo+' días';
+}
+
+async function guardarVacacion(){
+  const empId=parseInt(document.getElementById('vac-empleado').value);
+  const desde=document.getElementById('vac-desde').value;
+  const hasta=document.getElementById('vac-hasta').value;
+  const motivo=document.getElementById('vac-motivo').value.trim();
+  if(!empId||!desde||!hasta){toast('Completa los campos','err');return;}
+  if(new Date(hasta)<new Date(desde)){toast('La fecha de fin debe ser posterior al inicio','err');return;}
+
+  const dias=diasEntre(desde,hasta);
+  const usados=vacaciones.filter(v=>v.empleado_id===empId&&v.estado==='Aprobado').reduce((s,v)=>s+(v.dias||0),0);
+  const saldo=Math.max(0,DIAS_VAC_BASE-usados);
+
+  if(dias>saldo){toast(`Sin saldo suficiente (disponible: ${saldo} días)`,'err');return;}
+
+  const datos={empleado_id:empId,desde,hasta,dias,saldo_restante:saldo-dias,estado:'Pendiente',motivo:motivo||null};
+  if(esDemo()){
+    const emp=empleados.find(e=>e.id===empId);
+    vacaciones.unshift({id:Date.now(),...datos,empleados:{nombre:emp?emp.nombre:'—'}});
+  } else {
+    await db.from('vacaciones').insert([datos]);
+  }
+  const emp=empleados.find(e=>e.id===empId);
+  toast(`Solicitud enviada para ${emp?emp.nombre:''}`,'ok');
+  cerrarModal('modal-vacacion');
+  renderVacaciones();
+}
+
+async function cambiarVacacion(id,nuevoEstado){
+  if(esDemo()){
+    const idx=vacaciones.findIndex(v=>v.id===id);
+    if(idx>=0)vacaciones[idx].estado=nuevoEstado;
+  } else {
+    await db.from('vacaciones').update({estado:nuevoEstado}).eq('id',id);
+  }
+  toast(`Solicitud ${nuevoEstado.toLowerCase()}`,nuevoEstado==='Aprobado'?'ok':'');
+  renderVacaciones();
+}
+
+// ── FILL SELECTS ──
+function llenarSelectEmpleados(){
+  ['aus-empleado','vac-empleado','mk-empleado'].forEach(selId=>{
+    const sel=document.getElementById(selId);
+    if(!sel)return;
+    const actual=sel.value;
+    sel.innerHTML='<option value="">Seleccionar empleado...</option>';
+    empleados.forEach(e=>{
+      const opt=document.createElement('option');
+      opt.value=e.id;
+      opt.textContent=`${e.nombre} — ${e.cargo||''}`;
+      sel.appendChild(opt);
+    });
+    sel.value=actual;
+  });
+}
+
+// ── HELPERS ──
+function esDemo(){return SUPABASE_URL.includes('TU_PROYECTO');}
+function abrirModal(id){document.getElementById(id).classList.add('open');}
+function cerrarModal(id){document.getElementById(id).classList.remove('open');}
+
+document.querySelectorAll('.overlay').forEach(bg=>{
+  bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open');});
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));
+});
+
+function toast(msg,tipo=''){
+  const wrap=document.getElementById('toast-wrap');
+  const el=document.createElement('div');
+  el.className=`toast ${tipo==='ok'?'ok':tipo==='err'?'err':''}`;
+  el.innerHTML=`<i class="ti ${tipo==='ok'?'ti-check':tipo==='err'?'ti-x':'ti-info-circle'}"></i>${msg}`;
+  wrap.appendChild(el);
+  setTimeout(()=>el.classList.add('show'),10);
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},3200);
+}
+
+// ── ARRANCAR ──
+iniciar();
+</script>
+</body>
+</html>
