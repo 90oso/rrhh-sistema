@@ -232,11 +232,47 @@ function renderTabla() {
           </div>
         </div>
       </td>
+
       <td>${c.cargo}</td>
+
       <td>${fecha}</td>
+
       <td style="${entrevStyle}">${entrev}</td>
-      <td><span class="badge ${badge}">${c.estado}</span></td>
-      <td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">${acciones}</div></td>
+
+      <td>
+        <span class="badge ${badge}">
+          ${c.estado}
+        </span>
+      </td>
+
+      <!-- NUEVA COLUMNA DEL CV -->
+      <td style="text-align:center">
+
+        ${
+          c.cv_archivo
+
+          ? `<i class="ti ti-file-type-pdf"
+                 style="color:#DC2626;font-size:19px"
+                 title="CV almacenado"></i>`
+
+          : c.cv_link
+
+          ? `<i class="ti ti-link"
+                 style="color:#2563EB;font-size:18px"
+                 title="CV mediante enlace"></i>`
+
+          : "-"
+
+        }
+
+      </td>
+
+      <td>
+        <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+          ${acciones}
+        </div>
+      </td>
+
     </tr>`;
   }).join('');
 }
@@ -287,6 +323,7 @@ function verHV(id) {
     <div class="hv-field"><span class="hv-field-lbl">Entrevista</span><span class="hv-field-val">${c.entrevista || '—'}</span></div>
     ${c.fecha_contrato ? `<div class="hv-field"><span class="hv-field-lbl">Fecha contrato</span><span class="hv-field-val">${formatFecha(c.fecha_contrato)}</span></div>` : ''}
     ${c.cv_link ? `<div class="hv-field"><span class="hv-field-lbl">CV / portafolio</span><span class="hv-field-val"><a href="${c.cv_link}" target="_blank" style="color:var(--blue)">Ver CV →</a></span></div>` : ''}
+    ${c.cv_archivo ? `<div class="hv-field"><span class="hv-field-lbl">Hoja de vida</span><span class="hv-field-val"><ahref="${c.cv_archivo}"target="_blank"style="color:var(--blue)">Descargar PDF →</a></span></div>` : ''}
     ${c.motivo_rechazo ? `<div class="hv-field"><span class="hv-field-lbl">Motivo rechazo</span><span class="hv-field-val" style="color:var(--red)">${c.motivo_rechazo}</span></div>` : ''}
     ${c.comentario ? `<div style="margin-top:14px;padding:10px 12px;background:#F8FAFC;border-radius:8px;font-size:13px;color:var(--text-2);border-left:3px solid var(--blue)"><div style="font-size:11px;color:var(--text-3);font-weight:500;margin-bottom:4px">Comentario del entrevistador</div>${c.comentario}</div>` : ''}
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px">
