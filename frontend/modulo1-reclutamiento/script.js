@@ -438,7 +438,6 @@ async function guardar() {
     cv_link: document.getElementById('f-cv').value.trim() || null,
     comentario: document.getElementById('f-comentario').value.trim() || null,
     motivo_rechazo: document.getElementById('f-motivo').value || null,
-    fecha_contracto: estado === 'Contratado' ? (new Date().toISOString().split('T')[0]) : null, // Ajustado según tu modelo de datos
   };
 
   const btnG = document.getElementById('btn-guardar');
