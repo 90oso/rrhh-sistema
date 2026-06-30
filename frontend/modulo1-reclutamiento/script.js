@@ -517,22 +517,62 @@ function esDemo() {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 async function iniciar() {
 
-    console.log("Entró a iniciar()");
+    console.log("1. Entró a iniciar");
 
     try {
 
-        console.log("Probando Supabase...");
+        console.log("2. Consultando candidatos...");
 
         const { data, error } = await db
             .from("candidatos")
             .select("id")
             .limit(1);
 
-        console.log("Respuesta:", data, error);
+        console.log("3. Resultado:", data);
+        console.log("4. Error:", error);
+
+        const dot = document.getElementById('status-dot');
+        const txt = document.getElementById('status-text');
+        const statusEl = document.getElementById('db-status');
+
+        console.log("5. Elementos HTML", dot, txt, statusEl);
+
+        if (error) {
+
+            console.log("6. Entró al modo demo");
+
+            modoDemo = true;
+
+            dot.style.background = '#F59E0B';
+            txt.textContent = 'Modo demo';
+
+            candidatos = datosDemo();
+
+            renderizarTodo();
+
+            return;
+        }
+
+        console.log("7. Conectado correctamente");
+
+        modoDemo = false;
+
+        dot.style.background = '#22C55E';
+        txt.textContent = 'Conectado';
+
+        await cargarCandidatos();
+
+        console.log("8. cargarCandidatos terminó");
+
+        suscribirRealtime();
+
+        console.log("9. Realtime iniciado");
+
+        setTimeout(() => statusEl.classList.add("hidden"), 2000);
 
     } catch (e) {
 
-        console.error("ERROR:", e);
+        console.error("ERROR EN INICIAR", e);
 
     }
 
