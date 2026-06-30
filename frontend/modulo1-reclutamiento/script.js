@@ -420,7 +420,7 @@ async function guardar() {
   const cargo  = document.getElementById('f-cargo').value.trim();
   const estado = document.getElementById('f-estado').value;
 
-  // Validar
+  // Validar campos obligatorios
   let ok = true;
   ['f-nombre','f-email','f-cargo'].forEach(id => {
     const el = document.getElementById(id);
@@ -439,7 +439,7 @@ async function guardar() {
     cv_link: document.getElementById('f-cv').value.trim() || null,
     comentario: document.getElementById('f-comentario').value.trim() || null,
     motivo_rechazo: document.getElementById('f-motivo').value || null,
-    fecha_contrato: estado === 'Contratado' ? (new Date().toISOString().split('T')[0]) : null,
+    fecha_contracto: estado === 'Contratado' ? (new Date().toISOString().split('T')[0]) : null, // Ajustado según tu modelo de datos
   };
 
   const btnG = document.getElementById('btn-guardar');
@@ -461,27 +461,48 @@ async function guardar() {
     return;
   }
 
-  if (editandoId) {
-    const { error } = await db.from('candidatos').update(datos).eq('id', editandoId);
-    const urlCV = await subirCV(editandoId);
-    if(urlCV){await db.from("candidatos").update({cv_archivo:urlCV}).eq("id",editandoId);
-}
-    if (error) { toast('Error al guardar: ' + error.message, 'err'); btnG.disabled = false; return; }
-    toast(`${nombre} actualizado`);
-  } else {
-    const { error } = await db.from('candidatos').insert([datos]).select().single();
-    if (error) { toast('Error al guardar: ' + error.message, 'err'); btnG.disabled = false; return; }
-    toast(`${nombre} agregado`);
-    const urlCV = await subirCV(data.id);
-    if(urlCV) { await db.from("candidatos").update({cv_archivo:urlCV}).eq("id",data.id);
-}
-  }
-  cerrarModal('modal-form');
-  btnG.disabled = false;
-  // Realtime actualizará la tabla automáticamente
-  if (esDemo()) renderizarTodo();
-}
+  try {
+    if (editandoId) {
+      // 1. Actualizar datos de texto del candidato existente
+      const { error } = await db.from('candidatos').update(datos).eq('id', editandoId);
+      if (error) throw error;
 
+      // 2. Intentar subir el archivo binario usando el ID existente
+      const urlCV = await subirCV(editandoId);
+      if (urlCV) {
+        const { error: errUpdateUrl } = await db.from("candidatos").update({ cv_archivo: urlCV }).eq("id", editandoId);
+        if (errUpdateUrl) throw errUpdateUrl;
+      }
+      toast(`${nombre} actualizado`);
+    } else {
+      // 1. Insertar nuevo candidato capturando la respuesta completa { data, error }
+      const { data, error } = await db.from('candidatos').insert([datos]).select().single();
+      if (error) throw error;
+
+      toast(`${nombre} agregado`);
+
+      // 2. Si hay un archivo en el input, usar el ID devuelto por Supabase para nombrarlo
+      if (data && data.id) {
+        const urlCV = await subirCV(data.id);
+        if (urlCV) {
+          const { error: errUpdateUrl } = await db.from("candidatos").update({ cv_archivo: urlCV }).eq("id", data.id);
+          if (errUpdateUrl) throw errUpdateUrl;
+        }
+      }
+    }
+
+    // Limpiar input de tipo file de forma manual
+    const fileInput = document.getElementById("f-cv-file");
+    if (fileInput) fileInput.value = "";
+
+    cerrarModal('modal-form');
+  } catch (err) {
+    console.error("Error en la operación:", err);
+    toast('Error al guardar: ' + err.message, 'err');
+  } finally {
+    btnG.disabled = false;
+  }
+}
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // AVANZAR ETAPA
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
