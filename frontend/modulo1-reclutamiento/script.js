@@ -36,39 +36,34 @@ function formatFecha(iso) {
 }
 
 async function subirCV(idCandidato) {
-
     const input = document.getElementById("f-cv-file");
-
-    if (!input.files.length)
-        return null;
+    
+    // VALIDACIÓN CRÍTICA: Si el input no existe o el usuario no seleccionó ningún archivo, salimos de inmediato sin lanzar errores.
+    if (!input || !input.files || input.files.length === 0) {
+        return null; 
+    }
 
     const archivo = input.files[0];
-
     const extension = archivo.name.split(".").pop();
+    const nombreArchivo = `${idCandidato}_${Date.now()}.${extension}`;
 
-    const nombreArchivo =
-        `${idCandidato}_${Date.now()}.${extension}`;
-
+    // Subir el archivo al bucket
     const { error } = await db.storage
         .from("hojas-vida")
         .upload(nombreArchivo, archivo, {
             upsert: true
         });
 
-    if (error)
+    if (error) {
         throw error;
+    }
 
+    // Obtener y retornar la URL pública
     const { data } = db.storage
         .from("hojas-vida")
         .getPublicUrl(nombreArchivo);
 
     return data.publicUrl;
-}
-
-
-function diasEntre(iso1, iso2) {
-  if (!iso1 || !iso2) return null;
-  return Math.round((new Date(iso2) - new Date(iso1)) / 86400000);
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -382,6 +377,8 @@ function abrirNuevo() {
   document.getElementById('f-cv').value = '';
   document.getElementById('f-comentario').value = '';
   document.getElementById('f-motivo').value = '';
+  const fileInput = document.getElementById("f-cv-file");
+  if (fileInput) fileInput.value = "";
   toggleMotivoRechazo('Postulado');
   abrirModal('modal-form');
   setTimeout(() => document.getElementById('f-nombre').focus(), 150);
@@ -402,6 +399,8 @@ function editarCandidato(id) {
   document.getElementById('f-cv').value = c.cv_link || '';
   document.getElementById('f-comentario').value = c.comentario || '';
   document.getElementById('f-motivo').value = c.motivo_rechazo || '';
+  const fileInput = document.getElementById("f-cv-file");
+  if (fileInput) fileInput.value = "";
   toggleMotivoRechazo(c.estado);
   abrirModal('modal-form');
 }
