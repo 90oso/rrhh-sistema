@@ -379,7 +379,6 @@ function abrirNuevo() {
   document.getElementById('f-cargo').value = '';
   document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
   document.getElementById('f-estado').value = 'Postulado';
-  document.getElementById('f-entrevista').value = '';
   document.getElementById('f-cv').value = '';
   document.getElementById('f-comentario').value = '';
   document.getElementById('f-motivo').value = '';
@@ -399,7 +398,6 @@ function editarCandidato(id) {
   document.getElementById('f-cargo').value = c.cargo || '';
   document.getElementById('f-fecha').value = c.fecha_postulacion || '';
   document.getElementById('f-estado').value = c.estado || 'Postulado';
-  document.getElementById('f-entrevista').value = c.entrevista || '';
   document.getElementById('f-cv').value = c.cv_link || '';
   document.getElementById('f-comentario').value = c.comentario || '';
   document.getElementById('f-motivo').value = c.motivo_rechazo || '';
