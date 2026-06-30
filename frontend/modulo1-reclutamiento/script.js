@@ -1,4 +1,4 @@
-import { supabase } from "../supabase-client.js";
+Import { supabase } from "../supabase-client.js";
 console.log("script.js cargado");
 const db = supabase;
 let modoDemo = false;
@@ -431,23 +431,21 @@ async function guardar() {
   }
   if (!ok) { toast('Completa los campos obligatorios', 'err'); return; }
 
-  // Dejamos únicamente las columnas exactas que existen en tu tabla de Supabase
   const datos = {
-    nombre, 
-    email, 
-    cargo, 
-    estado,
+    nombre, email, cargo, estado,
     fecha_postulacion: document.getElementById('f-fecha').value || null,
     entrevista: document.getElementById('f-entrevista').value.trim() || null,
     cv_link: document.getElementById('f-cv').value.trim() || null,
     comentario: document.getElementById('f-comentario').value.trim() || null,
-    motivo_rechazo: document.getElementById('f-motivo').value || null
+    motivo_rechazo: document.getElementById('f-motivo').value || null,
+    fecha_contracto: estado === 'Contratado' ? (new Date().toISOString().split('T')[0]) : null, // Ajustado según tu modelo de datos
   };
 
   const btnG = document.getElementById('btn-guardar');
   btnG.disabled = true;
 
   if (esDemo()) {
+    // Modo demo — solo memoria local
     if (editandoId) {
       const idx = candidatos.findIndex(c => c.id === editandoId);
       if (idx >= 0) candidatos[idx] = { ...candidatos[idx], ...datos };
@@ -464,9 +462,11 @@ async function guardar() {
 
   try {
     if (editandoId) {
+      // 1. Actualizar datos de texto del candidato existente
       const { error } = await db.from('candidatos').update(datos).eq('id', editandoId);
       if (error) throw error;
 
+      // 2. Intentar subir el archivo binario usando el ID existente
       const urlCV = await subirCV(editandoId);
       if (urlCV) {
         const { error: errUpdateUrl } = await db.from("candidatos").update({ cv_archivo: urlCV }).eq("id", editandoId);
@@ -474,11 +474,13 @@ async function guardar() {
       }
       toast(`${nombre} actualizado`);
     } else {
+      // 1. Insertar nuevo candidato capturando la respuesta completa { data, error }
       const { data, error } = await db.from('candidatos').insert([datos]).select().single();
       if (error) throw error;
 
       toast(`${nombre} agregado`);
 
+      // 2. Si hay un archivo en el input, usar el ID devuelto por Supabase para nombrarlo
       if (data && data.id) {
         const urlCV = await subirCV(data.id);
         if (urlCV) {
@@ -488,13 +490,11 @@ async function guardar() {
       }
     }
 
+    // Limpiar input de tipo file de forma manual
     const fileInput = document.getElementById("f-cv-file");
     if (fileInput) fileInput.value = "";
 
     cerrarModal('modal-form');
-    // Forzamos la recarga manual de los datos inmediatamente después de guardar con éxito
-    await cargarCandidatos();
-
   } catch (err) {
     console.error("Error en la operación:", err);
     toast('Error al guardar: ' + err.message, 'err');
