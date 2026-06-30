@@ -38,7 +38,7 @@ function formatFecha(iso) {
 
 async function subirCV(idCandidato) {
 
-    const input = document.getElementById("f-cv-file");
+    const input = document.getElementById('f-cv-archivo');
 
     if (!input.files.length)
         return null;
@@ -470,10 +470,10 @@ async function guardar() {
     if (error) { toast('Error al guardar: ' + error.message, 'err'); btnG.disabled = false; return; }
     toast(`${nombre} actualizado`);
   } else {
-    const { error } = await db.from('candidatos').insert([datos]).select().single();
+    const { data: nuevo, error } = await db.from('candidatos').insert([datos]).select().single();
     if (error) { toast('Error al guardar: ' + error.message, 'err'); btnG.disabled = false; return; }
     toast(`${nombre} agregado`);
-    const urlCV = await subirCV(data.id);
+    const urlCV = await subirCV(nuevo.id);
     if(urlCV) { await db.from("candidatos").update({cv_archivo:urlCV}).eq("id",data.id);
 }
   }
