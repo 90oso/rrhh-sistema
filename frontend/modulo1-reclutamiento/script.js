@@ -35,6 +35,37 @@ function formatFecha(iso) {
   return d.toLocaleDateString('es', {day:'2-digit',month:'short',year:'numeric'});
 }
 
+async function subirCV(idCandidato) {
+
+    const input = document.getElementById("f-cv-file");
+
+    if (!input.files.length)
+        return null;
+
+    const archivo = input.files[0];
+
+    const extension = archivo.name.split(".").pop();
+
+    const nombreArchivo =
+        `${idCandidato}_${Date.now()}.${extension}`;
+
+    const { error } = await db.storage
+        .from("hojas-vida")
+        .upload(nombreArchivo, archivo, {
+            upsert: true
+        });
+
+    if (error)
+        throw error;
+
+    const { data } = db.storage
+        .from("hojas-vida")
+        .getPublicUrl(nombreArchivo);
+
+    return data.publicUrl;
+}
+
+
 function diasEntre(iso1, iso2) {
   if (!iso1 || !iso2) return null;
   return Math.round((new Date(iso2) - new Date(iso1)) / 86400000);
@@ -323,7 +354,7 @@ function verHV(id) {
     <div class="hv-field"><span class="hv-field-lbl">Entrevista</span><span class="hv-field-val">${c.entrevista || '—'}</span></div>
     ${c.fecha_contrato ? `<div class="hv-field"><span class="hv-field-lbl">Fecha contrato</span><span class="hv-field-val">${formatFecha(c.fecha_contrato)}</span></div>` : ''}
     ${c.cv_link ? `<div class="hv-field"><span class="hv-field-lbl">CV / portafolio</span><span class="hv-field-val"><a href="${c.cv_link}" target="_blank" style="color:var(--blue)">Ver CV →</a></span></div>` : ''}
-    ${c.cv_archivo ? `<div class="hv-field"><span class="hv-field-lbl">Hoja de vida</span><span class="hv-field-val"><ahref="${c.cv_archivo}"target="_blank"style="color:var(--blue)">Descargar PDF →</a></span></div>` : ''}
+    ${c.cv_archivo ? `<div class="hv-field"><span class="hv-field-lbl">Hoja de vida</span><span class="hv-field-val"><a href="${c.cv_archivo}"target="_blank"style="color:var(--blue)">Descargar PDF →</a></span></div>` : ''}
     ${c.motivo_rechazo ? `<div class="hv-field"><span class="hv-field-lbl">Motivo rechazo</span><span class="hv-field-val" style="color:var(--red)">${c.motivo_rechazo}</span></div>` : ''}
     ${c.comentario ? `<div style="margin-top:14px;padding:10px 12px;background:#F8FAFC;border-radius:8px;font-size:13px;color:var(--text-2);border-left:3px solid var(--blue)"><div style="font-size:11px;color:var(--text-3);font-weight:500;margin-bottom:4px">Comentario del entrevistador</div>${c.comentario}</div>` : ''}
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px">
@@ -432,12 +463,18 @@ async function guardar() {
 
   if (editandoId) {
     const { error } = await db.from('candidatos').update(datos).eq('id', editandoId);
+    const urlCV = await subirCV(editandoId);
+    if(urlCV){await db.from("candidatos").update({cv_archivo:urlCV}).eq("id",editandoId);
+}
     if (error) { toast('Error al guardar: ' + error.message, 'err'); btnG.disabled = false; return; }
     toast(`${nombre} actualizado`);
   } else {
-    const { error } = await db.from('candidatos').insert([datos]);
+    const { error } = await db.from('candidatos').insert([datos]).select().single();
     if (error) { toast('Error al guardar: ' + error.message, 'err'); btnG.disabled = false; return; }
     toast(`${nombre} agregado`);
+    const urlCV = await subirCV(data.id);
+    if(urlCV) { await db.from("candidatos").update({cv_archivo:urlCV}).eq("id",data.id);
+}
   }
   cerrarModal('modal-form');
   btnG.disabled = false;
