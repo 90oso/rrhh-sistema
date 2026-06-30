@@ -379,6 +379,7 @@ textarea.form-control{resize:vertical;min-height:72px}
                 <th>Fecha postulación</th>
                 <th>Entrevista</th>
                 <th>Estado</th>
+                <th>CV</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -440,11 +441,40 @@ textarea.form-control{resize:vertical;min-height:72px}
       </div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Link CV / portafolio</label>
-      <input class="form-control" id="f-cv" type="url" placeholder="https://...">
-      <div class="form-hint">Opcional — enlace al CV o portafolio del candidato</div>
+<div class="form-group">
+    <label class="form-label">Link CV / Portafolio</label>
+
+    <input
+        class="form-control"
+        id="f-cv"
+        type="url"
+        placeholder="https://..."
+    >
+
+    <div class="form-hint">
+        Opcional. Puede colocar un enlace a LinkedIn, Drive,
+        Dropbox o portafolio.
     </div>
+</div>
+
+<div class="form-group">
+
+    <label class="form-label">
+        Hoja de vida (PDF o Word)
+    </label>
+
+    <input
+        class="form-control"
+        id="f-cv-archivo"
+        type="file"
+        accept=".pdf,.doc,.docx"
+    >
+
+    <div class="form-hint">
+        Máximo recomendado: 10 MB.
+    </div>
+
+</div>
 
     <div class="form-group" id="motivo-group" style="display:none">
       <label class="form-label">Motivo de rechazo <span class="req">*</span></label>
