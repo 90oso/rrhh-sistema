@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 4 — Desarrollo · RRHH Sistema</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.2.0/dist/tabler-icons.min.css">
+
+<style>
+/* ═══ RESET ═══ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F1F5F9;--surface:#fff;--border:#E2E8F0;--border-l:#F1F5F9;
+  --text:#1E293B;--text2:#374151;--text3:#64748B;--text4:#94A3B8;
+  --sidebar:#0F172A;--blue:#2563EB;--blue-h:#1D4ED8;
+  --green:#16A34A;--green-h:#15803D;--red:#DC2626;
+  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+
+/* ═══ LAYOUT ═══ */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:220px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+
+/* ═══ SIDEBAR ═══ */
+.logo{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo-mark{font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:6px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+.nav-section{padding:12px 0 4px}
+.nav-label{padding:6px 16px;font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:rgba(255,255,255,.55);font-size:13px;transition:all .12s;border-left:2px solid transparent;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.85)}
+.nav-item.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--blue)}
+.nav-item i{font-size:16px;width:18px}
+.nav-badge{margin-left:auto;background:rgba(59,130,246,.3);color:#93C5FD;font-size:10px;padding:1px 6px;border-radius:99px}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.user-av{width:30px;height:30px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;color:rgba(255,255,255,.85);font-weight:500}
+.user-role{font-size:10px;color:rgba(255,255,255,.35)}
+
+/* ═══ TOPBAR ═══ */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;flex-shrink:0}
+.topbar-l{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text3)}
+.page-title{color:var(--text);font-weight:500;font-size:15px}
+.topbar-r{display:flex;align-items:center;gap:12px}
+.search-wrap{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:#fff}
+.search-wrap input{border:none;outline:none;font-size:13px;color:var(--text2);width:180px;background:transparent;font-family:inherit}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:16px;position:relative}
+.icon-btn:hover{background:#F8FAFC}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
+.av-top{width:32px;height:32px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+
+/* ═══ STATS ═══ */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.stat-label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:600;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;color:var(--text4);margin-top:4px}
+.trend-up{font-size:11px;color:var(--green);margin-top:4px}
+
+/* ═══ CARDS / ROW ═══ */
+.row{display:grid;grid-template-columns:1.3fr 1fr;gap:14px}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card-mb{margin-bottom:14px}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+.card-title{font-size:14px;font-weight:600;color:var(--text)}
+
+/* ═══ TABLE ═══ */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--border-l);color:var(--text2);vertical-align:middle;font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFBFD}
+.empty-row td{text-align:center;padding:28px;color:var(--text4);font-size:13px}
+
+/* ═══ AVATAR ═══ */
+.av{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.av-xl{width:52px;height:52px;font-size:17px}
+.av-lg{width:40px;height:40px;font-size:14px}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;white-space:nowrap}
+.b-gray{background:#F1F5F9;color:#475569}
+.b-blue{background:#EFF6FF;color:#1D4ED8}
+.b-yellow{background:#FFFBEB;color:#92400E}
+.b-purple{background:#F5F3FF;color:#5B21B6}
+.b-green{background:#F0FDF4;color:#15803D}
+.b-red{background:#FEF2F2;color:#B91C1C}
+.b-orange{background:#FFF7ED;color:#C2410C}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;cursor:pointer;font-weight:500;transition:all .12s;white-space:nowrap;font-family:inherit}
+.btn:hover{background:#F8FAFC;border-color:#CBD5E1}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{background:var(--blue-h);border-color:var(--blue-h)}
+.btn-success{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-success:hover{background:var(--green-h);border-color:var(--green-h)}
+.btn-blue-o{color:var(--blue);border-color:#BFDBFE;background:#fff}
+.btn-blue-o:hover{background:#EFF6FF}
+.btn-danger{color:var(--red);border-color:#FECACA;background:#fff}
+.btn-danger:hover{background:#FEF2F2}
+.btn-warn{color:#D97706;border-color:#FDE68A;background:#fff}
+.btn-warn:hover{background:#FFFBEB}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ═══ MODALS ═══ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;border:1px solid var(--border);padding:22px;width:560px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:slideUp .15s}
+.modal-wide{width:700px}
+.modal-sm{width:380px}
+@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:18px}
+.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px}
+.modal-close:hover{background:#F8FAFC}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-l)}
+
+/* ═══ FORMS ═══ */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-group{margin-bottom:12px}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px}
+.req{color:var(--red)}
+.form-control{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .12s;font-family:inherit}
+.form-control:focus{border-color:#93C5FD;box-shadow:0 0 0 3px rgba(147,197,253,.2)}
+select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px;padding-right:30px}
+textarea.form-control{resize:vertical;min-height:64px}
+.form-hint{font-size:11px;color:var(--text4);margin-top:3px}
+.section-hd{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border-l)}
+
+/* ═══ RATING SLIDER ═══ */
+.rating-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-l)}
+.rating-row:last-child{border-bottom:none}
+.rating-lbl{font-size:13px;color:var(--text2);font-weight:500}
+.rating-ctrl{display:flex;align-items:center;gap:8px}
+.rating-ctrl input[type=range]{width:120px;accent-color:var(--blue)}
+.rating-num{font-size:13px;font-weight:600;color:var(--blue);width:28px;text-align:right}
+.prom-box{margin-top:14px;padding:12px 14px;background:#F5F3FF;border-radius:8px;display:flex;align-items:center;justify-content:space-between}
+.prom-lbl{font-size:12px;color:#5B21B6;font-weight:500}
+.prom-val{font-size:20px;font-weight:700;color:#5B21B6}
+
+/* ═══ PERFIL PANEL ═══ */
+.profile-field{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border-l);font-size:13px}
+.profile-field:last-of-type{border-bottom:none}
+.pf-lbl{color:var(--text3)}
+.pf-val{color:var(--text);font-weight:500;text-align:right;max-width:60%}
+.hist-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-l);font-size:12px}
+.hist-item:last-child{border-bottom:none}
+.hist-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:14px}
+.tab{padding:8px 16px;font-size:13px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:all .12s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ═══ STARS ═══ */
+.stars{color:#F59E0B;font-size:12px;letter-spacing:1px}
+
+/* ═══ TOAST ═══ */
+#toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#1E293B;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(8px);transition:all .25s;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok{background:#15803D}
+.toast.err{background:#B91C1C}
+
+/* ═══ STATUS ═══ */
+#db-status{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-radius:99px;padding:4px 12px;font-size:11px;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);z-index:50;transition:opacity .5s}
+#db-status.hidden{opacity:0;pointer-events:none}
+.sdot{width:7px;height:7px;border-radius:50%}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:28px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══ FILTER CHIPS ═══ */
+.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.filter-lbl{font-size:12px;color:var(--text3)}
+.chip{padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;color:var(--text3);font-weight:500;transition:all .12s}
+.chip:hover{border-color:#93C5FD;color:var(--blue)}
+.chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ═══ PROGRESS ═══ */
+.prog-wrap{width:100%;height:6px;background:#F1F5F9;border-radius:99px;overflow:hidden}
+.prog-bar{height:100%;border-radius:99px;background:var(--blue)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1100px){
+  .row{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+  .sidebar{width:56px}
+  .logo-mark span,.logo-sub,.nav-item span,.user-info,.nav-label,.nav-badge{display:none}
+  .nav-item{justify-content:center;padding:10px}
+}
+</style>
+</head>
+<body>
+
+<div id="db-status">
+  <div class="sdot" id="sdot" style="background:#F59E0B"></div>
+  <span id="stxt">Conectando...</span>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-mark"><i class="ti ti-building-community"></i><span>RRHH Sistema</span></div>
+      <div class="logo-sub">Gestión de Talento Humano</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Módulos</div>
+      <a class="nav-item" href="../modulo1-reclutamiento/index.html"><i class="ti ti-user-search"></i><span>Reclutamiento</span></a>
+      <a class="nav-item" href="../modulo2-personal/index.html"><i class="ti ti-users"></i><span>Personal</span></a>
+      <a class="nav-item" href="../modulo3-control/index.html"><i class="ti ti-clock-check"></i><span>Control Diario</span></a>
+      <div class="nav-item active"><i class="ti ti-school"></i><span>Desarrollo</span><span class="nav-badge" id="badge-eval">—</span></div>
+      <a class="nav-item" href="../modulo5-salida/index.html"><i class="ti ti-door-exit"></i><span>Salida</span></a>
+      <a class="nav-item" href="../modulo6-reportes/index.html"><i class="ti ti-chart-bar"></i><span>Reportes</span></a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Sistema</div>
+      <div class="nav-item"><i class="ti ti-settings"></i><span>Configuración</span></div>
+      <div class="nav-item"><i class="ti ti-help-circle"></i><span>Ayuda</span></div>
+    </div>
+    <div class="sb-footer">
+      <div class="user-av">AG</div>
+      <div class="user-info">
+        <div class="user-name">Ana García</div>
+        <div class="user-role">Gerente RRHH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-l">
+        <i class="ti ti-home" style="font-size:14px"></i>
+        <span style="color:#CBD5E1">/</span>
+        <span class="page-title">Desarrollo</span>
+      </div>
+      <div class="topbar-r">
+        <div class="search-wrap">
+          <i class="ti ti-search" style="font-size:14px;color:var(--text3)"></i>
+          <input id="search-input" placeholder="Buscar empleado..." oninput="renderTabla()">
+        </div>
+        <div class="icon-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
+        <div class="av-top">AG</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Promedio de desempeño</div>
+          <div class="stat-val" id="st-promedio">—</div>
+          <div class="stat-sub" id="st-promedio-sub">sobre 5.0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Capacitaciones completadas</div>
+          <div class="stat-val" id="st-cap-comp">—</div>
+          <div class="stat-sub" id="st-cap-pct">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Capacitaciones pendientes</div>
+          <div class="stat-val" id="st-cap-pend">—</div>
+          <div class="stat-sub">inscritas / en curso</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Evaluaciones registradas</div>
+          <div class="stat-val" id="st-eval-total">—</div>
+          <div class="trend-up" id="st-eval-mes">—</div>
+        </div>
+      </div>
+
+      <div class="row">
+
+        <!-- COL IZQUIERDA: DIRECTORIO -->
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="card-hd">
+            <div class="card-title">Desarrollo del personal</div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-blue-o" onclick="abrirCapacitacion()"><i class="ti ti-certificate"></i>Capacitación</button>
+              <button class="btn btn-primary btn-sm" onclick="abrirEvaluacion()"><i class="ti ti-star"></i>Evaluación</button>
+            </div>
+          </div>
+          <div class="filter-row">
+            <span class="filter-lbl">Departamento:</span>
+            <div class="chip active" onclick="filtrarPor('todos',this)">Todos</div>
+          </div>
+          <div class="tbl-wrap" style="flex:1">
+            <table>
+              <thead>
+                <tr>
+                  <th>Empleado</th>
+                  <th>Desempeño</th>
+                  <th>Capacitaciones</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tbody"><tr><td colspan="4"><div class="spinner"></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- COL DERECHA: PERFIL DESARROLLO -->
+        <div>
+          <div class="card" id="perfil-card">
+            <div id="perfil-content">
+              <div style="text-align:center;padding:24px;color:var(--text4)">
+                <i class="ti ti-school" style="font-size:32px;display:block;margin-bottom:8px"></i>
+                Selecciona un empleado para ver su desarrollo
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-mb" style="margin-top:14px">
+            <div class="card-hd">
+              <div class="card-title">Certificaciones por vencer</div>
+              <span style="font-size:12px;color:var(--text3)">próximos 60 días</span>
+            </div>
+            <div id="venc-wrap"><div class="spinner"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /content -->
+  </div>
+</div>
+
+<!-- ══ MODAL: NUEVA CAPACITACIÓN ══ -->
+<div class="overlay" id="modal-cap">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrarModal('modal-cap')"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Registrar capacitación</div>
+    <div class="form-group">
+      <label class="form-label">Empleado <span class="req">*</span></label>
+      <select class="form-control" id="cap-empleado"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Nombre de la capacitación <span class="req">*</span></label>
+        <input class="form-control" id="cap-nombre" placeholder="Ej: Excel Avanzado">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Proveedor</label>
+        <input class="form-control" id="cap-proveedor" placeholder="Ej: Capacita Panamá">
+      </div>
+    </div>
+    <div class="form-row-3">
+      <div class="form-group">
+        <label class="form-label">Fecha <span class="req">*</span></label>
+        <input class="form-control" id="cap-fecha" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Horas</label>
+        <input class="form-control" id="cap-horas" type="number" min="0" placeholder="8">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="cap-estado">
+          <option>Inscrito</option>
+          <option>En curso</option>
+          <option selected>Completado</option>
+          <option>No completado</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fecha de vencimiento (si certifica)</label>
+      <input class="form-control" id="cap-vencimiento" type="date">
+      <div class="form-hint">Déjalo vacío si la capacitación no otorga certificación con vigencia.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-cap')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-cap-guardar" onclick="guardarCapacitacion()"><i class="ti ti-check"></i>Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: NUEVA EVALUACIÓN ══ -->
+<div class="overlay" id="modal-eval">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrarModal('modal-eval')"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Evaluación de desempeño</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Empleado <span class="req">*</span></label>
+        <select class="form-control" id="eval-empleado"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha <span class="req">*</span></label>
+        <input class="form-control" id="eval-fecha" type="date">
+      </div>
+    </div>
+    <div class="section-hd">Calificación por competencia (escala 1–5)</div>
+    <div class="rating-row">
+      <span class="rating-lbl">Puntualidad</span>
+      <div class="rating-ctrl">
+        <input type="range" min="1" max="5" step="0.5" value="4" id="r-punt" oninput="actualizarRating('r-punt')">
+        <span class="rating-num" id="rv-punt">4.0</span>
+      </div>
+    </div>
+    <div class="rating-row">
+      <span class="rating-lbl">Trabajo en equipo</span>
+      <div class="rating-ctrl">
+        <input type="range" min="1" max="5" step="0.5" value="4" id="r-equipo" oninput="actualizarRating('r-equipo')">
+        <span class="rating-num" id="rv-equipo">4.0</span>
+      </div>
+    </div>
+    <div class="rating-row">
+      <span class="rating-lbl">Resultados</span>
+      <div class="rating-ctrl">
+        <input type="range" min="1" max="5" step="0.5" value="4" id="r-result" oninput="actualizarRating('r-result')">
+        <span class="rating-num" id="rv-result">4.0</span>
+      </div>
+    </div>
+    <div class="rating-row">
+      <span class="rating-lbl">Liderazgo</span>
+      <div class="rating-ctrl">
+        <input type="range" min="1" max="5" step="0.5" value="4" id="r-lider" oninput="actualizarRating('r-lider')">
+        <span class="rating-num" id="rv-lider">4.0</span>
+      </div>
+    </div>
+    <div class="prom-box">
+      <span class="prom-lbl">Promedio calculado</span>
+      <span class="prom-val" id="eval-promedio">4.00</span>
+    </div>
+    <div class="form-group" style="margin-top:14px">
+      <label class="form-label">Evaluador</label>
+      <input class="form-control" id="eval-evaluador" placeholder="Nombre del evaluador" value="Ana García">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Comentarios</label>
+      <textarea class="form-control" id="eval-desc" placeholder="Observaciones sobre el desempeño..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-eval')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-eval-guardar" onclick="guardarEvaluacion()"><i class="ti ti-check"></i>Guardar evaluación</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
+<script type="module">
+// ── SUPABASE (carga dinámica y segura) ──
+let db = null;
+
+async function cargarSupabase() {
+  try {
+    const mod = await import('../supabase-client.js');
+    db = mod.supabase;
+    if (!db) throw new Error('supabase-client.js no exporta "supabase"');
+  } catch (err) {
+    console.error('No se pudo cargar supabase-client.js:', err);
+    db = null;
+  }
+}
+
+// ── captura global de errores fatales ──
+window.addEventListener('error', (e) => {
+  console.error('Error fatal capturado:', e.error || e.message);
+  const st = document.getElementById('db-status');
+  if (st) {
+    st.classList.remove('hidden');
+    const txt = document.getElementById('stxt');
+    const dot = document.getElementById('sdot');
+    if (txt) txt.textContent = 'Error cargando el módulo — revisa la consola';
+    if (dot) dot.style.background = '#EF4444';
+  }
+});
+
+// ── ESTADO GENERAL ──
+let empleados = [];
+let capacitaciones = [];
+let evaluaciones = [];
+let filtroDepto = 'todos';
+let empleadoSeleccionado = null;
+let histTab = 'cap';
+let modoDemoActivo = false;
+
+// ── HELPERS GENERALES ──
+const AV_COLORS = ['#8B5CF6','#3B82F6','#EC4899','#0EA5E9','#10B981','#F59E0B','#6366F1','#14B8A6','#EF4444','#F97316'];
+function avColor(id) { return AV_COLORS[(id||0) % AV_COLORS.length]; }
+function iniciales(nombre) { return (nombre||'??').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase(); }
+function fmtFecha(iso) { if(!iso) return '—'; const d=new Date(iso+'T12:00:00'); return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'}); }
+function diasHasta(iso){ if(!iso) return null; const hoy=new Date(); const d=new Date(iso+'T12:00:00'); return Math.round((d-hoy)/86400000); }
+function estrellas(prom){ const n=Math.round(prom||0); return '★'.repeat(n)+'☆'.repeat(5-n); }
+
+function capBadge(e) {
+  const m = {Inscrito:'b-blue',['En curso']:'b-yellow',Completado:'b-green',['No completado']:'b-red'};
+  return `<span class="badge ${m[e]||'b-gray'}">${e}</span>`;
+}
+
+// ── RATINGS DEL MODAL ──
+function actualizarRating(id) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  const v = parseFloat(el.value);
+  const numEl = document.getElementById('rv-'+id.split('-')[1]);
+  if(numEl) numEl.textContent = v.toFixed(1);
+  recalcPromedio();
+}
+
+function recalcPromedio() {
+  const ids = ['r-punt','r-equipo','r-result','r-lider'];
+  const vals = ids.map(id => {
+    const el = document.getElementById(id);
+    return el ? parseFloat(el.value) : 4;
+  });
+  const prom = vals.reduce((a,b)=>a+b,0)/vals.length;
+  const promEl = document.getElementById('eval-promedio');
+  if(promEl) promEl.textContent = prom.toFixed(2);
+}
+
+// ── FILTROS DEPTO ──
+function renderFiltrosDeptoLimpio() {
+  const deptos = [...new Set(empleados.map(e=>e.departamento).filter(Boolean))];
+  const row = document.querySelector('.filter-row');
+  if(row) {
+    row.innerHTML = `<span class="filter-lbl">Departamento:</span>
+      <div class="chip ${filtroDepto==='todos'?'active':''}" onclick="filtrarPor('todos',this)">Todos</div>
+      ${deptos.map(d=>`<div class="chip ${filtroDepto===d?'active':''}" onclick="filtrarPor('${d.replace(/'/g,"\\'")}',this)">${d}</div>`).join('')}`;
+  }
+}
+
+function filtrarPor(depto, el) {
+  filtroDepto = depto;
+  renderFiltrosDeptoLimpio();
+  renderTabla();
+}
+
+// ── TABLA ──
+function renderTabla() {
+  const sInp = document.getElementById('search-input');
+  const busqueda = (sInp ? sInp.value : '').toLowerCase();
+  const lista = empleados.filter(e => {
+    const matchD = filtroDepto==='todos' || e.departamento===filtroDepto;
+    const matchB = !busqueda || (e.nombre||'').toLowerCase().includes(busqueda) || (e.cargo||'').toLowerCase().includes(busqueda);
+    return matchD && matchB;
+  });
+
+  const tbody = document.getElementById('tbody');
+  if(!tbody) return;
+
+  if (!lista.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="4"><i class="ti ti-users-off" style="font-size:24px;display:block;margin:0 auto 8px;color:#CBD5E1"></i>Sin empleados</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = lista.map(e => {
+    const ini = iniciales(e.nombre);
+    const col = avColor(e.id);
+    const prom = promedioEmpleado(e.id);
+    const capCount = capacitaciones.filter(c=>c.empleado_id===e.id).length;
+    const capComp = capacitaciones.filter(c=>c.empleado_id===e.id && c.estado==='Completado').length;
+    return `<tr onclick="mostrarPerfil(${e.id})" style="cursor:pointer;${empleadoSeleccionado===e.id?'background:#EFF6FF':''}">
+      <td>
+        <div style="display:flex;align-items:center;gap:9px">
+          <div class="av" style="background:${col}">${ini}</div>
+          <div>
+            <div style="font-weight:500;font-size:13px">${e.nombre}</div>
+            <div style="font-size:11px;color:var(--text4)">${e.cargo||'—'}</div>
+          </div>
+        </div>
+      </td>
+      <td>${prom!==null ? `<span class="stars">${estrellas(prom)}</span> <span style="font-size:12px;color:var(--text3)">${prom.toFixed(2)}</span>` : '<span style="color:var(--text4)">Sin evaluar</span>'}</td>
+      <td>${capComp}/${capCount} completadas</td>
+      <td><button class="btn btn-sm" onclick="event.stopPropagation();mostrarPerfil(${e.id})"><i class="ti ti-eye"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── PERFIL ──
+function mostrarPerfil(id) {
+  empleadoSeleccionado = id;
+  const e = empleados.find(x=>x.id===id);
+  if (!e) return;
+  const ini = iniciales(e.nombre);
+  const col = avColor(e.id);
+  const prom = promedioEmpleado(e.id);
+  const cap = capacitaciones.filter(c=>c.empleado_id===id).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const evs = evaluaciones.filter(c=>c.empleado_id===id).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+
+  const pBox = document.getElementById('perfil-content');
+  if(pBox) {
+    pBox.innerHTML = `
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border-l)">
+        <div class="av av-xl" style="background:${col}">${ini}</div>
+        <div>
+          <div style="font-size:16px;font-weight:600;margin-bottom:3px">${e.nombre}</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:7px">${e.cargo||'—'} · Depto. ${e.departamento||'—'}</div>
+          ${prom!==null ? `<span class="stars">${estrellas(prom)}</span> <span style="font-size:12px;font-weight:600;color:var(--text)">${prom.toFixed(2)}/5</span>` : '<span class="badge b-gray">Sin evaluaciones</span>'}
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tab ${histTab==='cap'?'active':''}" onclick="tabHist('cap',this)">Capacitaciones (${cap.length})</div>
+        <div class="tab ${histTab==='eval'?'active':''}" onclick="tabHist('eval',this)">Evaluaciones (${evs.length})</div>
+      </div>
+      <div id="hist-content">${renderHistContent(histTab, cap, evs)}</div>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-sm btn-blue-o" onclick="abrirCapacitacion(${id})"><i class="ti ti-certificate"></i>Nueva capacitación</button>
+        <button class="btn btn-sm btn-primary" onclick="abrirEvaluacion(${id})"><i class="ti ti-star"></i>Nueva evaluación</button>
+      </div>`;
+  }
+
+  renderTabla();
+}
+
+function tabHist(tab, el) {
+  histTab = tab;
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const cap = capacitaciones.filter(c=>c.empleado_id===empleadoSeleccionado).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const evs = evaluaciones.filter(c=>c.empleado_id===empleadoSeleccionado).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const hContent = document.getElementById('hist-content');
+  if(hContent) hContent.innerHTML = renderHistContent(tab, cap, evs);
+}
+
+function renderHistContent(tab, cap, evs) {
+  if (tab==='cap') {
+    if (!cap.length) return `<div style="text-align:center;padding:20px;color:var(--text4);font-size:13px">Sin capacitaciones registradas</div>`;
+    return cap.map(c=>`
+      <div class="hist-item">
+        <div class="hist-icon" style="background:#EFF6FF;color:#2563EB"><i class="ti ti-certificate"></i></div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-weight:500;color:var(--text2)">${c.nombre}</span>
+            ${capBadge(c.estado)}
+          </div>
+          <div style="color:var(--text4);margin-top:2px">${fmtFecha(c.fecha)} · ${c.horas||0}h${c.proveedor?` · ${c.proveedor}`:''}</div>
+        </div>
+      </div>`).join('');
+  }
+  if (!evs.length) return `<div style="text-align:center;padding:20px;color:var(--text4);font-size:13px">Sin evaluaciones registradas</div>`;
+  return evs.map(e=>`
+    <div class="hist-item">
+      <div class="hist-icon" style="background:#FFFBEB;color:#D97706"><i class="ti ti-star"></i></div>
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:500;color:var(--text2)">Promedio: ${Number(e.promedio).toFixed(2)}/5</span>
+          <span style="color:var(--text4)">${fmtFecha(e.fecha)}</span>
+        </div>
+        <div style="color:var(--text4);margin-top:2px">Puntualidad ${e.puntualidad} · Equipo ${e.trabajo_equipo} · Resultados ${e.resultados} · Liderazgo ${e.liderazgo}</div>
+        ${e.descripcion?`<div style="color:var(--text3);margin-top:3px;font-style:italic">"${e.descripcion}"</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// ── VENCIMIENTOS ──
+function renderVencimientos() {
+  const wrap = document.getElementById('venc-wrap');
+  if(!wrap) return;
+
+  const prox = capacitaciones
+    .filter(c=>c.fecha_vencimiento || c.vencimiento)
+    .map(c=>({...c, dias: diasHasta(c.fecha_vencimiento||c.vencimiento)}))
+    .filter(c=>c.dias!==null && c.dias>=0 && c.dias<=60)
+    .sort((a,b)=>a.dias-b.dias);
+
+  if (!prox.length) {
+    wrap.innerHTML = `<div style="text-align:center;padding:14px;color:var(--text4);font-size:13px">Sin certificaciones por vencer</div>`;
+    return;
+  }
+  wrap.innerHTML = prox.map(c=>{
+    const emp = empleados.find(e=>e.id===c.empleado_id);
+    return `<div class="hist-item">
+      <div class="hist-icon" style="background:#FEF2F2;color:#B91C1C"><i class="ti ti-alert-triangle"></i></div>
+      <div>
+        <div style="font-weight:500;color:var(--text2)">${c.nombre} — ${emp?emp.nombre:'—'}</div>
+        <div style="color:var(--text4);margin-top:2px">Vence en ${c.dias} día${c.dias===1?'':'s'} · ${fmtFecha(c.fecha_vencimiento||c.vencimiento)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── SELECTS ──
+function llenarSelectsEmpleado() {
+  const opts = empleados.map(e=>`<option value="${e.id}">${e.nombre} — ${e.cargo||''}</option>`).join('');
+  const sCap = document.getElementById('cap-empleado');
+  const sEval = document.getElementById('eval-empleado');
+  if(sCap) sCap.innerHTML = opts;
+  if(sEval) sEval.innerHTML = opts;
+}
+
+// ── STATS ──
+function actualizarStats() {
+  const proms = empleados.map(e=>promedioEmpleado(e.id)).filter(p=>p!==null);
+  const promGeneral = proms.length ? (proms.reduce((a,b)=>a+b,0)/proms.length) : 0;
+
+  const completadas = capacitaciones.filter(c=>c.estado==='Completado').length;
+  const pendientes = capacitaciones.filter(c=>c.estado==='Inscrito'||c.estado==='En curso').length;
+  const totalCap = capacitaciones.length;
+  const pct = totalCap ? Math.round((completadas/totalCap)*100) : 0;
+
+  const ahora = new Date();
+  const evalMes = evaluaciones.filter(e=>{
+    if(!e.fecha) return false;
+    const d = new Date(e.fecha);
+    return d.getMonth()===ahora.getMonth() && d.getFullYear()===ahora.getFullYear();
+  });
+
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  set('st-promedio', promGeneral ? promGeneral.toFixed(2) : '—');
+  set('st-promedio-sub', proms.length ? `sobre 5.0 · ${proms.length} evaluados` : 'Sin evaluaciones aún');
+  set('st-cap-comp', completadas);
+  set('st-cap-pct', totalCap ? `${pct}% del total (${totalCap})` : 'Sin registros');
+  set('st-cap-pend', pendientes);
+  set('st-eval-total', evaluaciones.length);
+  set('st-eval-mes', evalMes.length ? `+${evalMes.length} este mes` : 'Ninguna este mes');
+  set('badge-eval', evaluaciones.length);
+}
+
+// ── RENDER GLOBAL ──
+function renderizarTodo() {
+  actualizarStats();
+  renderFiltrosDeptoLimpio();
+  renderTabla();
+  renderVencimientos();
+  llenarSelectsEmpleado();
+  if (empleadoSeleccionado) mostrarPerfil(empleadoSeleccionado);
+}
+
+// ── MODAL CAPACITACIÓN ──
+function abrirCapacitacion(empId) {
+  try {
+    document.getElementById('cap-nombre').value='';
+    document.getElementById('cap-proveedor').value='';
+    document.getElementById('cap-horas').value='';
+    document.getElementById('cap-vencimiento').value='';
+    document.getElementById('cap-estado').value='Completado';
+    document.getElementById('cap-fecha').value = new Date().toISOString().split('T')[0];
+    if (empId) document.getElementById('cap-empleado').value = empId;
+  } catch(e){}
+  abrirModal('modal-cap');
+}
+
+async function guardarCapacitacion() {
+  const empId = Number(document.getElementById('cap-empleado').value);
+  const nombre = document.getElementById('cap-nombre').value.trim();
+  if (!empId || !nombre) { toast('Completa empleado y nombre de la capacitación','err'); return; }
+
+  const datos = {
+    empleado_id: empId,
+    nombre,
+    fecha: document.getElementById('cap-fecha').value || null,
+    horas: parseInt(document.getElementById('cap-horas').value) || null,
+    proveedor: document.getElementById('cap-proveedor').value.trim() || null,
+    estado: document.getElementById('cap-estado').value,
+    fecha_vencimiento: document.getElementById('cap-vencimiento').value || null,
+  };
+
+  const btn = document.getElementById('btn-cap-guardar');
+  if(btn) btn.disabled = true;
+
+  if (esDemo()) {
+    capacitaciones.unshift({id:Date.now(), ...datos});
+    toast(`Capacitación registrada (demo)`,'ok');
+    renderizarTodo();
+    cerrarModal('modal-cap');
+    if(btn) btn.disabled=false;
+    return;
+  }
+
+  const { error } = await db.from('capacitaciones_empleado').insert([datos]);
+  if(btn) btn.disabled = false;
+  if (error) { toast('Error: '+error.message,'err'); return; }
+  toast('Capacitación registrada','ok');
+  cerrarModal('modal-cap');
+  await cargar();
+}
+
+// ── MODAL EVALUACIÓN ──
+function abrirEvaluacion(empId) {
+  try {
+    ['r-punt','r-equipo','r-result','r-lider'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.value = 4;
+      actualizarRating(id);
+    });
+    document.getElementById('eval-desc').value='';
+    document.getElementById('eval-fecha').value = new Date().toISOString().split('T')[0];
+    if (empId) document.getElementById('eval-empleado').value = empId;
+  } catch(e){}
+  abrirModal('modal-eval');
+}
+
+async function guardarEvaluacion() {
+  const empId = Number(document.getElementById('eval-empleado').value);
+  if (!empId) { toast('Selecciona un empleado','err'); return; }
+
+  const punt = parseFloat(document.getElementById('r-punt').value);
+  const equipo = parseFloat(document.getElementById('r-equipo').value);
+  const result = parseFloat(document.getElementById('r-result').value);
+  const lider = parseFloat(document.getElementById('r-lider').value);
+  const promedio = (punt+equipo+result+lider)/4;
+
+  const datos = {
+    empleado_id: empId,
+    fecha: document.getElementById('eval-fecha').value || new Date().toISOString().split('T')[0],
+    puntualidad: punt, trabajo_equipo: equipo, resultados: result, liderazgo: lider,
+    descripcion: document.getElementById('eval-desc').value.trim() || null,
+    evaluador: document.getElementById('eval-evaluador').value.trim() || null,
+  };
+
+  const btn = document.getElementById('btn-eval-guardar');
+  if(btn) btn.disabled = true;
+
+  if (esDemo()) {
+    evaluaciones.unshift({id:Date.now(), ...datos, promedio});
+    toast('Evaluación registrada (demo)','ok');
+    renderizarTodo();
+    cerrarModal('modal-eval');
+    if(btn) btn.disabled=false;
+    return;
+  }
+
+  const { error } = await db.from('evaluaciones_empleado').insert([datos]);
+  if(btn) btn.disabled = false;
+  if (error) { toast('Error: '+error.message,'err'); return; }
+  toast('Evaluación registrada','ok');
+  cerrarModal('modal-eval');
+  await cargar();
+}
+
+function promedioEmpleado(id) {
+  const evs = evaluaciones.filter(e=>e.empleado_id===id);
+  if (!evs.length) return null;
+  return evs.reduce((a,e)=>a+Number(e.promedio||0),0)/evs.length;
+}
+
+function esDemo(){
+  return modoDemoActivo;
+}
+
+function abrirModal(id){
+  const el = document.getElementById(id);
+  if(el) el.classList.add('open');
+}
+function cerrarModal(id){
+  const el = document.getElementById(id);
+  if(el) el.classList.remove('open');
+}
+
+// ── INICIO CON CAPTURA CRÍTICA DE ERRORES ──
+async function iniciar() {
+  try {
+    const dCap = document.getElementById('cap-fecha');
+    const dEval = document.getElementById('eval-fecha');
+    if(dCap) dCap.value = new Date().toISOString().split('T')[0];
+    if(dEval) dEval.value = new Date().toISOString().split('T')[0];
+  } catch(e) {}
+
+  const dot = document.getElementById('sdot');
+  const txt = document.getElementById('stxt');
+  const st  = document.getElementById('db-status');
+
+  try {
+    if (!db) throw new Error("Cliente de Supabase no inicializado");
+
+    const { data, error } = await db.from('empleados').select('id').limit(1);
+    if (error) throw error;
+
+    if(dot) dot.style.background = '#22C55E';
+    if(txt) txt.textContent = 'Conectado a Supabase';
+    if(st) setTimeout(()=>st.classList.add('hidden'),2000);
+
+    await cargar();
+    suscribirRealtime();
+  } catch (err) {
+    console.error("Fallo de conexión o base de datos vacía, activando fallback demo:", err);
+    modoDemoActivo = true;
+    if(dot) dot.style.background = '#F59E0B';
+    if(txt) txt.textContent = 'Modo demo — Fallback activo';
+    if(st) setTimeout(()=>st.classList.add('hidden'),4000);
+    cargarDatosDemo();
+    renderizarTodo();
+  }
+}
+
+async function cargar() {
+  try {
+    const [e, c, ev] = await Promise.all([
+      db.from('empleados').select('*'),
+      db.from('capacitaciones_empleado').select('*').order('fecha',{ascending:false}),
+      db.from('evaluaciones_empleado').select('*').order('fecha',{ascending:false}),
+    ]);
+
+    empleados = e.data || [];
+    capacitaciones = c.data || [];
+    evaluaciones = ev.data || [];
+
+    if(empleados.length === 0) {
+      cargarDatosDemo();
+    }
+
+    renderizarTodo();
+  } catch(err) {
+    console.error("Error cargando colecciones:", err);
+    modoDemoActivo = true;
+    cargarDatosDemo();
+    renderizarTodo();
+  }
+}
+
+function suscribirRealtime() {
+  if(!db) return;
+  db.channel('desarrollo')
+    .on('postgres_changes',{event:'*',schema:'public',table:'capacitaciones_empleado'}, ()=>cargar())
+    .on('postgres_changes',{event:'*',schema:'public',table:'evaluaciones_empleado'}, ()=>cargar())
+    .subscribe();
+}
+
+// ── DATOS DEMO ──
+function cargarDatosDemo() {
+  empleados = [
+    {id:1,nombre:'Ana García',cargo:'Gerente RRHH',departamento:'RRHH',estado:'Activo'},
+    {id:2,nombre:'Carlos Mora',cargo:'Analista TI',departamento:'TI',estado:'Activo'},
+    {id:3,nombre:'Lucía Pérez',cargo:'Diseñadora',departamento:'Marketing',estado:'Activo'},
+    {id:4,nombre:'Roberto Sánchez',cargo:'Dev Backend',departamento:'TI',estado:'Activo'},
+    {id:5,nombre:'María Jiménez',cargo:'Contadora',departamento:'Finanzas',estado:'Activo'},
+    {id:6,nombre:'Diego Vargas',cargo:'Vendedor',departamento:'Comercial',estado:'Activo'},
+    {id:7,nombre:'Patricia López',cargo:'Asistente RRHH',departamento:'RRHH',estado:'Activo'},
+    {id:8,nombre:'Fernando Ruiz',cargo:'Supervisor',departamento:'Operaciones',estado:'Activo'},
+  ];
+  capacitaciones = [
+    {id:1,empleado_id:4,nombre:'Seguridad Industrial',fecha:'2026-03-15',horas:8,proveedor:'Instituto Nacional',estado:'Completado'},
+    {id:2,empleado_id:4,nombre:'Excel Avanzado',fecha:'2026-01-10',horas:16,proveedor:'Capacita Panamá',estado:'Completado'},
+    {id:3,empleado_id:2,nombre:'Ciberseguridad',fecha:'2026-02-20',horas:24,proveedor:'ISACA',estado:'Completado'},
+    {id:4,empleado_id:2,nombre:'AWS Cloud Practitioner',fecha:'2026-06-10',horas:12,proveedor:'AWS Academy',estado:'En curso'},
+    {id:5,empleado_id:6,nombre:'Técnicas de Venta Consultiva',fecha:'2026-05-02',horas:6,proveedor:'Capacita Panamá',estado:'Inscrito'},
+    {id:6,empleado_id:3,nombre:'Adobe Creative Cloud',fecha:'2025-11-20',horas:10,proveedor:'Adobe',estado:'Completado'},
+  ];
+  evaluaciones = [
+    {id:1,empleado_id:4,fecha:'2026-04-01',puntualidad:4.5,trabajo_equipo:4.0,resultados:4.2,liderazgo:4.0,promedio:4.18,descripcion:'Buen desempeño técnico',evaluador:'Ana García'},
+    {id:2,empleado_id:4,fecha:'2025-12-01',puntualidad:4.0,trabajo_equipo:3.8,resultados:4.0,liderazgo:3.8,promedio:3.90,descripcion:null,evaluador:'Ana García'},
+    {id:3,empleado_id:2,fecha:'2026-04-01',puntualidad:4.8,trabajo_equipo:4.5,resultados:4.3,liderazgo:4.0,promedio:4.40,descripcion:'Excelente proactividad',evaluador:'Ana García'},
+    {id:4,empleado_id:6,fecha:'2026-03-15',puntualidad:3.5,trabajo_equipo:4.0,resultados:3.8,liderazgo:3.0,promedio:3.58,descripcion:null,evaluador:'Ana García'},
+  ];
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.querySelectorAll('.overlay').forEach(bg=>{
+    bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open');});
+  });
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));
+});
+
+function toast(msg,tipo=''){
+  const wrap=document.getElementById('toast-wrap');
+  if(!wrap) return;
+  const el=document.createElement('div');
+  el.className=`toast ${tipo==='ok'?'ok':tipo==='err'?'err':''}`;
+  el.innerHTML=`<i class="ti ${tipo==='ok'?'ti-check':tipo==='err'?'ti-x':'ti-info-circle'}"></i>${msg}`;
+  wrap.appendChild(el);
+  setTimeout(()=>el.classList.add('show'),10);
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},3000);
+}
+
+// ── REGISTRO SEGURO EN EL OBJETO WINDOW (para los onclick del HTML) ──
+window.renderTabla = renderTabla;
+window.abrirCapacitacion = abrirCapacitacion;
+window.guardarCapacitacion = guardarCapacitacion;
+window.abrirEvaluacion = abrirEvaluacion;
+window.guardarEvaluacion = guardarEvaluacion;
+window.cerrarModal = cerrarModal;
+window.filtrarPor = filtrarPor;
+window.mostrarPerfil = mostrarPerfil;
+window.tabHist = tabHist;
+window.actualizarRating = actualizarRating;
+
+// ── ARRANCAR ──
+(async () => {
+  await cargarSupabase();
+  await iniciar();
+})();
+</script>
+</body>
+</html>
