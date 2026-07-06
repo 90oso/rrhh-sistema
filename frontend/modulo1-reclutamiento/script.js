@@ -1,5 +1,10 @@
 
 import { supabase } from "../supabase-client.js";
+import { requireSession, pintarUsuarioEnSidebar } from "../auth-guard.js";
+
+const sesion = requireSession('modulo1');
+if (sesion) pintarUsuarioEnSidebar(sesion);
+
 console.log("script.js cargado");
 const db = supabase;
 let modoDemo = false;

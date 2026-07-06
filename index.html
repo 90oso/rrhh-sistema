@@ -15,11 +15,47 @@
             flex-direction: column;
             align-items: center;
         }
+        .topbar {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .user-chip strong { color: #e2e8f0; }
+        .badge-rol {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #93c5fd;
+            text-transform: capitalize;
+        }
+        #btn-logout {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        #btn-logout:hover { border-color: #ef4444; color: #ef4444; }
         h1 {
             color: #3b82f6;
             margin-bottom: 10px;
         }
-        p {
+        p.subtitle {
             color: #94a3b8;
             margin-bottom: 40px;
             text-align: center;
@@ -45,6 +81,10 @@
             transform: translateY(-4px);
             border-color: #3b82f6;
         }
+        .card.bloqueada {
+            opacity: 0.4;
+            pointer-events: none;
+        }
         .card h3 {
             margin: 0 0 10px 0;
             color: #f1f5f9;
@@ -65,50 +105,88 @@
         }
         .ready { background-color: #065f46; color: #34d399; }
         .pending { background-color: #78350f; color: #fbbf24; }
+        .locked { background-color: #334155; color: #94a3b8; }
     </style>
 </head>
 <body>
 
-    <h1>Sistema de Recursos Humanos</h1>
-    <p>Centralización, automatización y análisis del talento humano (300 colaboradores)</p>
+    <div class="topbar">
+        <div class="user-chip">
+            Hola, <strong id="chip-nombre">—</strong>
+            <span class="badge-rol" id="chip-rol">—</span>
+        </div>
+        <button id="btn-logout">Cerrar sesión</button>
+    </div>
 
-    <div class="grid">
-        <a href="frontend/modulo1-reclutamiento/index.html" class="card">
+    <h1>Sistema de Recursos Humanos</h1>
+    <p class="subtitle">Centralización, automatización y análisis del talento humano (300 colaboradores)</p>
+
+    <div class="grid" id="grid-modulos">
+        <a href="frontend/modulo1-reclutamiento/index.html" class="card" data-modulo="modulo1">
             <h3>Módulo 1 — Reclutamiento</h3>
             <p>Formulario de postulantes, filtros de candidatos y pipeline de estados.</p>
             <span class="status ready">Disponible</span>
         </a>
 
-        <a href="frontend/modulo2-personal/index.html" class="card">
+        <a href="frontend/modulo2-personal/index.html" class="card" data-modulo="modulo2">
             <h3>Módulo 2 — Personal</h3>
             <p>Ingreso de empleados, historial clínico/laboral y organigrama interactivo.</p>
             <span class="status ready">Disponible</span>
         </a>
 
-        <a href="frontend/modulo3-control/index.html" class="card">
+        <a href="frontend/modulo3-control/index.html" class="card" data-modulo="modulo3">
             <h3>Módulo 3 — Control Diario</h3>
             <p>Marcación de asistencia móvil con Geofencing (GPS) vía Supabase.</p>
             <span class="status ready">Disponible</span>
         </a>
 
-        <a href="frontend/modulo4-desarrollo/index.html" class="card">
+        <a href="frontend/modulo4-desarrollo/index.html" class="card" data-modulo="modulo4">
             <h3>Módulo 4 — Desarrollo</h3>
             <p>Capacitaciones y evaluación de desempeño por competencias.</p>
             <span class="status pending">En Desarrollo</span>
         </a>
 
-        <a href="frontend/modulo5-salida/index.html" class="card">
+        <a href="frontend/modulo5-salida/index.html" class="card" data-modulo="modulo5">
             <h3>Módulo 5 — Salida</h3>
             <p>Registro de bajas, entrevistas de salida y checklist de offboarding.</p>
             <span class="status pending">En Desarrollo</span>
         </a>
 
-        <a href="frontend/modulo6-reportes/index.html" class="card">
+        <a href="frontend/modulo6-reportes/index.html" class="card" data-modulo="modulo6">
             <h3>Módulo 6 — Reportes Gerenciales</h3>
             <p>Indicadores clave, tasas de rotación y gráficos en tiempo real con Chart.js.</p>
             <span class="status pending">En Desarrollo</span>
         </a>
     </div>
+
+<script type="module">
+    import { requireSession, logout, tienePermiso } from './frontend/auth-guard.js';
+
+    // Si no hay sesión válida, esto redirige a login.html automáticamente.
+    const sesion = requireSession();
+
+    if (sesion) {
+        document.getElementById('chip-nombre').textContent = sesion.nombre;
+        document.getElementById('chip-rol').textContent = sesion.rol;
+
+        // Ocultar/bloquear módulos que el rol no tiene permitido
+        document.querySelectorAll('#grid-modulos .card').forEach(card => {
+            const clave = card.dataset.modulo;
+            if (!tienePermiso(sesion.rol, clave)) {
+                card.classList.add('bloqueada');
+                const status = card.querySelector('.status');
+                if (status) {
+                    status.className = 'status locked';
+                    status.textContent = 'Sin acceso';
+                }
+            }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            if (confirm('¿Cerrar sesión?')) logout();
+        });
+    }
+</script>
 
 </body>
 </html>
