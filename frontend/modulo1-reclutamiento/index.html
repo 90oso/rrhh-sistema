@@ -94,17 +94,17 @@
     .modal-overlay > div { scale: 0.95; }
   </style>
 </head>
-<body class="bg-surface font-sans text-on-surface antialiased">
+<body class="bg-[#f8fafc] font-sans text-on-surface antialiased">
 
-  <!-- INDICADOR DE ESTADO BASE DE DATOS (Premium Glass) -->
+  <!-- INDICADOR DE ESTADO BASE DE DATOS -->
   <div id="db-status" class="fixed top-4 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg z-[100] transition-opacity duration-500">
     <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="status-dot"></div>
     <span id="status-text" class="text-primary">Sincronizando ecosistema...</span>
   </div>
 
   <div class="flex min-h-screen">
-    <!-- ── SIDEBAR NAVIGATION ── -->
-    <aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-white/70 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50">
+    <!-- ── SIDEBAR NAVIGATION (Actualizado según la imagen) ── -->
+    <aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-white border-r border-slate-100 shadow-sm flex flex-col py-6 z-50">
       <div class="px-6 mb-8">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl">
@@ -118,335 +118,294 @@
       </div>
       
       <nav class="flex-1 space-y-1">
-        <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
+        <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-slate-50 transition-colors duration-200" href="#">
           <span class="material-symbols-outlined">person_search</span>
           <span class="text-sm">Reclutamiento</span>
-          <span class="ml-auto bg-primary text-white text-[10px] px-2 py-0.5 rounded-full" id="badge-total">0</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-all duration-200" href="../modulo2-personal/index.html">
           <span class="material-symbols-outlined">groups</span>
           <span class="text-sm">Personal</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo3-control/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-all duration-200" href="../modulo3-control/index.html">
           <span class="material-symbols-outlined">event_available</span>
           <span class="text-sm">Control diario</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo4-desarrollo/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-all duration-200" href="../modulo4-desarrollo/index.html">
           <span class="material-symbols-outlined">trending_up</span>
           <span class="text-sm">Desarrollo</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo5-salida/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-all duration-200" href="../modulo5-salida/index.html">
           <span class="material-symbols-outlined">exit_to_app</span>
           <span class="text-sm">Salida</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo6-reportes/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-primary hover:bg-slate-50 transition-all duration-200" href="../modulo6-reportes/index.html">
           <span class="material-symbols-outlined">analytics</span>
           <span class="text-sm">Reportes</span>
         </a>
-      </nav>
 
-      <div class="px-6 mt-auto pt-6 border-t border-outline-variant/20">
-        <div class="space-y-1">
-          <a class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" href="#">
-            <span class="material-symbols-outlined text-xl">settings</span>
-            <span>Configuración</span>
-          </a>
-        </div>
-        <div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
-          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">AG</div>
-          <div>
-            <p class="font-bold text-xs">Ana García</p>
-            <p class="text-[10px] text-on-surface-variant">Gerente RRHH</p>
+        <!-- Banner Upgrade Plan de la imagen -->
+        <div class="px-4 pt-4">
+          <div class="bg-[#0f172a] text-white rounded-2xl p-4 space-y-2">
+            <p class="text-xs font-semibold tracking-wide text-slate-200">Upgrade Plan</p>
+            <p class="text-[11px] text-slate-400 leading-relaxed">Obtén métricas avanzadas y AI Insights.</p>
+            <button class="w-full py-2 bg-white text-slate-900 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all">Actualizar</button>
           </div>
         </div>
+      </nav>
+
+      <div class="px-6 mt-auto pt-4 border-t border-slate-100 space-y-1">
+        <a class="flex items-center gap-3 px-2 py-2 text-slate-600 hover:text-primary text-sm transition-colors" href="#">
+          <span class="material-symbols-outlined text-xl">settings</span>
+          <span>Settings</span>
+        </a>
+        <a class="flex items-center gap-3 px-2 py-2 text-slate-600 hover:text-primary text-sm transition-colors" href="#">
+          <span class="material-symbols-outlined text-xl">help</span>
+          <span>Support</span>
+        </a>
       </div>
     </aside>
 
     <!-- ── MAIN CONTENT CANVAS ── -->
     <main class="ml-[280px] flex-1 min-h-screen flex flex-col">
       <!-- Top Navigation Header -->
-      <header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-6 z-40">
+      <header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-white/80 backdrop-blur-md border-b border-slate-100 flex justify-between items-center px-6 z-40">
         <div class="flex items-center gap-4 flex-1">
           <div class="relative w-full max-w-md">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
-            <input id="search-input" class="w-full pl-10 pr-4 py-1.5 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Buscar candidatos o cargo..." onkeyup="filtrarTabla()">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+            <input id="search-input" class="w-full pl-10 pr-4 py-1.5 bg-slate-50 border-none rounded-full focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Buscar vacantes o candidatos..." onkeyup="filtrarTabla()">
           </div>
         </div>
         <div class="flex items-center gap-4">
-          <span class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all">notifications</span>
-          <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4">
+          <span class="material-symbols-outlined hover:bg-slate-100 rounded-full p-2 cursor-pointer transition-all text-slate-600">notifications</span>
+          <span class="material-symbols-outlined hover:bg-slate-100 rounded-full p-2 cursor-pointer transition-all text-slate-600">apps</span>
+          <div class="flex items-center gap-3 border-l border-slate-100 pl-4">
             <div class="text-right">
-              <p class="font-bold text-xs">Admin HR</p>
-              <p class="text-[10px] text-on-surface-variant">Superuser</p>
+              <p class="font-bold text-xs text-slate-800">Admin HR</p>
+              <p class="text-[10px] text-slate-400">Superuser</p>
             </div>
-            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">HR</div>
+            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold text-xs overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" alt="Avatar" class="w-full h-full object-cover">
+            </div>
           </div>
         </div>
       </header>
 
       <!-- Page Context Content -->
-      <div class="pt-24 pb-12 px-6 max-w-[1600px] w-full mx-auto space-y-8 flex-1">
-        <!-- Dashboard Greeting Actions -->
+      <div class="pt-24 pb-12 px-8 max-w-[1600px] w-full mx-auto space-y-6 flex-1">
+        <!-- Dashboard Greeting Actions (Campos e hilos según la imagen) -->
         <div class="flex justify-between items-end">
           <div>
-            <h2 class="font-bold text-2xl text-primary tracking-tight">Módulo de Reclutamiento</h2>
-            <p class="text-sm text-on-surface-variant mt-1">Gestión avanzada de talento y flujos dinámicos operacionales.</p>
+            <h2 class="font-bold text-xl text-slate-900 tracking-tight">Módulo de Reclutamiento</h2>
+            <p class="text-xs text-slate-500 mt-1">Gestiona tus procesos de selección con inteligencia de datos.</p>
           </div>
-          <button onclick="abrirNuevo()" class="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-primary/20 active:scale-95 transition-all">
-            <span class="material-symbols-outlined text-lg">add</span>
-            <span>Agregar Candidato</span>
+          <button onclick="abrirNuevoVacante()" class="flex items-center gap-2 bg-black text-white px-5 py-2 rounded-xl font-bold text-xs hover:bg-slate-800 active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-sm">add</span>
+            <span>Crear Vacante</span>
           </button>
         </div>
 
         <!-- Bento Grid Structural Layout -->
         <div class="bento-grid">
-          <!-- 1. Dynamic Pipeline Panel Column (8/12 Layout) -->
-          <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="font-bold text-base text-primary">Pipeline Activo por Etapa</h3>
-              <div class="flex items-center gap-2">
-                <span class="text-xs text-on-surface-variant">Etapa seleccionada:</span>
-                <span id="pipeline-filter-tag" class="text-xs bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Todos</span>
-              </div>
-            </div>
-            
-            <!-- Etapas Globales de Flujo Corto (Chips) -->
-            <div class="flex gap-1.5 overflow-x-auto pb-4 custom-scrollbar" id="stage-chips-pool">
-              <button onclick="filtrarPor('todos', this)" class="chip px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full shadow-sm transition-all active">Todos (<span id="fc-todos">0</span>)</button>
-              <button onclick="filtrarPor('Postulado', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Postulado (<span id="p-0">0</span>)</button>
-              <button onclick="filtrarPor('Preseleccionado', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Preseleccionado (<span id="p-1">0</span>)</button>
-              <button onclick="filtrarPor('Entrevista', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Entrevista (<span id="p-2">0</span>)</button>
-              <button onclick="filtrarPor('Oferta', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Oferta (<span id="p-3">0</span>)</button>
-              <button onclick="filtrarPor('Contratado', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Contratado (<span id="p-4">0</span>)</button>
-              <button onclick="filtrarPor('Rechazado', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Rechazado (<span id="p-5">0</span>)</button>
-            </div>
-
-            <!-- Vacancies Injection Flow Container -->
-            <div class="space-y-4 custom-scrollbar overflow-y-auto max-h-[480px] pr-1" id="vacancies-pipeline-container">
-              <!-- Renderizado Dinámico mediante JS -->
-              <div class="flex items-center justify-center py-12 text-on-surface-variant text-sm">
-                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mr-2"></div> Cargando candidatos...
-              </div>
-            </div>
-          </div>
-
-          <!-- 2. Metrics & Analytics Column (4/12 Layout) -->
-          <div class="col-span-12 lg:col-span-4 space-y-6">
-            <!-- Metric Card 1: Total & Conversion -->
-            <div class="bg-primary text-white rounded-3xl p-6 shadow-xl shadow-primary/10 relative overflow-hidden h-40 flex flex-col justify-between">
-              <div class="relative z-10">
-                <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Candidatos en Sistema / Conversión</p>
-                <h3 class="text-4xl font-extrabold mt-2 tracking-tight" id="st-total">0</h3>
-              </div>
-              <div class="relative z-10 flex items-center gap-1.5 text-xs text-secondary-fixed font-semibold" id="st-tasa">
-                <span class="material-symbols-outlined text-sm">trending_up</span>
-                <span>Calculando tasa...</span>
-              </div>
-              <div class="absolute right-[-10px] bottom-[-15px] opacity-10">
-                <span class="material-symbols-outlined !text-[110px]">group</span>
-              </div>
-            </div>
-
-            <!-- Metric Card 2: Glassmorphic Distribution -->
-            <div class="glass-card rounded-3xl p-6 shadow-sm flex flex-col justify-between min-h-[180px]">
-              <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Distribución Operativa Proceso</p>
-              <div class="space-y-3" id="metrics-distribution-bars">
-                <div>
-                  <div class="flex justify-between text-xs mb-1">
-                    <span class="font-bold text-primary">En Embudo Activo</span>
-                    <span class="text-on-surface-variant font-semibold" id="st-proceso">0</span>
-                  </div>
-                  <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
-                    <div id="bar-proceso" class="h-full bg-primary transition-all duration-500" style="width: 0%"></div>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex justify-between text-xs mb-1">
-                    <span class="font-bold text-green-600">Contratados Totales</span>
-                    <span class="text-on-surface-variant font-semibold" id="st-contratados">0</span>
-                  </div>
-                  <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
-                    <div id="bar-contratados" class="h-full bg-green-500 transition-all duration-500" style="width: 0%"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Metric Card 3: Performance & Efficiency -->
-            <div class="bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex items-center gap-4">
-              <div class="w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center text-primary shadow-inner">
-                <span class="material-symbols-outlined">timer</span>
-              </div>
-              <div>
-                <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Tiempo de Cierre de Vacante</p>
-                <p class="font-extrabold text-xl text-primary mt-0.5"><span id="st-dias">—</span> <span class="text-xs font-normal text-on-surface-variant">días promedio</span></p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 3. Master Interactive Directory Directory (12/12 Full Width Section) -->
-          <div class="col-span-12 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+          <!-- 1. Pipeline de Vacantes Panel (8/12 Layout) -->
+          <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col">
             <div class="flex justify-between items-center mb-6">
-              <div>
-                <h3 class="font-bold text-base text-primary">Candidatos Registrados</h3>
-                <p class="text-xs text-on-surface-variant mt-0.5">Listado unificado con soporte relacional Supabase Database.</p>
-              </div>
+              <h3 class="font-bold text-sm text-slate-900">Pipeline de Vacantes</h3>
+              <a href="#" class="text-xs font-bold text-slate-900 hover:underline flex items-center gap-0.5">
+                Ver todo <span class="material-symbols-outlined text-xs">arrow_forward</span>
+              </a>
             </div>
-            
-            <div class="overflow-x-auto custom-scrollbar">
-              <table class="w-full text-left border-collapse">
-                <thead>
-                  <tr class="border-b border-outline-variant/20 text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
-                    <th class="pb-3 pl-2">Candidato</th>
-                    <th class="pb-3">Cargo Solicitado</th>
-                    <th class="pb-3">Fecha Postulación</th>
-                    <th class="pb-3">Agenda / Entrevista</th>
-                    <th class="pb-3">Fase Actual</th>
-                    <th class="pb-3 text-center">CV</th>
-                    <th class="pb-3 pr-2 text-right">Acciones Ejecutivas</th>
-                  </tr>
-                </thead>
-                <tbody id="tbody" class="divide-y divide-outline-variant/10">
-                  <tr>
-                    <td colspan="7" class="py-12 text-center text-on-surface-variant text-sm">
-                      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
-                      Inicializando consola...
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+
+            <!-- Vacancies Structural Flow Container -->
+            <div class="space-y-4 custom-scrollbar overflow-y-auto max-h-[600px] pr-1" id="vacancies-pipeline-container">
+              
+              <!-- VACANTE MODELO 1: Senior Product Designer -->
+              <div class="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-4">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h4 class="font-bold text-sm text-slate-900">Senior Product Designer</h4>
+                    <div class="flex items-center gap-3 text-[11px] text-slate-400 mt-1 font-medium">
+                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">location_on</span> Remoto</span>
+                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">schedule</span> Publicado hace 2d</span>
+                    </div>
+                  </div>
+                  <span class="px-2.5 py-0.5 bg-sky-100 text-sky-700 text-[10px] font-bold rounded-full">Activo</span>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-3">
+                  <div class="bg-white px-3 py-2 rounded-xl border border-slate-100 text-center">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Candidatos</p>
+                    <p class="text-sm font-extrabold text-slate-800 mt-0.5">42</p>
+                  </div>
+                  <div class="bg-white px-3 py-2 rounded-xl border border-slate-100 text-center">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Entrevista</p>
+                    <p class="text-sm font-extrabold text-slate-800 mt-0.5">8</p>
+                  </div>
+                  <div class="bg-white px-3 py-2 rounded-xl border border-slate-100 text-center">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Prueba</p>
+                    <p class="text-sm font-extrabold text-slate-800 mt-0.5">3</p>
+                  </div>
+                  <div class="bg-white px-3 py-2 rounded-xl border border-slate-100 text-center">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Finalistas</p>
+                    <p class="text-sm font-extrabold text-slate-800 mt-0.5">1</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- VACANTE MODELO 2: Fullstack Developer (Node/React) -->
+              <div class="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-4">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h4 class="font-bold text-sm text-slate-900">Fullstack Developer (Node/React)</h4>
+                    <div class="flex items-center gap-3 text-[11px] text-slate-400 mt-1 font-medium">
+                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">location_on</span> Madrid (Híbrido)</span>
+                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">schedule</span> Publicado hace 1w</span>
+                    </div>
+                  </div>
+                  <span class="px-2.5 py-0.5 bg-sky-100 text-sky-700 text-[10px] font-bold rounded-full">Activo</span>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-3">
+                  <div class="bg-white px-3 py-2 rounded-xl border border-slate-100 text-center">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Candidatos</p>
+                    <p class="text-sm font-extrabold text-slate-800 mt-0.5">128</p>
+                  </div>
+                  <div class="bg-white px-3 py-2 rounded-xl border border-slate-100 text-center">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Entrevista</p>
+                    <p class="text-sm font-extrabold text-slate-800 mt-0.5">12</p>
+                  </div>
+                  <div class="bg-white px-3 py-2 rounded-xl border border-slate-100 text-center">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Prueba</p>
+                    <p class="text-sm font-extrabold text-slate-800 mt-0.5">5</p>
+                  </div>
+                  <div class="bg-white px-3 py-2 rounded-xl border border-slate-100 text-center">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Finalistas</p>
+                    <p class="text-sm font-extrabold text-slate-800 mt-0.5">2</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- VACANTE MODELO 3: Sales Manager B2B -->
+              <div class="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-4">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h4 class="font-bold text-sm text-slate-900">Sales Manager B2B</h4>
+                    <div class="flex items-center gap-3 text-[11px] text-slate-400 mt-1 font-medium">
+                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">location_on</span> Barcelona</span>
+                      <span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">schedule</span> Publicado hace 3d</span>
+                    </div>
+                  </div>
+                  <span class="px-2.5 py-0.5 bg-slate-200 text-slate-600 text-[10px] font-bold rounded-full">Pausado</span>
+                </div>
+              </div>
+
             </div>
           </div>
+
+          <!-- 2. Metrics & Analytics Column (4/12 Layout según imagen) -->
+          <div class="col-span-12 lg:col-span-4 space-y-6">
+            <!-- Card 1: Tiempo de Contratación (Estilo oscuro de la imagen) -->
+            <div class="bg-black text-white rounded-3xl p-6 shadow-sm relative overflow-hidden h-36 flex flex-col justify-between">
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Tiempo de Contratación</p>
+                <h3 class="text-2xl font-bold mt-1 tracking-tight" id="st-dias">18 <span class="text-xs font-normal text-slate-400">días</span></h3>
+              </div>
+              <div class="flex items-center gap-1 text-[11px] text-sky-400 font-medium">
+                <span class="material-symbols-outlined text-sm">trending_down</span>
+                <span>4% menos que el mes pasado</span>
+              </div>
+              <div class="absolute right-4 bottom-4 opacity-10">
+                <span class="material-symbols-outlined !text-[80px]">timer</span>
+              </div>
+            </div>
+
+            <!-- Card 2: Origen de Candidatos (Estilo barras horizontales de la imagen) -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Origen de Candidatos</p>
+              <div class="space-y-3.5">
+                <div>
+                  <div class="flex justify-between text-xs mb-1 font-medium">
+                    <span class="text-slate-800 font-bold">LinkedIn</span>
+                    <span class="text-slate-500">65%</span>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-black rounded-full" style="width: 65%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1 font-medium">
+                    <span class="text-slate-800 font-bold">Referidos</span>
+                    <span class="text-slate-500">20%</span>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-black rounded-full" style="width: 20%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1 font-medium">
+                    <span class="text-slate-800 font-bold">Indeed / Otros</span>
+                    <span class="text-slate-500">15%</span>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-black rounded-full" style="width: 15%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Coste por Contratación -->
+            <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex items-center gap-4">
+              <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-800 border border-slate-100">
+                <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">payments</span>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Coste por Contratación</p>
+                <p class="font-extrabold text-lg text-slate-900 mt-0.5">1.450 €</p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </main>
   </div>
 
-  <!-- ══════════════════════════════════════
-       MODAL: AGREGAR / EDITAR CANDIDATO (Glassmorphic Container)
-  ══════════════════════════════════════ -->
+  <!-- MODAL: AGREGAR / EDITAR VACANTE -->
   <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-form">
-    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 custom-scrollbar">
-      <div class="flex justify-between items-center mb-6 pb-2 border-b border-outline-variant/10">
-        <h3 class="font-bold text-base text-primary" id="form-title">Agregar Candidato</h3>
-        <button onclick="cerrarModal('modal-form')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+    <div class="bg-white rounded-3xl border border-slate-100 p-6 w-full max-w-xl shadow-2xl transition-all duration-300">
+      <div class="flex justify-between items-center mb-6 pb-2 border-b border-slate-100">
+        <h3 class="font-bold text-base text-slate-900">Crear Nueva Vacante</h3>
+        <button onclick="cerrarModal('modal-form')" class="w-8 h-8 rounded-full hover:bg-slate-50 flex items-center justify-center text-slate-400">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
-
+      <!-- Campos del Formulario de Vacante -->
       <div class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-primary mb-1">Nombre completo <span class="text-error">*</span></label>
-            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-nombre" placeholder="Ej: Juan Pérez">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-primary mb-1">Correo electrónico <span class="text-error">*</span></label>
-            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-email" type="email" placeholder="correo@email.com">
-          </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nombre de la Vacante</label>
+          <input class="w-full rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-black focus:border-black" placeholder="Ej: Senior Product Designer">
         </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-bold text-primary mb-1">Cargo solicitado <span class="text-error">*</span></label>
-            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-cargo" placeholder="Ej: Senior Product Designer">
+            <label class="block text-xs font-bold text-slate-700 mb-1">Ubicación</label>
+            <input class="w-full rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-black focus:border-black" placeholder="Ej: Remoto o Híbrido">
           </div>
           <div>
-            <label class="block text-xs font-bold text-primary mb-1">Fecha postulación</label>
-            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-fecha" type="date">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-primary mb-1">Estado del Proceso</label>
-            <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="f-estado">
-              <option value="Postulado">Postulado</option>
-              <option value="Preseleccionado">Preseleccionado</option>
-              <option value="Entrevista">Entrevista</option>
-              <option value="Oferta">Oferta</option>
-              <option value="Contratado">Contratado</option>
-              <option value="Rechazado">Rechazado</option>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Estado</label>
+            <select class="w-full rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-black focus:border-black bg-white">
+              <option value="Activo">Activo</option>
+              <option value="Pausado">Pausado</option>
             </select>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-primary mb-1">Fecha / Info de Entrevista</label>
-            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-entrevista" placeholder="Ej: 12 May 2026 · 10:00">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-primary mb-1">Enlace a Portafolio / LinkedIn</label>
-          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-cv" type="url" placeholder="https://linkedin.com/in/...">
-        </div>
-
-        <div class="p-4 bg-surface rounded-2xl border border-outline-variant/20">
-          <label class="block text-xs font-bold text-primary mb-1">Documento CV / Hoja de Vida (PDF)</label>
-          <input class="w-full text-xs text-on-surface-variant file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary file:text-white hover:file:bg-black file:cursor-pointer" id="f-cv-archivo" type="file" accept=".pdf,.doc,.docx">
-          <p class="text-[10px] text-on-surface-variant mt-1.5 opacity-70">Almacenamiento seguro automático en Supabase Storage Bucket.</p>
-        </div>
-
-        <div id="motivo-group" class="hidden">
-          <label class="block text-xs font-bold text-primary mb-1">Motivo de Rechazo <span class="text-error">*</span></label>
-          <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="f-motivo">
-            <option value="">Selecciona un motivo...</option>
-            <option value="Sin competencias requeridas">Sin competencias requeridas</option>
-            <option value="Expectativa salarial fuera de rango">Expectativa salarial fuera de rango</option>
-            <option value="No superó prueba técnica">No superó prueba técnica</option>
-            <option value="Mejor candidato seleccionado">Mejor candidato seleccionado</option>
-            <option value="Posición cancelada">Posición cancelada</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-primary mb-1">Notas / Comentarios del Evaluador</label>
-          <textarea class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 h-16 resize-none" id="f-comentario" placeholder="Anotaciones clave del perfil."></textarea>
         </div>
       </div>
-
-      <div class="flex justify-end gap-2 mt-6 pt-4 border-t border-outline-variant/10">
-        <button onclick="cerrarModal('modal-form')" class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors">Cancelar</button>
-        <button id="btn-guardar" onclick="guardar()" class="px-5 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-black transition-all flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm">check</span>
-          <span id="btn-guardar-txt">Guardar Cambios</span>
-        </button>
+      <div class="flex justify-end gap-2 mt-6 pt-4 border-t border-slate-100">
+        <button onclick="cerrarModal('modal-form')" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-50 rounded-xl">Cancelar</button>
+        <button class="px-5 py-2 bg-black text-white text-xs font-bold rounded-xl hover:bg-slate-800">Guardar Vacante</button>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════
-       MODAL: REVISIÓN DE EXPEDIENTE / HOJA DE VIDA
-  ══════════════════════════════════════ -->
-  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-hv">
-    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-lg shadow-2xl transition-all duration-300">
-      <button onclick="cerrarModal('modal-hv')" class="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant">
-        <span class="material-symbols-outlined text-lg">close</span>
-      </button>
-      <div id="hv-content" class="space-y-4"></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       MODAL: CONFIRMACIONES EJECUTIVAS
-  ══════════════════════════════════════ -->
-  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-confirm">
-    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xs shadow-2xl transition-all duration-300 text-center">
-      <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center text-xl mb-4 shadow-inner" id="confirm-icon">
-        <span class="material-symbols-outlined">warning</span>
-      </div>
-      <h4 class="font-bold text-sm text-primary mb-1" id="confirm-title">¿Confirmar Acción?</h4>
-      <p class="text-xs text-on-surface-variant leading-relaxed" id="confirm-body"></p>
-      
-      <div class="flex justify-center gap-2 mt-5 pt-3 border-t border-outline-variant/10">
-        <button onclick="cerrarModal('modal-confirm')" class="px-4 py-1.5 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors">Cancelar</button>
-        <button id="confirm-ok" class="px-4 py-1.5 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all">Confirmar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOAST NOTIFICATION STACK CONTAINER -->
   <div id="toast-wrap" class="fixed bottom-6 right-6 z-[200] flex flex-col gap-2 pointer-events-none"></div>
-
   <script type="module" src="script.js"></script>
 </body>
 </html>
