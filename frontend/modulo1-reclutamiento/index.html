@@ -1,533 +1,448 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Módulo 1 — Reclutamiento · RRHH Sistema</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.2.0/dist/tabler-icons.min.css">
-<style>
-/* ═══════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════ */
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F1F5F9;
-  --surface:#ffffff;
-  --border:#E2E8F0;
-  --border-light:#F1F5F9;
-  --text:#1E293B;
-  --text-2:#374151;
-  --text-3:#64748B;
-  --text-4:#94A3B8;
-  --sidebar:#0F172A;
-  --blue:#2563EB;
-  --blue-h:#1D4ED8;
-  --green:#16A34A;
-  --green-h:#15803D;
-  --red:#DC2626;
-  --radius:10px;
-  --shadow:0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04);
-}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
-
-/* ═══════════════════════════════════════
-   LAYOUT
-═══════════════════════════════════════ */
-.app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:220px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.content{flex:1;overflow-y:auto;padding:20px 24px}
-
-/* ═══════════════════════════════════════
-   SIDEBAR
-═══════════════════════════════════════ */
-.logo{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,0.07)}
-.logo-mark{font-size:13px;font-weight:600;color:#fff;letter-spacing:.3px;display:flex;align-items:center;gap:6px}
-.logo-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
-.nav-section{padding:12px 0 4px}
-.nav-label{padding:6px 16px;font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;color:rgba(255,255,255,.55);font-size:13px;transition:all .12s;border-left:2px solid transparent;text-decoration:none}
-.nav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.85)}
-.nav-item.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--blue)}
-.nav-item i{font-size:16px;width:18px}
-.nav-badge{margin-left:auto;background:rgba(59,130,246,.3);color:#93C5FD;font-size:10px;padding:1px 6px;border-radius:99px}
-.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
-.user-av{width:30px;height:30px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
-.user-name{font-size:12px;color:rgba(255,255,255,.85);font-weight:500}
-.user-role{font-size:10px;color:rgba(255,255,255,.35)}
-
-/* ═══════════════════════════════════════
-   TOPBAR
-═══════════════════════════════════════ */
-.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;flex-shrink:0}
-.topbar-l{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-3)}
-.page-title{color:var(--text);font-weight:500;font-size:15px}
-.topbar-r{display:flex;align-items:center;gap:12px}
-.search-wrap{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-3);background:#fff;cursor:text}
-.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-3);font-size:16px;position:relative}
-.icon-btn:hover{background:#F8FAFC}
-.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
-.av-top{width:32px;height:32px;border-radius:50%;background:#6366F1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
-
-/* ═══════════════════════════════════════
-   STATS
-═══════════════════════════════════════ */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
-.stat-label{font-size:11px;color:var(--text-3);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.stat-val{font-size:26px;font-weight:600;color:var(--text);line-height:1}
-.stat-sub{font-size:11px;color:var(--text-4);margin-top:4px}
-.trend-up{font-size:11px;color:var(--green);margin-top:4px}
-
-/* ═══════════════════════════════════════
-   CARDS
-═══════════════════════════════════════ */
-.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
-.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.card-title{font-size:14px;font-weight:600;color:var(--text)}
-
-/* ═══════════════════════════════════════
-   PIPELINE
-═══════════════════════════════════════ */
-.pipeline{display:flex}
-.pipe-stage{flex:1;text-align:center;padding:10px 4px;position:relative;cursor:pointer;border-radius:8px;transition:background .12s}
-.pipe-stage:hover{background:#F8FAFC}
-.pipe-stage:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:8px solid var(--border);z-index:1}
-.pipe-num{font-size:20px;font-weight:700;line-height:1}
-.pipe-lbl{font-size:10px;color:var(--text-3);margin-top:2px}
-.pipe-bar{height:3px;border-radius:99px;margin-top:6px}
-
-/* ═══════════════════════════════════════
-   FILTERS
-═══════════════════════════════════════ */
-.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-.filter-lbl{font-size:12px;color:var(--text-3)}
-.chip{padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;color:var(--text-3);font-weight:500;transition:all .12s;white-space:nowrap}
-.chip:hover{border-color:#93C5FD;color:var(--blue)}
-.chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-
-/* ═══════════════════════════════════════
-   TABLE
-═══════════════════════════════════════ */
-.tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text-3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
-td{padding:10px 12px;border-bottom:1px solid var(--border-light);color:var(--text-2);vertical-align:middle;font-size:13px}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#FAFBFD}
-.empty-row td{text-align:center;padding:32px;color:var(--text-4);font-size:13px}
-
-/* ═══════════════════════════════════════
-   AVATAR
-═══════════════════════════════════════ */
-.av{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
-
-/* ═══════════════════════════════════════
-   BADGES
-═══════════════════════════════════════ */
-.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500;white-space:nowrap}
-.b-gray{background:#F1F5F9;color:#475569}
-.b-blue{background:#EFF6FF;color:#1D4ED8}
-.b-yellow{background:#FFFBEB;color:#92400E}
-.b-purple{background:#F5F3FF;color:#5B21B6}
-.b-green{background:#F0FDF4;color:#15803D}
-.b-red{background:#FEF2F2;color:#B91C1C}
-
-/* ═══════════════════════════════════════
-   BUTTONS
-═══════════════════════════════════════ */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--text-2);font-size:13px;cursor:pointer;font-weight:500;transition:all .12s;white-space:nowrap;font-family:inherit}
-.btn:hover{background:#F8FAFC;border-color:#CBD5E1}
-.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
-.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
-.btn-primary:hover{background:var(--blue-h);border-color:var(--blue-h)}
-.btn-success{background:var(--green);color:#fff;border-color:var(--green)}
-.btn-success:hover{background:var(--green-h);border-color:var(--green-h)}
-.btn-blue-outline{color:var(--blue);border-color:#BFDBFE;background:#fff}
-.btn-blue-outline:hover{background:#EFF6FF}
-.btn-green-outline{color:var(--green);border-color:#BBF7D0;background:#fff}
-.btn-green-outline:hover{background:#F0FDF4}
-.btn-danger{color:var(--red);border-color:#FECACA;background:#fff}
-.btn-danger:hover{background:#FEF2F2}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-
-/* ═══════════════════════════════════════
-   MODALS
-═══════════════════════════════════════ */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;animation:fadeIn .15s}
-.overlay.open{display:flex}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{background:#fff;border-radius:12px;border:1px solid var(--border);padding:22px;width:520px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:slideUp .15s}
-.modal-sm{width:360px}
-@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:18px}
-.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-3);font-size:14px}
-.modal-close:hover{background:#F8FAFC}
-.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-light)}
-
-/* ═══════════════════════════════════════
-   FORMS
-═══════════════════════════════════════ */
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0}
-.form-group{margin-bottom:12px}
-.form-label{display:block;font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:5px}
-.form-label .req{color:var(--red)}
-.form-control{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:#fff;outline:none;transition:border-color .12s;font-family:inherit}
-.form-control:focus{border-color:#93C5FD;box-shadow:0 0 0 3px rgba(147,197,253,.2)}
-.form-control.error{border-color:#FECACA}
-select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px;padding-right:30px}
-textarea.form-control{resize:vertical;min-height:72px}
-.form-hint{font-size:11px;color:var(--text-4);margin-top:3px}
-
-/* ═══════════════════════════════════════
-   HV PANEL (side detail)
-═══════════════════════════════════════ */
-.hv-field{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border-light);font-size:13px}
-.hv-field:last-of-type{border-bottom:none}
-.hv-field-lbl{color:var(--text-3)}
-.hv-field-val{color:var(--text);font-weight:500;text-align:right;max-width:60%}
-
-/* ═══════════════════════════════════════
-   CONFIRM
-═══════════════════════════════════════ */
-.confirm-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 14px}
-.confirm-icon.warn{background:#FFFBEB;color:#D97706}
-.confirm-icon.success{background:#F0FDF4;color:var(--green)}
-.confirm-title{font-size:15px;font-weight:600;text-align:center;margin-bottom:6px}
-.confirm-body{font-size:13px;color:var(--text-3);text-align:center;line-height:1.5;margin-bottom:0}
-
-/* ═══════════════════════════════════════
-   TOAST
-═══════════════════════════════════════ */
-#toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{background:#1E293B;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:320px}
-.toast.show{opacity:1;transform:translateY(0)}
-.toast.toast-ok{background:#15803D}
-.toast.toast-err{background:#B91C1C}
-
-/* ═══════════════════════════════════════
-   STATUS INDICATOR (Supabase)
-═══════════════════════════════════════ */
-#db-status{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-radius:99px;padding:4px 12px;font-size:11px;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);z-index:50;transition:opacity .5s}
-#db-status.hidden{opacity:0;pointer-events:none}
-.status-dot{width:7px;height:7px;border-radius:50%}
-
-/* ═══════════════════════════════════════
-   LOADING
-═══════════════════════════════════════ */
-.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:32px auto}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ═══════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════ */
-@media(max-width:900px){
-  .sidebar{width:56px}
-  .logo-mark span,.logo-sub,.nav-item span,.user-info,.nav-label,.nav-badge{display:none}
-  .nav-item{justify-content:center;padding:10px}
-  .nav-item i{width:auto}
-  .stats-grid{grid-template-columns:1fr 1fr}
-}
-</style>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>TalentHub B2B - Reclutamiento Inteligente</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "tertiary-fixed-dim": "#c0c1ff",
+            "on-tertiary-container": "#7073ff",
+            "on-tertiary": "#ffffff",
+            "secondary-container": "#40c2fd",
+            "surface-container": "#eceef0",
+            "inverse-on-surface": "#eff1f3",
+            "on-background": "#191c1e",
+            "on-secondary-fixed-variant": "#004c69",
+            "surface-variant": "#e0e3e5",
+            "on-primary-fixed": "#131b2e",
+            "inverse-surface": "#2d3133",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed-variant": "#2f2ebe",
+            "surface-container-highest": "#e0e3e5",
+            "primary-fixed": "#dae2fd",
+            "tertiary-container": "#07006c",
+            "surface-bright": "#f7f9fb",
+            "tertiary": "#000000",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "outline": "#76777d",
+            "surface-container-lowest": "#ffffff",
+            "inverse-primary": "#bec6e0",
+            "tertiary-fixed": "#e1e0ff",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed": "#07006c",
+            "surface-dim": "#d8dadc",
+            "primary-container": "#131b2e",
+            "primary": "#000000",
+            "on-secondary-container": "#004d6a",
+            "on-error-container": "#93000a",
+            "on-primary": "#ffffff",
+            "on-primary-fixed-variant": "#3f465c",
+            "secondary-fixed-dim": "#7bd0ff",
+            "primary-fixed-dim": "#bec6e0",
+            "secondary": "#00668a",
+            "on-surface-variant": "#45464d",
+            "surface-container-high": "#e6e8ea",
+            "outline-variant": "#c6c6cd",
+            "secondary-fixed": "#c4e7ff",
+            "on-secondary-fixed": "#001e2c",
+            "surface-container-low": "#f2f4f6",
+            "background": "#f7f9fb",
+            "on-primary-container": "#7c839b",
+            "surface-tint": "#565e74",
+            "surface": "#f7f9fb",
+            "on-surface": "#191c1e"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "table-row-height": "48px",
+            "sidebar-width": "280px",
+            "base": "8px",
+            "container-padding": "24px",
+            "bento-gap": "16px"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.5); }
+    .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+    .modal-overlay { background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(8px); transition: all 0.2s ease-out; }
+  </style>
 </head>
-<body>
+<body class="bg-surface font-sans text-on-surface antialiased">
 
-<div id="db-status">
-  <div class="status-dot" id="status-dot" style="background:#F59E0B"></div>
-  <span id="status-text">Conectando a base de datos...</span>
-</div>
-
-<div class="app">
-
-  <!-- ── SIDEBAR ── -->
-  <div class="sidebar">
-    <div class="logo">
-      <div class="logo-mark"><i class="ti ti-building-community"></i><span>RRHH Sistema</span></div>
-      <div class="logo-sub">Gestión de Talento Humano</div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Módulos</div>
-      <div class="nav-item active"><i class="ti ti-user-search"></i><span>Reclutamiento</span><span class="nav-badge" id="badge-total">—</span></div>
-      <a class="nav-item" href="../modulo2-personal/index.html"><i class="ti ti-users"></i><span>Personal</span></a>
-      <a class="nav-item" href="../modulo3-control/index.html"><i class="ti ti-clock-check"></i><span>Control Diario</span></a>
-      <a class="nav-item" href="../modulo4-desarrollo/index.html"><i class="ti ti-school"></i><span>Desarrollo</span></a>
-      <a class="nav-item" href="../modulo5-salida/index.html"><i class="ti ti-door-exit"></i><span>Salida</span></a>
-      <a class="nav-item" href="../modulo6-reportes/index.html"><i class="ti ti-chart-bar"></i><span>Reportes</span></a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Sistema</div>
-      <a class="nav-item" href="../../README.md"><i class="ti ti-settings"></i><span>Configuración</span></a>
-      <div class="nav-item"><i class="ti ti-help-circle"></i><span>Ayuda</span></div>
-    </div>
-    <div class="sb-footer">
-      <div class="user-av">AG</div>
-      <div class="user-info">
-        <div class="user-name">Ana García</div>
-        <div class="user-role">Gerente RRHH</div>
-      </div>
-    </div>
+  <!-- INDICADOR DE ESTADO BASE DE DATOS (Premium Glass) -->
+  <div id="db-status" class="fixed top-4 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg z-[100] transition-opacity duration-500">
+    <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="status-dot"></div>
+    <span id="status-text" class="text-primary">Sincronizando ecosistema...</span>
   </div>
 
-  <!-- ── MAIN ── -->
-  <div class="main">
-    <div class="topbar">
-      <div class="topbar-l">
-        <i class="ti ti-home" style="font-size:14px"></i>
-        <span style="color:#CBD5E1">/</span>
-        <span class="page-title">Reclutamiento</span>
-      </div>
-      <div class="topbar-r">
-        <div class="search-wrap">
-          <i class="ti ti-search" style="font-size:14px"></i>
-          <input id="search-input" placeholder="Buscar candidato..." style="border:none;outline:none;font-size:13px;color:#374151;width:180px;background:transparent;font-family:inherit" oninput="filtrarTabla()">
-        </div>
-        <div class="icon-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
-        <div class="av-top">AG</div>
-      </div>
-    </div>
-
-    <div class="content">
-
-      <!-- STATS -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Total candidatos</div>
-          <div class="stat-val" id="st-total">—</div>
-          <div class="stat-sub">Últimos 30 días</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">En proceso</div>
-          <div class="stat-val" id="st-proceso">—</div>
-          <div class="stat-sub">Presel. / Entrevista / Oferta</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Contratados</div>
-          <div class="stat-val" id="st-contratados">—</div>
-          <div class="trend-up" id="st-tasa">↑ Calculando...</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Tiempo promedio</div>
-          <div class="stat-val" id="st-dias">—</div>
-          <div class="stat-sub">días postulación → contrato</div>
-        </div>
-      </div>
-
-      <!-- PIPELINE -->
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-title">Pipeline de candidatos</div>
-          <span style="font-size:12px;color:var(--text-3)">Haga clic en una etapa para filtrar</span>
-        </div>
-        <div class="pipeline">
-          <div class="pipe-stage" onclick="filtrarPor('Postulado')">
-            <div class="pipe-num" style="color:#94A3B8" id="p-0">—</div>
-            <div class="pipe-lbl">Postulado</div>
-            <div class="pipe-bar" style="background:#E2E8F0"></div>
+  <div class="flex min-h-screen">
+    <!-- ── SIDEBAR NAVIGATION ── -->
+    <aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-white/70 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50">
+      <div class="px-6 mb-8">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl">
+            <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">hub</span>
           </div>
-          <div class="pipe-stage" onclick="filtrarPor('Preseleccionado')">
-            <div class="pipe-num" style="color:#3B82F6" id="p-1">—</div>
-            <div class="pipe-lbl">Preselec.</div>
-            <div class="pipe-bar" style="background:#93C5FD"></div>
-          </div>
-          <div class="pipe-stage" onclick="filtrarPor('Entrevista')">
-            <div class="pipe-num" style="color:#D97706" id="p-2">—</div>
-            <div class="pipe-lbl">Entrevista</div>
-            <div class="pipe-bar" style="background:#FCD34D"></div>
-          </div>
-          <div class="pipe-stage" onclick="filtrarPor('Oferta')">
-            <div class="pipe-num" style="color:#7C3AED" id="p-3">—</div>
-            <div class="pipe-lbl">Oferta</div>
-            <div class="pipe-bar" style="background:#A78BFA"></div>
-          </div>
-          <div class="pipe-stage" onclick="filtrarPor('Contratado')">
-            <div class="pipe-num" style="color:#16A34A" id="p-4">—</div>
-            <div class="pipe-lbl">Contratado</div>
-            <div class="pipe-bar" style="background:#86EFAC"></div>
-          </div>
-          <div class="pipe-stage" onclick="filtrarPor('Rechazado')">
-            <div class="pipe-num" style="color:#DC2626" id="p-5">—</div>
-            <div class="pipe-lbl">Rechazado</div>
-            <div class="pipe-bar" style="background:#FCA5A5"></div>
+          <div>
+            <h1 class="font-bold text-lg text-primary tracking-tight">TalentHub B2B</h1>
+            <p class="text-xs font-medium text-on-surface-variant opacity-70">HR Intelligence</p>
           </div>
         </div>
       </div>
+      
+      <nav class="flex-1 space-y-1">
+        <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
+          <span class="material-symbols-outlined">person_search</span>
+          <span class="text-sm">Reclutamiento</span>
+          <span class="ml-auto bg-primary text-white text-[10px] px-2 py-0.5 rounded-full" id="badge-total">0</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html">
+          <span class="material-symbols-outlined">groups</span>
+          <span class="text-sm">Personal</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo3-control/index.html">
+          <span class="material-symbols-outlined">event_available</span>
+          <span class="text-sm">Control diario</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo4-desarrollo/index.html">
+          <span class="material-symbols-outlined">trending_up</span>
+          <span class="text-sm">Desarrollo</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo5-salida/index.html">
+          <span class="material-symbols-outlined">exit_to_app</span>
+          <span class="text-sm">Salida</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo6-reportes/index.html">
+          <span class="material-symbols-outlined">analytics</span>
+          <span class="text-sm">Reportes</span>
+        </a>
+      </nav>
 
-      <!-- TABLA -->
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-title">Candidatos</div>
-          <button class="btn btn-primary btn-sm" onclick="abrirNuevo()">
-            <i class="ti ti-plus"></i>Agregar candidato
+      <div class="px-6 mt-auto pt-6 border-t border-outline-variant/20">
+        <div class="space-y-1">
+          <a class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" href="#">
+            <span class="material-symbols-outlined text-xl">settings</span>
+            <span>Configuración</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">AG</div>
+          <div>
+            <p class="font-bold text-xs">Ana García</p>
+            <p class="text-[10px] text-on-surface-variant">Gerente RRHH</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT CANVAS ── -->
+    <main class="ml-[280px] flex-1 min-h-screen flex flex-col">
+      <!-- Top Navigation Header -->
+      <header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-6 z-40">
+        <div class="flex items-center gap-4 flex-1">
+          <div class="relative w-full max-w-md">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
+            <input id="search-input" class="w-full pl-10 pr-4 py-1.5 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Buscar vacantes o candidatos..." type="text" oninput="filtrarTabla()"/>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all">notifications</span>
+          <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4">
+            <div class="text-right">
+              <p class="font-bold text-xs">Admin HR</p>
+              <p class="text-[10px] text-on-surface-variant">Superuser</p>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">HR</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Context Content -->
+      <div class="pt-24 pb-12 px-6 max-w-[1600px] w-full mx-auto space-y-8 flex-1">
+        <!-- Dashboard Greeting Actions -->
+        <div class="flex justify-between items-end">
+          <div>
+            <h2 class="font-bold text-2xl text-primary tracking-tight">Módulo de Reclutamiento</h2>
+            <p class="text-sm text-on-surface-variant mt-1">Gestión avanzada de talento y flujos dinámicos operacionales.</p>
+          </div>
+          <button onclick="abrirNuevo()" class="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-primary/20 active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-lg">add</span>
+            <span>Agregar Candidato</span>
           </button>
         </div>
-        <div class="filter-row">
-          <span class="filter-lbl">Filtrar:</span>
-          <div class="chip active" onclick="filtrarPor('todos',this)">Todos (<span id="fc-todos">—</span>)</div>
-          <div class="chip" onclick="filtrarPor('Postulado',this)">Postulado</div>
-          <div class="chip" onclick="filtrarPor('Preseleccionado',this)">Preseleccionado</div>
-          <div class="chip" onclick="filtrarPor('Entrevista',this)">Entrevista</div>
-          <div class="chip" onclick="filtrarPor('Oferta',this)">Oferta</div>
-          <div class="chip" onclick="filtrarPor('Contratado',this)">Contratado</div>
-          <div class="chip" onclick="filtrarPor('Rechazado',this)">Rechazado</div>
+
+        <!-- Bento Grid Structural Layout -->
+        <div class="bento-grid">
+          <!-- 1. Dynamic Pipeline Panel Column (8/12 Layout) -->
+          <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-base text-primary">Pipeline Activo por Vacante</h3>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-on-surface-variant">Etapa seleccionada:</span>
+                <span id="pipeline-filter-tag" class="text-xs bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Todos</span>
+              </div>
+            </div>
+            
+            <!-- Etapas Globales de Flujo Corto (Chips) -->
+            <div class="flex gap-1.5 overflow-x-auto pb-4 custom-scrollbar" id="stage-chips-pool">
+              <button onclick="filtrarPor('todos', this)" class="chip-filter px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full shadow-sm transition-all">Todos (<span id="fc-todos">0</span>)</button>
+              <button onclick="filtrarPor('Postulado', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Postulado</button>
+              <button onclick="filtrarPor('Preseleccionado', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Preseleccionado</button>
+              <button onclick="filtrarPor('Entrevista', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Entrevista</button>
+              <button onclick="filtrarPor('Oferta', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Oferta</button>
+              <button onclick="filtrarPor('Contratado', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Contratado</button>
+              <button onclick="filtrarPor('Rechazado', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Rechazado</button>
+            </div>
+
+            <!-- Vacancies Injection Flow Container -->
+            <div class="space-y-4 custom-scrollbar overflow-y-auto max-h-[480px] pr-1" id="vacancies-pipeline-container">
+              <!-- Renderizado Dinámico mediante JS -->
+              <div class="flex items-center justify-center py-12 text-on-surface-variant text-sm">
+                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mr-2"></div> Cargando vacantes...
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Metrics & Analytics Column (4/12 Layout) -->
+          <div class="col-span-12 lg:col-span-4 space-y-6">
+            <!-- Metric Card 1: Total & Conversion -->
+            <div class="bg-primary text-white rounded-3xl p-6 shadow-xl shadow-primary/10 relative overflow-hidden h-40 flex flex-col justify-between">
+              <div class="relative z-10">
+                <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Candidatos en Sistema / Conversión</p>
+                <h3 class="text-4xl font-extrabold mt-2 tracking-tight" id="st-total">0</h3>
+              </div>
+              <div class="relative z-10 flex items-center gap-1.5 text-xs text-secondary-fixed font-semibold" id="st-tasa">
+                <span class="material-symbols-outlined text-sm">trending_up</span>
+                <span>Calculando tasa...</span>
+              </div>
+              <div class="absolute right-[-10px] bottom-[-15px] opacity-10">
+                <span class="material-symbols-outlined !text-[110px]">group</span>
+              </div>
+            </div>
+
+            <!-- Metric Card 2: Glassmorphic Distribution -->
+            <div class="glass-card rounded-3xl p-6 shadow-sm flex flex-col justify-between min-h-[180px]">
+              <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Distribución Operativa Proceso</p>
+              <div class="space-y-3" id="metrics-distribution-bars">
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="font-bold text-primary">En Embudo Activo</span>
+                    <span class="text-on-surface-variant font-semibold" id="st-proceso">0</span>
+                  </div>
+                  <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                    <div id="bar-proceso" class="h-full bg-primary transition-all duration-500" style="width: 0%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="font-bold text-green-600">Contratados Totales</span>
+                    <span class="text-on-surface-variant font-semibold" id="st-contratados">0</span>
+                  </div>
+                  <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                    <div id="bar-contratados" class="h-full bg-green-500 transition-all duration-500" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Metric Card 3: Performance & Efficiency -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex items-center gap-4">
+              <div class="w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center text-primary shadow-inner">
+                <span class="material-symbols-outlined">timer</span>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Tiempo de Cierre de Vacante</p>
+                <p class="font-extrabold text-xl text-primary mt-0.5"><span id="st-dias">—</span> <span class="text-xs font-normal text-on-surface-variant">días promedio</span></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Master Interactive Directory Directory (12/12 Full Width Section) -->
+          <div class="col-span-12 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h3 class="font-bold text-base text-primary">Candidatos Registrados</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">Listado unificado con soporte relacional Supabase Database.</p>
+              </div>
+            </div>
+            
+            <div class="overflow-x-auto custom-scrollbar">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-outline-variant/20 text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
+                    <th class="pb-3 pl-2">Candidato</th>
+                    <th class="pb-3">Vacante Solicitada</th>
+                    <th class="pb-3">Fecha Postulación</th>
+                    <th class="pb-3">Agenda / Entrevista</th>
+                    <th class="pb-3">Fase Actual</th>
+                    <th class="pb-3 text-center">CV</th>
+                    <th class="pb-3 pr-2 text-right">Acciones Ejecutivas</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody" class="divide-y divide-outline-variant/10">
+                  <tr>
+                    <td colspan="7" class="py-12 text-center text-on-surface-variant text-sm">
+                      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+                      Inicializando consola...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Candidato</th>
-                <th>Cargo solicitado</th>
-                <th>Fecha postulación</th>
-                <th>Entrevista</th>
-                <th>Estado</th>
-                <th>CV</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tbody">
-              <tr><td colspan="6"><div class="spinner"></div></td></tr>
-            </tbody>
-          </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       MODAL: AGREGAR / EDITAR CANDIDATO (Glassmorphic Container)
+  ══════════════════════════════════════ -->
+  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300" id="modal-form">
+    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl scale-95 transition-all duration-300 custom-scrollbar">
+      <div class="flex justify-between items-center mb-6 pb-2 border-b border-outline-variant/10">
+        <h3 class="font-bold text-base text-primary" id="form-title">Agregar Candidato</h3>
+        <button onclick="cerrarModal('modal-form')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1">Nombre completo <span class="text-error">*</span></label>
+            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-nombre" placeholder="Ej: Juan Pérez">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1">Correo electrónico <span class="text-error">*</span></label>
+            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-email" type="email" placeholder="correo@email.com">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1">Vacante / Cargo solicitado <span class="text-error">*</span></label>
+            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-cargo" placeholder="Ej: Senior Product Designer">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1">Fecha postulación</label>
+            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-fecha" type="date">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1">Estado del Proceso</label>
+            <select class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="f-estado">
+              <option value="Postulado">Postulado</option>
+              <option value="Preseleccionado">Preseleccionado</option>
+              <option value="Entrevista">Entrevista</option>
+              <option value="Oferta">Oferta</option>
+              <option value="Contratado">Contratado</option>
+              <option value="Rechazado">Rechazado</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-primary mb-1">Fecha / Info de Entrevista</label>
+            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-entrevista" placeholder="Ej: 12 May 2026 · 10:00">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Enlace a Portafolio / LinkedIn</label>
+          <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-cv" type="url" placeholder="https://linkedin.com/in/...">
+        </div>
+
+        <div class="p-4 bg-surface rounded-2xl border border-outline-variant/20">
+          <label class="block text-xs font-bold text-primary mb-1">Documento CV / Hoja de Vida (PDF)</label>
+          <input class="w-full text-xs text-on-surface-variant file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary file:text-white hover:file:bg-black file:cursor-pointer" id="f-cv-archivo" type="file" accept=".pdf">
+          <p class="text-[10px] text-on-surface-variant mt-1.5 opacity-70">Almacenamiento seguro automático en Supabase Storage Bucket.</p>
+        </div>
+
+        <div id="motivo-group" class="hidden">
+          <label class="block text-xs font-bold text-primary mb-1">Motivo de Rechazo <span class="text-error">*</span></label>
+          <select class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="f-motivo">
+            <option value="">Selecciona un motivo...</option>
+            <option value="Sin competencias requeridas">Sin competencias requeridas</option>
+            <option value="Expectativa salarial fuera de rango">Expectativa salarial fuera de rango</option>
+            <option value="No superó prueba técnica">No superó prueba técnica</option>
+            <option value="Mejor candidato seleccionado">Mejor candidato seleccionado</option>
+            <option value="Posición cancelada">Posición cancelada</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Notas / Comentarios del Evaluador</label>
+          <textarea class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 h-16 resize-none" id="f-comentario" placeholder="Anotaciones clave del perfil..."></textarea>
         </div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /app -->
-
-<!-- ══════════════════════════════════════
-     MODAL: AGREGAR / EDITAR CANDIDATO
-══════════════════════════════════════ -->
-<div class="overlay" id="modal-form">
-  <div class="modal">
-    <button class="modal-close" onclick="cerrarModal('modal-form')"><i class="ti ti-x"></i></button>
-    <div class="modal-title" id="form-title">Agregar candidato</div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Nombre completo <span class="req">*</span></label>
-        <input class="form-control" id="f-nombre" placeholder="Ej: Juan Pérez" autocomplete="off">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Correo electrónico <span class="req">*</span></label>
-        <input class="form-control" id="f-email" type="email" placeholder="correo@email.com">
+      <div class="flex justify-end gap-2 mt-6 pt-4 border-t border-outline-variant/10">
+        <button onclick="cerrarModal('modal-form')" class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors">Cancelar</button>
+        <button id="btn-guardar" onclick="guardar()" class="px-5 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-black transition-all flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">check</span>
+          <span id="btn-guardar-txt">Guardar Cambios</span>
+        </button>
       </div>
     </div>
+  </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Cargo solicitado <span class="req">*</span></label>
-        <input class="form-control" id="f-cargo" placeholder="Ej: Analista TI">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Fecha postulación</label>
-        <input class="form-control" id="f-fecha" type="date">
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Estado</label>
-        <select class="form-control" id="f-estado">
-          <option value="Postulado">Postulado</option>
-          <option value="Preseleccionado">Preseleccionado</option>
-          <option value="Entrevista">Entrevista</option>
-          <option value="Oferta">Oferta</option>
-          <option value="Rechazado">Rechazado</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Fecha de entrevista</label>
-        <input class="form-control" id="f-entrevista-fecha" type="date">
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Hora de entrevista</label>
-        <input class="form-control" id="f-entrevista-hora" type="time">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Resultado entrevista</label>
-        <select class="form-control" id="f-entrevista-resultado">
-          <option value="">Sin resultado aún</option>
-          <option>Pendiente</option>
-          <option>Aprobado</option>
-          <option>No apto</option>
-          <option>Cancelada</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Link CV / Portafolio</label>
-      <input class="form-control" id="f-cv" type="url" placeholder="https://linkedin.com/in/...">
-      <div class="form-hint">Opcional. LinkedIn, Google Drive, Dropbox o portafolio web.</div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Hoja de vida (PDF o Word)</label>
-      <input class="form-control" id="f-cv-archivo" type="file" accept=".pdf,.doc,.docx">
-      <div class="form-hint">Máximo recomendado: 10 MB. Se guarda en Supabase Storage.</div>
-      <div id="f-cv-preview" style="margin-top:8px"></div>
-    </div>
-
-</div>
-
-    <div class="form-group" id="motivo-group" style="display:none">
-      <label class="form-label">Motivo de rechazo <span class="req">*</span></label>
-      <select class="form-control" id="f-motivo">
-        <option value="">Seleccionar motivo...</option>
-        <option>Sin competencias requeridas</option>
-        <option>Expectativa salarial fuera de rango</option>
-        <option>No superó prueba técnica</option>
-        <option>Mejor candidato seleccionado</option>
-        <option>Posición cancelada</option>
-        <option>Otro</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Comentario del entrevistador</label>
-      <textarea class="form-control" id="f-comentario" placeholder="Observaciones sobre el candidato..."></textarea>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn" onclick="cerrarModal('modal-form')">Cancelar</button>
-      <button class="btn btn-primary" id="btn-guardar" onclick="guardar()">
-        <i class="ti ti-check"></i><span id="btn-guardar-txt">Guardar candidato</span>
+  <!-- ══════════════════════════════════════
+       MODAL: REVISIÓN DE EXPEDIENTE / HOJA DE VIDA
+  ══════════════════════════════════════ -->
+  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300" id="modal-hv">
+    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-lg shadow-2xl scale-95 transition-all duration-300">
+      <button onclick="cerrarModal('modal-hv')" class="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant">
+        <span class="material-symbols-outlined text-lg">close</span>
       </button>
+      <div id="hv-content" class="space-y-4"></div>
     </div>
   </div>
-</div>
 
-<!-- ══════════════════════════════════════
-     MODAL: VER HV
-══════════════════════════════════════ -->
-<div class="overlay" id="modal-hv">
-  <div class="modal" style="width:600px;max-width:96vw">
-    <button class="modal-close" onclick="cerrarModal('modal-hv')"><i class="ti ti-x"></i></button>
-    <div id="hv-content"></div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════
-     MODAL: CONFIRMAR
-══════════════════════════════════════ -->
-<div class="overlay" id="modal-confirm">
-  <div class="modal modal-sm">
-    <div class="confirm-icon" id="confirm-icon"><i class="ti ti-alert-triangle"></i></div>
-    <div class="confirm-title" id="confirm-title">¿Confirmar acción?</div>
-    <div class="confirm-body" id="confirm-body"></div>
-    <div class="modal-footer" style="justify-content:center;gap:12px">
-      <button class="btn" onclick="cerrarModal('modal-confirm')">Cancelar</button>
-      <button class="btn btn-success" id="confirm-ok">Confirmar</button>
+  <!-- ══════════════════════════════════════
+       MODAL: CONFIRMACIONES EJECUTIVAS
+  ══════════════════════════════════════ -->
+  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300" id="modal-confirm">
+    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xs shadow-2xl scale-95 transition-all duration-300 text-center">
+      <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center text-xl mb-4 shadow-inner" id="confirm-icon">
+        <span class="material-symbols-outlined">warning</span>
+      </div>
+      <h4 class="font-bold text-sm text-primary mb-1" id="confirm-title">¿Confirmar Acción?</h4>
+      <p class="text-xs text-on-surface-variant leading-relaxed" id="confirm-body"></p>
+      
+      <div class="flex justify-center gap-2 mt-5 pt-3 border-t border-outline-variant/10">
+        <button onclick="cerrarModal('modal-confirm')" class="px-4 py-1.5 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors">Cancelar</button>
+        <button id="confirm-ok" class="px-4 py-1.5 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all">Confirmar</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- TOAST CONTAINER -->
-<div id="toast-wrap"></div>
+  <!-- TOAST NOTIFICATION STACK CONTAINER -->
+  <div id="toast-wrap" class="fixed bottom-6 right-6 z-[200] flex flex-col gap-2 pointer-events-none"></div>
 
-<script type="module" src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
