@@ -88,6 +88,10 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
     .modal-overlay { background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(8px); transition: all 0.2s ease-out; }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-overlay:not(.open) { opacity: 0; pointer-events: none; }
+    .modal-overlay.open > div { scale: 1; }
+    .modal-overlay > div { scale: 0.95; }
   </style>
 </head>
 <body class="bg-surface font-sans text-on-surface antialiased">
@@ -165,7 +169,7 @@
         <div class="flex items-center gap-4 flex-1">
           <div class="relative w-full max-w-md">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
-            <input id="search-input" class="w-full pl-10 pr-4 py-1.5 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Buscar vacantes o candidatos..." type="text" oninput="filtrarTabla()"/>
+            <input id="search-input" class="w-full pl-10 pr-4 py-1.5 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Buscar candidatos o cargo..." onkeyup="filtrarTabla()">
           </div>
         </div>
         <div class="flex items-center gap-4">
@@ -199,7 +203,7 @@
           <!-- 1. Dynamic Pipeline Panel Column (8/12 Layout) -->
           <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="font-bold text-base text-primary">Pipeline Activo por Vacante</h3>
+              <h3 class="font-bold text-base text-primary">Pipeline Activo por Etapa</h3>
               <div class="flex items-center gap-2">
                 <span class="text-xs text-on-surface-variant">Etapa seleccionada:</span>
                 <span id="pipeline-filter-tag" class="text-xs bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Todos</span>
@@ -208,20 +212,20 @@
             
             <!-- Etapas Globales de Flujo Corto (Chips) -->
             <div class="flex gap-1.5 overflow-x-auto pb-4 custom-scrollbar" id="stage-chips-pool">
-              <button onclick="filtrarPor('todos', this)" class="chip-filter px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full shadow-sm transition-all">Todos (<span id="fc-todos">0</span>)</button>
-              <button onclick="filtrarPor('Postulado', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Postulado</button>
-              <button onclick="filtrarPor('Preseleccionado', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Preseleccionado</button>
-              <button onclick="filtrarPor('Entrevista', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Entrevista</button>
-              <button onclick="filtrarPor('Oferta', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Oferta</button>
-              <button onclick="filtrarPor('Contratado', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Contratado</button>
-              <button onclick="filtrarPor('Rechazado', this)" class="chip-filter px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Rechazado</button>
+              <button onclick="filtrarPor('todos', this)" class="chip px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full shadow-sm transition-all active">Todos (<span id="fc-todos">0</span>)</button>
+              <button onclick="filtrarPor('Postulado', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Postulado (<span id="p-0">0</span>)</button>
+              <button onclick="filtrarPor('Preseleccionado', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Preseleccionado (<span id="p-1">0</span>)</button>
+              <button onclick="filtrarPor('Entrevista', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Entrevista (<span id="p-2">0</span>)</button>
+              <button onclick="filtrarPor('Oferta', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Oferta (<span id="p-3">0</span>)</button>
+              <button onclick="filtrarPor('Contratado', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Contratado (<span id="p-4">0</span>)</button>
+              <button onclick="filtrarPor('Rechazado', this)" class="chip px-3 py-1 bg-surface-container-high text-on-surface-variant text-xs font-medium rounded-full hover:bg-surface-container-highest transition-all">Rechazado (<span id="p-5">0</span>)</button>
             </div>
 
             <!-- Vacancies Injection Flow Container -->
             <div class="space-y-4 custom-scrollbar overflow-y-auto max-h-[480px] pr-1" id="vacancies-pipeline-container">
               <!-- Renderizado Dinámico mediante JS -->
               <div class="flex items-center justify-center py-12 text-on-surface-variant text-sm">
-                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mr-2"></div> Cargando vacantes...
+                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mr-2"></div> Cargando candidatos...
               </div>
             </div>
           </div>
@@ -294,7 +298,7 @@
                 <thead>
                   <tr class="border-b border-outline-variant/20 text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
                     <th class="pb-3 pl-2">Candidato</th>
-                    <th class="pb-3">Vacante Solicitada</th>
+                    <th class="pb-3">Cargo Solicitado</th>
                     <th class="pb-3">Fecha Postulación</th>
                     <th class="pb-3">Agenda / Entrevista</th>
                     <th class="pb-3">Fase Actual</th>
@@ -321,8 +325,8 @@
   <!-- ══════════════════════════════════════
        MODAL: AGREGAR / EDITAR CANDIDATO (Glassmorphic Container)
   ══════════════════════════════════════ -->
-  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300" id="modal-form">
-    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl scale-95 transition-all duration-300 custom-scrollbar">
+  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-form">
+    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 custom-scrollbar">
       <div class="flex justify-between items-center mb-6 pb-2 border-b border-outline-variant/10">
         <h3 class="font-bold text-base text-primary" id="form-title">Agregar Candidato</h3>
         <button onclick="cerrarModal('modal-form')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
@@ -334,29 +338,29 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-primary mb-1">Nombre completo <span class="text-error">*</span></label>
-            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-nombre" placeholder="Ej: Juan Pérez">
+            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-nombre" placeholder="Ej: Juan Pérez">
           </div>
           <div>
             <label class="block text-xs font-bold text-primary mb-1">Correo electrónico <span class="text-error">*</span></label>
-            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-email" type="email" placeholder="correo@email.com">
+            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-email" type="email" placeholder="correo@email.com">
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-bold text-primary mb-1">Vacante / Cargo solicitado <span class="text-error">*</span></label>
-            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-cargo" placeholder="Ej: Senior Product Designer">
+            <label class="block text-xs font-bold text-primary mb-1">Cargo solicitado <span class="text-error">*</span></label>
+            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-cargo" placeholder="Ej: Senior Product Designer">
           </div>
           <div>
             <label class="block text-xs font-bold text-primary mb-1">Fecha postulación</label>
-            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-fecha" type="date">
+            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-fecha" type="date">
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-primary mb-1">Estado del Proceso</label>
-            <select class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="f-estado">
+            <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="f-estado">
               <option value="Postulado">Postulado</option>
               <option value="Preseleccionado">Preseleccionado</option>
               <option value="Entrevista">Entrevista</option>
@@ -367,24 +371,24 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-primary mb-1">Fecha / Info de Entrevista</label>
-            <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-entrevista" placeholder="Ej: 12 May 2026 · 10:00">
+            <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-entrevista" placeholder="Ej: 12 May 2026 · 10:00">
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-primary mb-1">Enlace a Portafolio / LinkedIn</label>
-          <input class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-cv" type="url" placeholder="https://linkedin.com/in/...">
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="f-cv" type="url" placeholder="https://linkedin.com/in/...">
         </div>
 
         <div class="p-4 bg-surface rounded-2xl border border-outline-variant/20">
           <label class="block text-xs font-bold text-primary mb-1">Documento CV / Hoja de Vida (PDF)</label>
-          <input class="w-full text-xs text-on-surface-variant file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary file:text-white hover:file:bg-black file:cursor-pointer" id="f-cv-archivo" type="file" accept=".pdf">
+          <input class="w-full text-xs text-on-surface-variant file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary file:text-white hover:file:bg-black file:cursor-pointer" id="f-cv-archivo" type="file" accept=".pdf,.doc,.docx">
           <p class="text-[10px] text-on-surface-variant mt-1.5 opacity-70">Almacenamiento seguro automático en Supabase Storage Bucket.</p>
         </div>
 
         <div id="motivo-group" class="hidden">
           <label class="block text-xs font-bold text-primary mb-1">Motivo de Rechazo <span class="text-error">*</span></label>
-          <select class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="f-motivo">
+          <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="f-motivo">
             <option value="">Selecciona un motivo...</option>
             <option value="Sin competencias requeridas">Sin competencias requeridas</option>
             <option value="Expectativa salarial fuera de rango">Expectativa salarial fuera de rango</option>
@@ -396,7 +400,7 @@
 
         <div>
           <label class="block text-xs font-bold text-primary mb-1">Notas / Comentarios del Evaluador</label>
-          <textarea class="w-full rounded-xl border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 h-16 resize-none" id="f-comentario" placeholder="Anotaciones clave del perfil..."></textarea>
+          <textarea class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 h-16 resize-none" id="f-comentario" placeholder="Anotaciones clave del perfil."></textarea>
         </div>
       </div>
 
@@ -413,8 +417,8 @@
   <!-- ══════════════════════════════════════
        MODAL: REVISIÓN DE EXPEDIENTE / HOJA DE VIDA
   ══════════════════════════════════════ -->
-  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300" id="modal-hv">
-    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-lg shadow-2xl scale-95 transition-all duration-300">
+  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-hv">
+    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-lg shadow-2xl transition-all duration-300">
       <button onclick="cerrarModal('modal-hv')" class="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant">
         <span class="material-symbols-outlined text-lg">close</span>
       </button>
@@ -425,8 +429,8 @@
   <!-- ══════════════════════════════════════
        MODAL: CONFIRMACIONES EJECUTIVAS
   ══════════════════════════════════════ -->
-  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300" id="modal-confirm">
-    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xs shadow-2xl scale-95 transition-all duration-300 text-center">
+  <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-confirm">
+    <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xs shadow-2xl transition-all duration-300 text-center">
       <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center text-xl mb-4 shadow-inner" id="confirm-icon">
         <span class="material-symbols-outlined">warning</span>
       </div>
