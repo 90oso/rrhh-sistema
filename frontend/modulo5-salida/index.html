@@ -723,7 +723,6 @@ let filtroTipo = 'todos';
 let ordenActual = 'fecha-desc';
 let bajaSeleccionada = null;
 let perfilTab = 'info';
-let modoDemoActivo = false;
 let entrevistaBajaId = null;
 let cargando = true;
 const TIPOS = ['Renuncia','Despido','Jubilación','Fin de contrato','Otro'];
@@ -1199,13 +1198,6 @@ async function toggleCheck(bajaId, key, nuevoEstado) {
   if (!b) return;
   const antes = CHECKLIST_ITEMS.filter(it=>b[it.key]).length;
 
-  if (esDemo()) {
-    b[key] = nuevoEstado;
-    celebrarSiCompleto(b, antes);
-    renderizarTodo();
-    return;
-  }
-
   const { error } = await db.from('salidas').update({ [key]: nuevoEstado }).eq('id', bajaId);
   if (error) { toast('Error: '+error.message,'err'); return; }
   b[key] = nuevoEstado;
@@ -1249,19 +1241,6 @@ async function guardarBaja() {
 
   const btn = document.getElementById('btn-baja-guardar');
   if(btn) btn.disabled = true;
-
-  if (esDemo()) {
-    const newId = Date.now();
-    bajas.push({id: newId, ...datos, porque_se_va: null, mejoraria: null, recomendaria: null,
-      equipo_entregado: false, accesos_revocados: false, liquidacion_firmada: false, entrevista_realizada: false});
-    toast('Baja registrada (demo)','ok');
-    bumpBadge();
-    renderizarTodo();
-    cerrarModal('modal-baja');
-    seleccionarBaja(newId);
-    if(btn) btn.disabled = false;
-    return;
-  }
 
   const { data, error } = await db.from('salidas').insert([datos]).select();
   if(btn) btn.disabled = false;
@@ -1310,17 +1289,6 @@ async function guardarEntrevista() {
   const btn = document.getElementById('btn-ent-guardar');
   if(btn) btn.disabled = true;
 
-  if (esDemo()) {
-    const b = bajas.find(x=>x.id===entrevistaBajaId);
-    if (b) Object.assign(b, datos);
-    toast('Entrevista registrada (demo)','ok');
-    perfilTab = 'entrevista';
-    renderizarTodo();
-    cerrarModal('modal-entrevista');
-    if(btn) btn.disabled = false;
-    return;
-  }
-
   const { error } = await db.from('salidas').update(datos).eq('id', entrevistaBajaId);
   if(btn) btn.disabled = false;
   if (error) { toast('Error: '+error.message,'err'); return; }
@@ -1342,15 +1310,6 @@ function confirmarEliminar(bajaId) {
 
 async function eliminarBaja(bajaId) {
   cerrarModal('modal-confirm');
-
-  if (esDemo()) {
-    bajas = bajas.filter(b=>b.id!==bajaId);
-    bajaSeleccionada = null;
-    toast('Baja eliminada (demo)','ok');
-    renderizarTodo();
-    resetPerfil();
-    return;
-  }
 
   const { error } = await db.from('salidas').delete().eq('id', bajaId);
   if (error) { toast('Error: '+error.message,'err'); return; }
@@ -1455,8 +1414,6 @@ function renderizarTodo() {
   autoSeleccionarPrimera();
 }
 
-function esDemo() { return modoDemoActivo; }
-
 function abrirModal(id) {
   const el = document.getElementById(id);
   if(el) {
@@ -1485,12 +1442,11 @@ async function iniciar() {
     await cargar();
     suscribirRealtime();
   } catch (err) {
-    console.error("Fallo de conexión, activando fallback demo:", err);
-    modoDemoActivo = true;
-    if(dot) dot.style.background = '#F59E0B';
-    if(txt) txt.textContent = 'Modo demo — Fallback activo';
-    if(st) setTimeout(()=>st.classList.add('hidden'),4000);
-    cargarDatosDemo();
+    console.error("Error de conexión con Supabase:", err);
+    if(dot) dot.style.background = '#EF4444';
+    if(txt) txt.textContent = 'Sin conexión a Supabase';
+    empleados = [];
+    bajas = [];
     cargando = false;
     renderizarTodo();
   }
@@ -1506,16 +1462,16 @@ async function cargar() {
     empleados = e.data || [];
     bajas = s.data || [];
 
-    if(empleados.length === 0) {
-      cargarDatosDemo();
-    }
-
     cargando = false;
     renderizarTodo();
   } catch(err) {
     console.error("Error cargando colecciones:", err);
-    modoDemoActivo = true;
-    cargarDatosDemo();
+    const dot = document.getElementById('sdot');
+    const txt = document.getElementById('stxt');
+    const st  = document.getElementById('db-status');
+    if(st) st.classList.remove('hidden');
+    if(dot) dot.style.background = '#EF4444';
+    if(txt) txt.textContent = 'Error cargando datos';
     cargando = false;
     renderizarTodo();
   }
@@ -1526,33 +1482,6 @@ function suscribirRealtime() {
   db.channel('salida')
     .on('postgres_changes',{event:'*',schema:'public',table:'salidas'}, ()=>cargar())
     .subscribe();
-}
-
-// ── DATOS DEMO ──
-function cargarDatosDemo() {
-  empleados = [
-    {id:1,nombre:'Ana García',cargo:'Gerente RRHH',departamento:'RRHH',estado:'Activo',fecha_ingreso:'2020-01-15'},
-    {id:2,nombre:'Carlos Mora',cargo:'Analista TI',departamento:'TI',estado:'Activo',fecha_ingreso:'2021-03-10'},
-    {id:3,nombre:'Lucía Pérez',cargo:'Diseñadora',departamento:'Marketing',estado:'Inactivo',fecha_ingreso:'2022-06-01'},
-    {id:4,nombre:'Roberto Sánchez',cargo:'Dev Backend',departamento:'TI',estado:'Activo',fecha_ingreso:'2021-08-15'},
-    {id:5,nombre:'María Jiménez',cargo:'Contadora',departamento:'Finanzas',estado:'Activo',fecha_ingreso:'2020-11-20'},
-    {id:6,nombre:'Diego Vargas',cargo:'Vendedor',departamento:'Comercial',estado:'Inactivo',fecha_ingreso:'2023-02-01'},
-    {id:7,nombre:'Patricia López',cargo:'Asistente RRHH',departamento:'RRHH',estado:'Activo',fecha_ingreso:'2023-09-15'},
-    {id:8,nombre:'Fernando Ruiz',cargo:'Supervisor',departamento:'Operaciones',estado:'Activo',fecha_ingreso:'2022-04-10'},
-  ];
-
-  bajas = [
-    {id:1,empleado_id:3,motivo:'Renuncia',fecha_salida:'2026-06-30',
-      observaciones:'Salida amigable, buen desempeño durante su estancia.',
-      porque_se_va:'Mejor oferta salarial y posición de liderazgo en otra empresa',
-      mejoraria:'Mejorar las oportunidades de crecimiento interno y revisar escalas salariales del mercado.',
-      recomendaria:'Sí',
-      equipo_entregado:true, accesos_revocados:true, liquidacion_firmada:true, entrevista_realizada:true},
-    {id:2,empleado_id:6,motivo:'Fin de contrato',fecha_salida:'2026-07-15',
-      observaciones:'Contrato no renovado por reestructuración del área comercial.',
-      porque_se_va:null, mejoraria:null, recomendaria:null,
-      equipo_entregado:false, accesos_revocados:false, liquidacion_firmada:true, entrevista_realizada:false},
-  ];
 }
 
 // ── EVENT LISTENERS ──
