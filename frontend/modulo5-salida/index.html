@@ -851,11 +851,14 @@ function renderHistorico() {
   if (foot) {
     const totalPeriodo = counts.reduce((a,b)=>a+b,0);
     const promedioMes = (totalPeriodo/12).toFixed(1);
+    // si los 12 meses están en 0, indexOf(max) da -1 (max se fuerza a 1) → proteger
+    const hayDatos = counts.some(c => c > 0);
     const picoIdx = counts.indexOf(max);
+    const mesPico = (hayDatos && picoIdx >= 0) ? meses[picoIdx].lbl.toUpperCase() : '—';
     foot.innerHTML = `
       <div><div class="hist-stat-lbl">Total período</div><div class="hist-stat-val">${totalPeriodo}</div></div>
       <div><div class="hist-stat-lbl">Promedio mensual</div><div class="hist-stat-val">${promedioMes}</div></div>
-      <div><div class="hist-stat-lbl">Mes con más bajas</div><div class="hist-stat-val" style="font-size:16px">${max>0?meses[picoIdx].lbl.toUpperCase():'—'}</div></div>`;
+      <div><div class="hist-stat-lbl">Mes con más bajas</div><div class="hist-stat-val" style="font-size:16px">${mesPico}</div></div>`;
   }
 }
 
