@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reportes Gerenciales · TalentHub B2B</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.2.0/dist/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "tertiary-fixed-dim": "#c0c1ff",
+          "on-tertiary-container": "#7073ff",
+          "on-tertiary": "#ffffff",
+          "secondary-container": "#40c2fd",
+          "surface-container": "#eceef0",
+          "inverse-on-surface": "#eff1f3",
+          "on-background": "#191c1e",
+          "on-secondary-fixed-variant": "#004c69",
+          "surface-variant": "#e0e3e5",
+          "on-primary-fixed": "#131b2e",
+          "inverse-surface": "#2d3133",
+          "error": "#ba1a1a",
+          "on-tertiary-fixed-variant": "#2f2ebe",
+          "surface-container-highest": "#e0e3e5",
+          "primary-fixed": "#dae2fd",
+          "tertiary-container": "#07006c",
+          "surface-bright": "#f7f9fb",
+          "tertiary": "#000000",
+          "on-error": "#ffffff",
+          "error-container": "#ffdad6",
+          "outline": "#76777d",
+          "surface-container-lowest": "#ffffff",
+          "inverse-primary": "#bec6e0",
+          "tertiary-fixed": "#e1e0ff",
+          "on-secondary": "#ffffff",
+          "on-tertiary-fixed": "#07006c",
+          "surface-dim": "#d8dadc",
+          "primary-container": "#131b2e",
+          "primary": "#000000",
+          "on-secondary-container": "#004d6a",
+          "on-error-container": "#93000a",
+          "on-primary": "#ffffff",
+          "on-primary-fixed-variant": "#3f465c",
+          "secondary-fixed-dim": "#7bd0ff",
+          "primary-fixed-dim": "#bec6e0",
+          "secondary": "#00668a",
+          "on-surface-variant": "#45464d",
+          "surface-container-high": "#e6e8ea",
+          "outline-variant": "#c6c6cd",
+          "secondary-fixed": "#c4e7ff",
+          "on-secondary-fixed": "#001e2c",
+          "surface-container-low": "#f2f4f6",
+          "background": "#f7f9fb",
+          "on-primary-container": "#7c839b",
+          "surface-tint": "#565e74",
+          "surface": "#f7f9fb",
+          "on-surface": "#191c1e"
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        spacing: { "table-row-height": "48px", "sidebar-width": "280px", "base": "8px", "container-padding": "24px", "bento-gap": "16px" },
+        fontFamily: { sans: ["Plus Jakarta Sans", "sans-serif"] }
+      }
+    }
+  }
+</script>
+<style>
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+.glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.5); }
+.bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+
+/* ── contenedores dinámicos que rellena script.js (mismos nombres de clase, no se tocó el JS) ── */
+.chart-wrap { position: relative; height: 230px; }
+.pending-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:230px; padding:20px; border:1.5px dashed rgba(198,198,205,.6); border-radius:1.5rem; background:rgba(242,244,246,.5); color:#76777d; }
+.pending-wrap i { font-size:26px; margin-bottom:10px; color:#c6c6cd; }
+.pending-wrap .pw-title { font-size:12.5px; font-weight:700; color:#45464d; margin-bottom:3px; }
+.pending-wrap .pw-sub { font-size:11.5px; color:#76777d; max-width:220px; }
+.badge-pend { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:99px; font-size:10.5px; font-weight:700; background:#FFFBEB; color:#92400E; margin-top:10px; }
+
+.vac-rank { display:flex; flex-direction:column; gap:12px; justify-content:center; height:100%; min-height:180px; }
+.vac-row { display:flex; align-items:center; gap:10px; font-size:12.5px; }
+.vac-name { width:108px; flex-shrink:0; color:#45464d; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vac-bar-wrap { flex:1; height:7px; background:#eceef0; border-radius:99px; overflow:hidden; }
+.vac-bar { height:100%; border-radius:99px; background:#00668a; }
+.vac-days { width:50px; text-align:right; color:#45464d; font-weight:700; flex-shrink:0; font-size:11.5px; }
+
+#st-rotacion-card.pending { opacity:.55 }
+</style>
+</head>
+<body class="bg-surface font-sans text-on-surface antialiased">
+
+<!-- INDICADOR DE ESTADO BASE DE DATOS (Premium Glass) -->
+<div id="db-status" class="fixed top-4 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg z-[100] transition-opacity duration-500">
+  <div class="w-2 h-2 rounded-full" id="sdot" style="background:#F59E0B"></div>
+  <span id="stxt" class="text-primary">Conectando...</span>
+</div>
+
+<div class="flex min-h-screen">
+  <!-- ── SIDEBAR NAVIGATION ── -->
+  <aside class="fixed left-0 top-0 h-screen w-[280px] bg-white/70 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50">
+    <div class="px-6 mb-8">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl">
+          <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">hub</span>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-primary tracking-tight">TalentHub B2B</h1>
+          <p class="text-xs font-medium text-on-surface-variant opacity-70">HR Intelligence</p>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo1-reclutamiento/index.html">
+        <span class="material-symbols-outlined">person_search</span>
+        <span class="text-sm">Reclutamiento</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html">
+        <span class="material-symbols-outlined">groups</span>
+        <span class="text-sm">Personal</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo3-control/index.html">
+        <span class="material-symbols-outlined">event_available</span>
+        <span class="text-sm">Control diario</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo4-desarrollo/index.html">
+        <span class="material-symbols-outlined">trending_up</span>
+        <span class="text-sm">Desarrollo</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo5-salida/index.html">
+        <span class="material-symbols-outlined">exit_to_app</span>
+        <span class="text-sm">Salida</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
+        <span class="material-symbols-outlined">analytics</span>
+        <span class="text-sm">Reportes</span>
+      </a>
+    </nav>
+
+    <div class="px-6 mt-auto pt-6 border-t border-outline-variant/20">
+      <div class="space-y-1">
+        <a class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" href="#">
+          <span class="material-symbols-outlined text-xl">settings</span>
+          <span>Configuración</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
+        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">AG</div>
+        <div>
+          <p class="font-bold text-xs">Ana García</p>
+          <p class="text-[10px] text-on-surface-variant">Gerente RRHH</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT CANVAS ── -->
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col">
+    <header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-6 z-40">
+      <div class="flex items-center gap-2 text-sm text-on-surface-variant">
+        <span class="material-symbols-outlined text-base">home</span>
+        <span class="opacity-40">/</span>
+        <span class="font-semibold text-primary">Reportes Gerenciales</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-xs text-on-surface-variant" id="last-update">—</span>
+        <span onclick="actualizar()" class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all">refresh</span>
+        <span class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all">notifications</span>
+        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4">
+          <div class="text-right">
+            <p class="font-bold text-xs">Admin HR</p>
+            <p class="text-[10px] text-on-surface-variant">Superuser</p>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">HR</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="pt-24 pb-12 px-6 max-w-[1600px] w-full mx-auto space-y-8 flex-1">
+      <div class="flex justify-between items-end">
+        <div>
+          <h2 class="font-bold text-2xl text-primary tracking-tight">Reportes Gerenciales</h2>
+          <p class="text-sm text-on-surface-variant mt-1">Indicadores clave y tendencias en tiempo real vía Supabase.</p>
+        </div>
+      </div>
+
+      <!-- ══ BENTO GRID ══ -->
+      <div class="bento-grid">
+
+        <!-- STAT 1: Headcount (Metric Card negra, tono premium) -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-primary text-white rounded-3xl p-6 shadow-xl shadow-primary/10 relative overflow-hidden h-40 flex flex-col justify-between">
+          <div class="relative z-10">
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Headcount activo</p>
+            <h3 class="text-4xl font-extrabold mt-2 tracking-tight" id="st-headcount">—</h3>
+          </div>
+          <div class="relative z-10 text-xs text-secondary-fixed font-semibold" id="st-headcount-sub">—</div>
+          <div class="absolute right-[-10px] bottom-[-15px] opacity-10">
+            <span class="material-symbols-outlined !text-[110px]">groups</span>
+          </div>
+        </div>
+
+        <!-- STAT 2: Conversión (Glassmorphic) -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 shadow-sm h-40 flex flex-col justify-between">
+          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Tasa de conversión</p>
+          <h3 class="text-4xl font-extrabold text-primary tracking-tight" id="st-conversion">—</h3>
+          <p class="text-xs text-on-surface-variant font-medium" id="st-conversion-sub">candidatos → contratados</p>
+        </div>
+
+        <!-- STAT 3: Tiempo de contratación -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 h-40 flex flex-col justify-center gap-3">
+          <div class="w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined">timer</span>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Tiempo de contratación</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5"><span id="st-tiempo">—</span> <span class="text-xs font-normal text-on-surface-variant">días promedio</span></p>
+          </div>
+        </div>
+
+        <!-- STAT 4: Rotación -->
+        <div id="st-rotacion-card" class="col-span-12 md:col-span-6 lg:col-span-3 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 h-40 flex flex-col justify-center gap-3 transition-opacity">
+          <div class="w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center text-secondary">
+            <span class="material-symbols-outlined">sync_alt</span>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Tasa de rotación</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5" id="st-rotacion">—</p>
+            <p class="text-[11px] text-on-surface-variant mt-0.5" id="st-rotacion-sub">—</p>
+          </div>
+        </div>
+
+        <!-- CHART: Headcount por departamento (2x1) -->
+        <div class="col-span-12 lg:col-span-7 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="font-bold text-base text-primary">Headcount por departamento</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5">Empleados activos agrupados por área</p>
+            </div>
+            <span class="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Módulo 2</span>
+          </div>
+          <div class="chart-wrap"><canvas id="chart-headcount"></canvas></div>
+        </div>
+
+        <!-- CHART: Desempeño por área (2x1 -> comparte fila) -->
+        <div class="col-span-12 lg:col-span-5 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="font-bold text-base text-primary">Desempeño promedio</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5">Por área, escala 1–5</p>
+            </div>
+            <span class="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Módulo 4</span>
+          </div>
+          <div class="chart-wrap" id="wrap-desempeno"><canvas id="chart-desempeno"></canvas></div>
+        </div>
+
+        <!-- CHART: Capacitaciones (1x1) -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="font-bold text-base text-primary">Capacitaciones</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5">Completadas vs. pendientes</p>
+            </div>
+            <span class="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Módulo 4</span>
+          </div>
+          <div class="chart-wrap" id="wrap-capacitaciones"><canvas id="chart-capacitaciones"></canvas></div>
+        </div>
+
+        <!-- CHART: Ausentismo por tipo (1x1) -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="font-bold text-base text-primary">Ausentismo por tipo</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5">Días acumulados en el período</p>
+            </div>
+            <span class="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Módulo 3</span>
+          </div>
+          <div class="chart-wrap" id="wrap-ausentismo"><canvas id="chart-ausentismo"></canvas></div>
+        </div>
+
+        <!-- Saldo de vacaciones (1x1, ranking) -->
+        <div class="col-span-12 md:col-span-12 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="font-bold text-base text-primary">Vacaciones pendientes</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5">Saldo por empleado</p>
+            </div>
+            <span class="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Módulo 3</span>
+          </div>
+          <div id="wrap-vacaciones" class="chart-wrap"></div>
+        </div>
+
+        <!-- CHART: Motivos de salida (full width) -->
+        <div class="col-span-12 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="font-bold text-base text-primary">Distribución de motivos de salida</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5">Rotación del período por causa</p>
+            </div>
+            <span class="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Módulo 5</span>
+          </div>
+          <div class="chart-wrap" id="wrap-salidas" style="height:200px"><canvas id="chart-salidas"></canvas></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
+<script type="module" src="script.js"></script>
+</body>
+</html>
