@@ -116,7 +116,8 @@ body{
   grid-template-columns:repeat(6,1fr);
   grid-template-areas:
     "hero hero mes  mes  ent  pend"
-    "tbl  tbl  tbl  tbl  perf perf";
+    "tbl  tbl  tbl  tbl  perf perf"
+    "hist hist hist motv motv motv";
   align-items:start;
 }
 .b-hero{grid-area:hero}
@@ -125,6 +126,8 @@ body{
 .b-pend{grid-area:pend}
 .b-tbl{grid-area:tbl}
 .b-perf{grid-area:perf}
+.b-hist{grid-area:hist}
+.b-motv{grid-area:motv}
 
 /* contenedor bento base (flat) */
 .bcard{
@@ -160,6 +163,11 @@ body{
 .stat-val{font-size:32px;font-weight:800;color:var(--text);line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .stat-sub{font-size:11.5px;color:var(--text4);margin-top:4px;font-weight:500}
 .trend-warn{font-size:11.5px;color:var(--orange);margin-top:4px;font-weight:600}
+.trend-mes{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;margin-top:6px;padding:3px 9px;border-radius:99px}
+.trend-mes i{font-size:13px}
+.trend-up{background:#FFF4EA;color:#C2410C}
+.trend-down{background:#EEFBF2;color:#15803D}
+.trend-flat{background:#F1F4F9;color:#5A6478}
 
 /* mini gráfico de barras del hero */
 .mini-chart{display:flex;align-items:flex-end;gap:8px;width:170px;padding:6px 0 0}
@@ -167,6 +175,28 @@ body{
 .mc-bar{width:100%;max-width:20px;border-radius:6px 6px 3px 3px;background:linear-gradient(180deg,#3B82F6,#93C5FD);min-height:5px;transition:height .7s var(--ease);transform-origin:bottom}
 .mc-col:hover .mc-bar{background:linear-gradient(180deg,#1D4ED8,#60A5FA);transform:scaleY(1.04)}
 .mc-col span{font-size:9.5px;color:var(--text4);font-weight:600;text-transform:uppercase}
+
+/* ═══ HISTÓRICO DE BAJAS (bento grande, 12 meses) ═══ */
+.hist-chart{display:flex;align-items:flex-end;gap:8px;height:170px;padding:6px 4px 0}
+.hist-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;min-width:0}
+.hist-bar{width:100%;max-width:28px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#3B82F6,#93C5FD);min-height:4px;transition:height .7s var(--ease);transform-origin:bottom}
+.hist-col:hover .hist-bar{background:linear-gradient(180deg,#1D4ED8,#60A5FA);transform:scaleY(1.03)}
+.hist-col span{font-size:9.5px;color:var(--text4);font-weight:600;text-transform:uppercase;white-space:nowrap}
+.hist-foot{display:flex;gap:28px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.hist-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--text4);font-weight:700;margin-bottom:2px}
+.hist-stat-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+
+/* ═══ MOTIVOS DE SALIDA (desglose por tipo) ═══ */
+.motivo-row{display:flex;align-items:center;gap:10px;padding:8px 0}
+.motivo-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.motivo-lbl{font-size:12.5px;color:var(--text2);font-weight:600;width:112px;flex-shrink:0}
+.motivo-track{flex:1;height:8px;background:#EDF1F8;border-radius:99px;overflow:hidden}
+.motivo-fill{height:100%;border-radius:99px;width:0;transition:width .7s var(--ease)}
+.motivo-pct{font-size:12px;font-weight:700;color:var(--text);width:56px;text-align:right;font-variant-numeric:tabular-nums}
+.motivo-foot{margin-top:14px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.motivo-foot-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text4);font-weight:700}
+.motivo-foot-sub{font-size:11px;color:var(--text4);font-weight:500;margin-top:2px}
+.motivo-foot-val{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 
 /* stats compactas 1x1 */
 .stat-sm .stat-ico{width:38px;height:38px;font-size:18px;border-radius:12px;margin-bottom:10px}
@@ -268,7 +298,7 @@ textarea.form-control{resize:vertical;min-height:64px}
 .section-hd{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin:16px 0 8px}
 
 /* ═══ SEGMENTED TIPO DE BAJA ═══ */
-.tipo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tipo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .tipo-opt{border:1.5px solid rgba(230,234,242,.9);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s var(--ease);background:rgba(255,255,255,.7)}
 .tipo-opt i{font-size:20px;display:block;margin-bottom:5px;color:var(--text4);transition:color .2s}
 .tipo-opt span{font-size:11px;font-weight:600;color:var(--text3);display:block;line-height:1.25}
@@ -373,7 +403,9 @@ textarea.form-control{resize:vertical;min-height:64px}
       "mes  ent"
       "pend pend"
       "tbl  tbl"
-      "perf perf";
+      "perf perf"
+      "hist hist"
+      "motv motv";
   }
   .b-pend{display:flex;gap:16px;align-items:center}
   .b-pend .stat-ico{margin-bottom:0}
@@ -392,8 +424,10 @@ textarea.form-control{resize:vertical;min-height:64px}
   .topbar{margin:12px 14px 0}
   .content{padding:14px}
   .tipo-grid{grid-template-columns:1fr 1fr}
-  .bento{grid-template-columns:1fr;grid-template-areas:"hero" "mes" "ent" "pend" "tbl" "perf"}
+  .bento{grid-template-columns:1fr;grid-template-areas:"hero" "mes" "ent" "pend" "tbl" "perf" "hist" "motv"}
   .mini-chart{width:130px}
+  .hist-chart{gap:4px}
+  .hist-bar{max-width:18px}
 }
 </style>
 </head>
@@ -479,7 +513,8 @@ textarea.form-control{resize:vertical;min-height:64px}
           <div class="stat-ico ico-orange"><i class="ti ti-calendar-event"></i></div>
           <div class="stat-label">Bajas este mes</div>
           <div class="stat-val" id="st-mes">—</div>
-          <div class="trend-warn" id="st-mes-sub">—</div>
+          <div id="st-mes-sub" class="stat-sub">—</div>
+          <div><span class="trend-mes trend-flat" id="st-mes-trend" style="visibility:hidden">—</span></div>
         </div>
 
         <!-- ENTREVISTAS 1x1 · glass -->
@@ -542,6 +577,24 @@ textarea.form-control{resize:vertical;min-height:64px}
           </div>
         </div>
 
+        <!-- HISTÓRICO DE BAJAS · flat -->
+        <div class="bcard b-hist">
+          <div class="card-hd">
+            <div class="card-title"><i class="ti ti-chart-bar" style="font-size:15px;color:var(--blue)"></i>Histórico de Bajas <span style="font-weight:500;color:var(--text4);font-size:12px">— últimos 12 meses</span></div>
+          </div>
+          <div class="hist-chart" id="hist-chart"></div>
+          <div class="hist-foot" id="hist-foot"></div>
+        </div>
+
+        <!-- MOTIVOS DE SALIDA · flat -->
+        <div class="bcard b-motv">
+          <div class="card-hd">
+            <div class="card-title"><i class="ti ti-chart-donut" style="font-size:15px;color:var(--purple)"></i>Motivos de Salida</div>
+          </div>
+          <div id="motivos-list"></div>
+          <div class="motivo-foot" id="motivo-foot"></div>
+        </div>
+
       </div><!-- /bento -->
     </div><!-- /content -->
   </div>
@@ -558,23 +611,18 @@ textarea.form-control{resize:vertical;min-height:64px}
       <select class="form-control" id="baja-empleado"></select>
     </div>
     <div class="form-group">
-      <label class="form-label">Tipo de baja <span class="req">*</span></label>
+      <label class="form-label">Motivo de la baja <span class="req">*</span></label>
       <div class="tipo-grid" id="tipo-grid">
-        <div class="tipo-opt sel" data-tipo="Voluntaria" onclick="selTipo(this)"><i class="ti ti-user-check"></i><span>Voluntaria</span></div>
-        <div class="tipo-opt" data-tipo="Involuntaria" onclick="selTipo(this)"><i class="ti ti-user-x"></i><span>Involuntaria</span></div>
-        <div class="tipo-opt" data-tipo="Fin de contrato" onclick="selTipo(this)"><i class="ti ti-file-off"></i><span>Fin de contrato</span></div>
+        <div class="tipo-opt sel" data-tipo="Renuncia" onclick="selTipo(this)"><i class="ti ti-user-check"></i><span>Renuncia</span></div>
+        <div class="tipo-opt" data-tipo="Despido" onclick="selTipo(this)"><i class="ti ti-user-x"></i><span>Despido</span></div>
         <div class="tipo-opt" data-tipo="Jubilación" onclick="selTipo(this)"><i class="ti ti-beach"></i><span>Jubilación</span></div>
+        <div class="tipo-opt" data-tipo="Fin de contrato" onclick="selTipo(this)"><i class="ti ti-file-off"></i><span>Fin de contrato</span></div>
+        <div class="tipo-opt" data-tipo="Otro" onclick="selTipo(this)"><i class="ti ti-dots"></i><span>Otro</span></div>
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Fecha de salida <span class="req">*</span></label>
-        <input class="form-control" id="baja-fecha" type="date">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Motivo</label>
-        <input class="form-control" id="baja-motivo" placeholder="Motivo principal...">
-      </div>
+    <div class="form-group">
+      <label class="form-label">Fecha de salida <span class="req">*</span></label>
+      <input class="form-control" id="baja-fecha" type="date">
     </div>
     <div class="form-group">
       <label class="form-label">Observaciones</label>
@@ -582,7 +630,7 @@ textarea.form-control{resize:vertical;min-height:64px}
     </div>
     <div class="form-hint">
       <i class="ti ti-sparkles" style="font-size:13px;color:var(--blue)"></i>
-      Se creará automáticamente un checklist de offboarding con 8 tareas estándar.
+      El checklist de offboarding (equipo, accesos, liquidación, entrevista) se marca luego desde el expediente.
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="cerrarModal('modal-baja')">Cancelar</button>
@@ -598,51 +646,19 @@ textarea.form-control{resize:vertical;min-height:64px}
     <div class="modal-title">Entrevista de Salida</div>
     <div class="modal-desc" id="ent-desc">Registra la retroalimentación del empleado antes de su salida.</div>
     <div class="form-group">
-      <label class="form-label">Motivo principal de salida <span class="req">*</span></label>
+      <label class="form-label">¿Por qué se va? <span class="req">*</span></label>
       <textarea class="form-control" id="ent-motivo" placeholder="¿Cuál es la razón principal por la que deja la empresa?"></textarea>
     </div>
-    <div class="section-hd">Calificación del ambiente (1–5 estrellas)</div>
-    <div class="rating-row">
-      <span class="rating-lbl">Ambiente laboral</span>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="stars" id="stars-ambiente"></div>
-        <span class="star-num" id="num-ambiente">3/5</span>
-      </div>
-    </div>
-    <div class="rating-row">
-      <span class="rating-lbl">Relación con jefe directo</span>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="stars" id="stars-jefe"></div>
-        <span class="star-num" id="num-jefe">3/5</span>
-      </div>
-    </div>
-    <div class="rating-row">
-      <span class="rating-lbl">Oportunidades de crecimiento</span>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="stars" id="stars-crecimiento"></div>
-        <span class="star-num" id="num-crecimiento">3/5</span>
-      </div>
-    </div>
-    <div class="form-group" style="margin-top:14px">
+    <div class="form-group">
       <label class="form-label">¿Recomendaría la empresa?</label>
       <select class="form-control" id="ent-recomienda">
-        <option value="true">Sí, la recomendaría</option>
-        <option value="false">No la recomendaría</option>
+        <option value="Sí">Sí, la recomendaría</option>
+        <option value="No">No la recomendaría</option>
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Sugerencias de mejora</label>
+      <label class="form-label">¿Qué mejoraría de la empresa?</label>
       <textarea class="form-control" id="ent-sugerencias" placeholder="¿Qué mejoraría de la empresa?"></textarea>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Entrevistador</label>
-        <input class="form-control" id="ent-entrevistador" value="Ana García">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Fecha</label>
-        <input class="form-control" id="ent-fecha" type="date">
-      </div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="cerrarModal('modal-entrevista')">Cancelar</button>
@@ -698,10 +714,11 @@ window.addEventListener('error', (e) => {
 });
 
 // ── ESTADO ──
+// "bajas" contiene las filas de la tabla real `salidas` (empleado_id, fecha_salida,
+// motivo, porque_se_va, mejoraria, recomendaria, observaciones y los 4 booleanos
+// de checklist). Ya no existen tablas separadas de entrevista/checklist.
 let empleados = [];
 let bajas = [];
-let entrevistas = [];
-let checklists = [];
 let filtroTipo = 'todos';
 let ordenActual = 'fecha-desc';
 let bajaSeleccionada = null;
@@ -709,9 +726,22 @@ let perfilTab = 'info';
 let modoDemoActivo = false;
 let entrevistaBajaId = null;
 let cargando = true;
-const ratings = { ambiente: 3, jefe: 3, crecimiento: 3 };
-const TIPOS = ['Voluntaria','Involuntaria','Fin de contrato','Jubilación'];
-let tipoBajaSel = 'Voluntaria';
+const TIPOS = ['Renuncia','Despido','Jubilación','Fin de contrato','Otro'];
+let tipoBajaSel = 'Renuncia';
+
+// checklist de offboarding: 4 columnas booleanas reales de `salidas`
+const CHECKLIST_ITEMS = [
+  { key: 'equipo_entregado',    label: 'Equipo entregado',                 icon: 'ti-device-laptop' },
+  { key: 'accesos_revocados',   label: 'Accesos revocados',                icon: 'ti-lock' },
+  { key: 'liquidacion_firmada', label: 'Liquidación firmada',              icon: 'ti-file-check' },
+  { key: 'entrevista_realizada',label: 'Entrevista de salida realizada',   icon: 'ti-message-circle-check' },
+];
+function estadoOffboarding(b) {
+  const done = CHECKLIST_ITEMS.filter(it => b[it.key]).length;
+  if (done === 0) return 'Pendiente';
+  if (done === CHECKLIST_ITEMS.length) return 'Completado';
+  return 'En proceso';
+}
 
 // ── HELPERS ──
 const AV_COLORS = ['#8B5CF6','#3B82F6','#EC4899','#0EA5E9','#10B981','#F59E0B','#6366F1','#14B8A6','#EF4444','#F97316'];
@@ -734,9 +764,9 @@ function fmtRel(iso) {
 }
 
 function tipoBadge(tipo) {
-  const m = {'Voluntaria':['b-blue','ti-user-check'],'Involuntaria':['b-red','ti-user-x'],'Fin de contrato':['b-orange','ti-file-off'],'Jubilación':['b-purple','ti-beach']};
+  const m = {'Renuncia':['b-blue','ti-user-check'],'Despido':['b-red','ti-user-x'],'Jubilación':['b-purple','ti-beach'],'Fin de contrato':['b-orange','ti-file-off'],'Otro':['b-gray','ti-dots']};
   const [cls,ico] = m[tipo]||['b-gray','ti-user'];
-  return `<span class="badge ${cls}"><i class="ti ${ico}"></i>${tipo}</span>`;
+  return `<span class="badge ${cls}"><i class="ti ${ico}"></i>${tipo||'Sin especificar'}</span>`;
 }
 
 function offBadge(estado) {
@@ -796,31 +826,84 @@ function renderMiniChart() {
     </div>`).join('');
 }
 
-// ── CHECKLIST ITEMS DEFAULT ──
-const CHECKLIST_DEFAULT = [
-  { item: 'Devolución de laptop y equipo asignado', responsable: 'TI' },
-  { item: 'Devolución de tarjeta de acceso / badge', responsable: 'Seguridad' },
-  { item: 'Desactivación de correo corporativo', responsable: 'TI' },
-  { item: 'Desactivación de accesos a sistemas', responsable: 'TI' },
-  { item: 'Firma de documento de baja / renuncia', responsable: 'RRHH' },
-  { item: 'Cálculo y pago de finiquito / liquidación', responsable: 'Finanzas' },
-  { item: 'Entrevista de salida realizada', responsable: 'RRHH' },
-  { item: 'Transferencia de conocimiento documentada', responsable: 'Departamento' },
-];
+// gráfico grande: bajas de los últimos 12 meses (bento "Histórico de Bajas")
+function renderHistorico() {
+  const box = document.getElementById('hist-chart');
+  const foot = document.getElementById('hist-foot');
+  if (!box) return;
+  const hoy = new Date();
+  const meses = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(hoy.getFullYear(), hoy.getMonth()-i, 1);
+    meses.push({ y: d.getFullYear(), m: d.getMonth(), lbl: d.toLocaleDateString('es',{month:'short'}).replace('.','') });
+  }
+  const counts = meses.map(mm => bajas.filter(b => {
+    if (!b.fecha_salida) return false;
+    const d = new Date(b.fecha_salida+'T12:00:00');
+    return d.getMonth()===mm.m && d.getFullYear()===mm.y;
+  }).length);
+  const max = Math.max(...counts, 1);
+  box.innerHTML = meses.map((mm,i) =>
+    `<div class="hist-col" title="${counts[i]} baja${counts[i]!==1?'s':''} — ${mm.lbl.toUpperCase()} ${mm.y}">
+      <div class="hist-bar" style="height:${Math.max(counts[i]/max*140, 4)}px"></div>
+      <span>${mm.lbl}</span>
+    </div>`).join('');
 
-// ── STAR RATING ──
-function renderStars() {
-  Object.keys(ratings).forEach(campo => {
-    const box = document.getElementById('stars-'+campo);
-    const num = document.getElementById('num-'+campo);
-    if (!box) return;
-    box.innerHTML = [1,2,3,4,5].map(v =>
-      `<i class="ti ti-star-filled star ${v<=ratings[campo]?'on':''}" onclick="setRating('${campo}',${v})"></i>`
-    ).join('');
-    if (num) num.textContent = ratings[campo]+'/5';
-  });
+  if (foot) {
+    const totalPeriodo = counts.reduce((a,b)=>a+b,0);
+    const promedioMes = (totalPeriodo/12).toFixed(1);
+    const picoIdx = counts.indexOf(max);
+    foot.innerHTML = `
+      <div><div class="hist-stat-lbl">Total período</div><div class="hist-stat-val">${totalPeriodo}</div></div>
+      <div><div class="hist-stat-lbl">Promedio mensual</div><div class="hist-stat-val">${promedioMes}</div></div>
+      <div><div class="hist-stat-lbl">Mes con más bajas</div><div class="hist-stat-val" style="font-size:16px">${max>0?meses[picoIdx].lbl.toUpperCase():'—'}</div></div>`;
+  }
 }
-function setRating(campo, val) { ratings[campo] = val; renderStars(); }
+
+// desglose por motivo de salida (bento "Motivos de Salida")
+const MOTIVO_COLORS = {'Renuncia':'#2563EB','Despido':'#DC2626','Jubilación':'#7C3AED','Fin de contrato':'#EA580C','Otro':'#9AA4BB'};
+function renderMotivos() {
+  const box = document.getElementById('motivos-list');
+  if (!box) return;
+  const total = bajas.length;
+  if (!total) {
+    box.innerHTML = `<div class="empty-state" style="padding:20px 16px"><div class="es-ico"><i class="ti ti-chart-donut"></i></div><p>Sin bajas registradas todavía</p></div>`;
+    return;
+  }
+  const filas = TIPOS.map(t => ({ tipo: t, n: bajas.filter(b=>b.motivo===t).length }))
+    .filter(f => f.n > 0)
+    .sort((a,b) => b.n - a.n);
+
+  box.innerHTML = filas.map(f => {
+    const pct = Math.round(f.n/total*100);
+    const color = MOTIVO_COLORS[f.tipo] || '#9AA4BB';
+    return `<div class="motivo-row">
+      <span class="motivo-dot" style="background:${color}"></span>
+      <span class="motivo-lbl">${f.tipo}</span>
+      <div class="motivo-track"><div class="motivo-fill" style="width:${pct}%;background:${color}"></div></div>
+      <span class="motivo-pct">${f.n} · ${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // % que recomendaría la empresa, calculado sobre las entrevistas de salida
+  // ya registradas (campo `recomendaria` de `salidas`)
+  const foot = document.getElementById('motivo-foot');
+  if (!foot) return;
+  const conEntrevista = bajas.filter(b => b.recomendaria);
+  if (!conEntrevista.length) {
+    foot.innerHTML = `<div class="motivo-foot-lbl" style="color:var(--text4);font-weight:600;text-transform:none;letter-spacing:normal">Aún no hay entrevistas de salida registradas</div>`;
+    return;
+  }
+  const recomiendan = conEntrevista.filter(b => (b.recomendaria||'').toLowerCase().startsWith('s')).length;
+  const pctRec = Math.round(recomiendan/conEntrevista.length*100);
+  const colorRec = pctRec>=70 ? 'var(--green)' : pctRec>=40 ? 'var(--amber)' : 'var(--red)';
+  foot.innerHTML = `
+    <div>
+      <div class="motivo-foot-lbl">Recomendarían la empresa</div>
+      <div class="motivo-foot-sub">${recomiendan} de ${conEntrevista.length} entrevistas de salida</div>
+    </div>
+    <div class="motivo-foot-val" style="color:${colorRec}">${pctRec}%</div>`;
+}
 
 // ── TIPO DE BAJA (segmentado) ──
 function selTipo(el) {
@@ -839,7 +922,7 @@ function filtrarPor(tipo) {
 function renderChips() {
   const row = document.getElementById('filter-row');
   if (!row) return;
-  const conteo = t => t==='todos' ? bajas.length : bajas.filter(b=>b.tipo_baja===t).length;
+  const conteo = t => t==='todos' ? bajas.length : bajas.filter(b=>b.motivo===t).length;
   const chip = (t, lbl) =>
     `<div class="chip ${filtroTipo===t?'active':''}" onclick="filtrarPor('${t}')">${lbl}<span class="chip-n">${conteo(t)}</span></div>`;
   row.innerHTML = `<span style="font-size:12px;color:var(--text3);font-weight:600">Tipo:</span>` +
@@ -885,15 +968,12 @@ function renderTabla() {
   let lista = bajas.filter(b => {
     const emp = empleados.find(e=>e.id===b.empleado_id);
     const nombre = emp ? emp.nombre.toLowerCase() : '';
-    const matchT = filtroTipo==='todos' || b.tipo_baja===filtroTipo;
-    const matchB = !busqueda || nombre.includes(busqueda) || (b.motivo||'').toLowerCase().includes(busqueda);
+    const matchT = filtroTipo==='todos' || b.motivo===filtroTipo;
+    const matchB = !busqueda || nombre.includes(busqueda) || (b.porque_se_va||'').toLowerCase().includes(busqueda);
     return matchT && matchB;
   });
 
-  const pctDe = b => {
-    const ck = checklists.filter(c=>c.baja_id===b.id);
-    return ck.length ? Math.round(ck.filter(c=>c.completado).length/ck.length*100) : 0;
-  };
+  const pctDe = b => Math.round(CHECKLIST_ITEMS.filter(it=>b[it.key]).length / CHECKLIST_ITEMS.length * 100);
   const nombreDe = b => (empleados.find(e=>e.id===b.empleado_id)?.nombre)||'';
 
   lista.sort((a,b) => {
@@ -937,14 +1017,14 @@ function renderTabla() {
           </div>
         </div>
       </td>
-      <td>${tipoBadge(b.tipo_baja)}</td>
+      <td>${tipoBadge(b.motivo)}</td>
       <td>
         <div style="font-size:12px;font-weight:600;color:var(--text2)">${fmtFecha(b.fecha_salida)}</div>
         <div style="font-size:10.5px;color:var(--text4)">${fmtRel(b.fecha_salida)}</div>
       </td>
       <td>
         <div style="display:flex;align-items:center;gap:8px">
-          ${offBadge(b.estado_offboarding)}
+          ${offBadge(estadoOffboarding(b))}
           <div style="width:48px">
             <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${pct===100?'var(--green)':'var(--blue)'}"></div></div>
           </div>
@@ -1000,11 +1080,10 @@ function renderPerfil() {
   const ini = iniciales(nombre);
   const col = avColor(b.empleado_id);
 
-  const ent = entrevistas.find(e=>e.baja_id===b.id);
-  const ck = checklists.filter(c=>c.baja_id===b.id);
-  const ckDone = ck.filter(c=>c.completado).length;
-  const ckTotal = ck.length;
-  const pct = ckTotal ? Math.round((ckDone/ckTotal)*100) : 0;
+  const tieneEntrevista = !!b.porque_se_va;
+  const ckDone = CHECKLIST_ITEMS.filter(it=>b[it.key]).length;
+  const ckTotal = CHECKLIST_ITEMS.length;
+  const pct = Math.round((ckDone/ckTotal)*100);
 
   const pBox = document.getElementById('perfil-content');
   if(!pBox) return;
@@ -1016,20 +1095,20 @@ function renderPerfil() {
         <div style="font-size:16px;font-weight:700;margin-bottom:2px;letter-spacing:-.01em">${nombre}</div>
         <div style="font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500">${cargo} · ${depto}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${tipoBadge(b.tipo_baja)}
-          ${offBadge(b.estado_offboarding)}
+          ${tipoBadge(b.motivo)}
+          ${offBadge(estadoOffboarding(b))}
         </div>
       </div>
       ${ringSVG(pct)}
     </div>
     <div class="tabs">
       <div class="tab ${perfilTab==='info'?'active':''}" onclick="cambiarTab('info')"><i class="ti ti-id" style="font-size:13px"></i> Información</div>
-      <div class="tab ${perfilTab==='entrevista'?'active':''}" onclick="cambiarTab('entrevista')"><i class="ti ti-message-circle" style="font-size:13px"></i> Entrevista ${ent?'✓':''}</div>
+      <div class="tab ${perfilTab==='entrevista'?'active':''}" onclick="cambiarTab('entrevista')"><i class="ti ti-message-circle" style="font-size:13px"></i> Entrevista ${tieneEntrevista?'✓':''}</div>
       <div class="tab ${perfilTab==='checklist'?'active':''}" onclick="cambiarTab('checklist')"><i class="ti ti-checklist" style="font-size:13px"></i> Checklist ${ckDone}/${ckTotal}</div>
     </div>
-    <div id="tab-content">${renderTabContent(b, emp, ent, ck, pct)}</div>
+    <div id="tab-content">${renderTabContent(b, emp, tieneEntrevista, pct)}</div>
     <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
-      ${!ent ? `<button class="btn btn-sm btn-blue-o" onclick="abrirEntrevista(${b.id})"><i class="ti ti-message-circle"></i>Entrevista de salida</button>` : ''}
+      ${!tieneEntrevista ? `<button class="btn btn-sm btn-blue-o" onclick="abrirEntrevista(${b.id})"><i class="ti ti-message-circle"></i>Entrevista de salida</button>` : ''}
       <button class="btn btn-sm btn-danger" onclick="confirmarEliminar(${b.id})"><i class="ti ti-trash"></i>Eliminar baja</button>
     </div>`;
 
@@ -1044,20 +1123,19 @@ function cambiarTab(tab) {
   renderPerfil();
 }
 
-function renderTabContent(b, emp, ent, ck, pct) {
+function renderTabContent(b, emp, tieneEntrevista, pct) {
   if (perfilTab === 'info') {
     return `
       <div class="profile-field"><span class="pf-lbl">Fecha de ingreso</span><span class="pf-val">${fmtFecha(emp?.fecha_ingreso)}</span></div>
       <div class="profile-field"><span class="pf-lbl">Fecha de salida</span><span class="pf-val">${fmtFecha(b.fecha_salida)} <span style="color:var(--text4);font-weight:400">(${fmtRel(b.fecha_salida)})</span></span></div>
       <div class="profile-field"><span class="pf-lbl">Antigüedad</span><span class="pf-val">${calcAntiguedad(emp?.fecha_ingreso, b.fecha_salida)}</span></div>
-      <div class="profile-field"><span class="pf-lbl">Tipo de baja</span><span class="pf-val">${b.tipo_baja}</span></div>
-      <div class="profile-field"><span class="pf-lbl">Motivo</span><span class="pf-val">${b.motivo||'—'}</span></div>
-      <div class="profile-field"><span class="pf-lbl">Offboarding</span><span class="pf-val">${offBadge(b.estado_offboarding)}</span></div>
+      <div class="profile-field"><span class="pf-lbl">Tipo de baja</span><span class="pf-val">${b.motivo}</span></div>
+      <div class="profile-field"><span class="pf-lbl">Offboarding</span><span class="pf-val">${offBadge(estadoOffboarding(b))}</span></div>
       ${b.observaciones ? `<div style="margin-top:12px;padding:12px 14px;background:#F6F8FC;border-radius:12px;font-size:12px;color:var(--text3)"><strong style="color:var(--text2)"><i class="ti ti-note" style="font-size:12px"></i> Observaciones:</strong><br>${b.observaciones}</div>` : ''}`;
   }
 
   if (perfilTab === 'entrevista') {
-    if (!ent) {
+    if (!tieneEntrevista) {
       return `<div class="empty-state">
         <div class="es-ico"><i class="ti ti-message-circle-off"></i></div>
         <p>No se ha realizado entrevista de salida</p>
@@ -1065,56 +1143,34 @@ function renderTabContent(b, emp, ent, ck, pct) {
       </div>`;
     }
 
-    function ratingBar(label, value, color) {
-      const p = ((value||0)/5)*100;
-      return `<div class="rating-bar">
-        <span class="rating-label">${label}</span>
-        <div class="rating-track"><div class="rating-fill" data-w="${p}" style="background:${color}"></div></div>
-        <span class="rating-val" style="color:${color}">${value||0}/5</span>
-      </div>`;
-    }
-
-    const prom = ((ent.ambiente_laboral+ent.relacion_jefe+ent.oportunidades_crecimiento)/3).toFixed(1);
+    const recomienda = (b.recomendaria||'').toLowerCase().startsWith('s');
 
     return `
       <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Motivo principal</div>
-        <div style="padding:12px 14px;background:#F6F8FC;border-radius:12px;font-size:13px;color:var(--text2);font-weight:500">${ent.motivo_principal||'—'}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">¿Por qué se va?</div>
+        <div style="padding:12px 14px;background:#F6F8FC;border-radius:12px;font-size:13px;color:var(--text2);font-weight:500">${b.porque_se_va||'—'}</div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px">Calificaciones</span>
-        <span class="badge ${prom>=3.5?'b-green':prom>=2.5?'b-yellow':'b-red'}"><i class="ti ti-star-filled"></i>Promedio ${prom}</span>
-      </div>
-      ${ratingBar('Ambiente laboral', ent.ambiente_laboral, '#2563EB')}
-      ${ratingBar('Relación con jefe', ent.relacion_jefe, '#7C3AED')}
-      ${ratingBar('Crecimiento', ent.oportunidades_crecimiento, '#EA580C')}
-      <div class="profile-field" style="margin-top:10px">
+      <div class="profile-field" style="margin-top:4px">
         <span class="pf-lbl">¿Recomendaría la empresa?</span>
-        <span class="pf-val">${ent.recomendaria ? '<span class="badge b-green"><i class="ti ti-thumb-up"></i>Sí</span>' : '<span class="badge b-red"><i class="ti ti-thumb-down"></i>No</span>'}</span>
+        <span class="pf-val">${b.recomendaria ? (recomienda ? '<span class="badge b-green"><i class="ti ti-thumb-up"></i>Sí</span>' : '<span class="badge b-red"><i class="ti ti-thumb-down"></i>No</span>') : '—'}</span>
       </div>
-      ${ent.sugerencias ? `<div style="margin-top:10px"><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Sugerencias</div><div style="padding:12px 14px;background:#FEF9E7;border-radius:12px;font-size:12px;color:#92400E;font-style:italic;font-weight:500">"${ent.sugerencias}"</div></div>` : ''}
-      <div style="margin-top:10px;font-size:11px;color:var(--text4);font-weight:500"><i class="ti ti-user" style="font-size:11px"></i> Entrevistado por ${ent.entrevistador||'—'} · ${fmtFecha(ent.fecha)}</div>`;
+      ${b.mejoraria ? `<div style="margin-top:10px"><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Qué mejoraría</div><div style="padding:12px 14px;background:#FEF9E7;border-radius:12px;font-size:12px;color:#92400E;font-style:italic;font-weight:500">"${b.mejoraria}"</div></div>` : ''}`;
   }
 
   if (perfilTab === 'checklist') {
-    if (!ck.length) {
-      return `<div class="empty-state"><div class="es-ico"><i class="ti ti-checklist"></i></div><p>Sin items en el checklist</p></div>`;
-    }
-
     return `
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
         <div class="prog-wrap" style="flex:1"><div class="prog-bar" data-w="${pct}" style="background:${pct===100?'var(--green)':'var(--blue)'}"></div></div>
         <span style="font-size:12px;font-weight:700;color:${pct===100?'var(--green)':'var(--blue)'};font-variant-numeric:tabular-nums">${pct}%</span>
       </div>
       ${pct===100 ? `<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#EEFBF2;border-radius:12px;margin-bottom:10px;font-size:12px;color:#15803D;font-weight:600"><i class="ti ti-confetti"></i>¡Offboarding completado!</div>` : ''}
-      ${ck.map(c => `
-        <div class="check-item ${c.completado?'done':''}">
-          <div class="check-box ${c.completado?'checked':''}" onclick="toggleCheck(${c.id}, ${!c.completado})" title="${c.completado?'Marcar pendiente':'Marcar completado'}">
-            ${c.completado ? '<i class="ti ti-check"></i>' : ''}
+      ${CHECKLIST_ITEMS.map(it => `
+        <div class="check-item ${b[it.key]?'done':''}">
+          <div class="check-box ${b[it.key]?'checked':''}" onclick="toggleCheck(${b.id}, '${it.key}', ${!b[it.key]})" title="${b[it.key]?'Marcar pendiente':'Marcar completado'}">
+            ${b[it.key] ? '<i class="ti ti-check"></i>' : ''}
           </div>
-          <span class="check-text">${c.item}</span>
-          <span class="check-resp">${c.responsable||''}</span>
-          <span class="check-date">${c.completado ? fmtFecha(c.fecha_completado) : ''}</span>
+          <i class="ti ${it.icon}" style="font-size:15px;color:var(--text4)"></i>
+          <span class="check-text">${it.label}</span>
         </div>`).join('')}`;
   }
 
@@ -1137,64 +1193,43 @@ function lanzarConfetti() {
   }
 }
 
-// ── TOGGLE CHECKLIST ──
-async function toggleCheck(checkId, nuevoEstado) {
-  const hoy = new Date().toISOString().split('T')[0];
-  const item = checklists.find(c=>c.id===checkId);
-  const bajaId = item?.baja_id;
-
-  const antes = bajaId ? checklists.filter(c=>c.baja_id===bajaId && c.completado).length : 0;
+// ── TOGGLE CHECKLIST (booleanos directos de la fila `salidas`) ──
+async function toggleCheck(bajaId, key, nuevoEstado) {
+  const b = bajas.find(x=>x.id===bajaId);
+  if (!b) return;
+  const antes = CHECKLIST_ITEMS.filter(it=>b[it.key]).length;
 
   if (esDemo()) {
-    if(item) { item.completado = nuevoEstado; item.fecha_completado = nuevoEstado ? hoy : null; }
-    actualizarEstadoOffboarding(bajaId);
-    celebrarSiCompleto(bajaId, antes);
+    b[key] = nuevoEstado;
+    celebrarSiCompleto(b, antes);
     renderizarTodo();
     return;
   }
 
-  const { error } = await db.from('checklist_offboarding').update({
-    completado: nuevoEstado,
-    fecha_completado: nuevoEstado ? hoy : null
-  }).eq('id', checkId);
-
+  const { error } = await db.from('salidas').update({ [key]: nuevoEstado }).eq('id', bajaId);
   if (error) { toast('Error: '+error.message,'err'); return; }
-  if(item) { item.completado = nuevoEstado; item.fecha_completado = nuevoEstado ? hoy : null; }
-  celebrarSiCompleto(bajaId, antes);
+  b[key] = nuevoEstado;
+  celebrarSiCompleto(b, antes);
   await cargar();
 }
 
-function celebrarSiCompleto(bajaId, antes) {
-  if (!bajaId) return;
-  const ck = checklists.filter(c=>c.baja_id===bajaId);
-  const done = ck.filter(c=>c.completado).length;
-  if (ck.length > 0 && done === ck.length && antes < ck.length) {
+function celebrarSiCompleto(b, antes) {
+  if (!b) return;
+  const done = CHECKLIST_ITEMS.filter(it=>b[it.key]).length;
+  if (done === CHECKLIST_ITEMS.length && antes < CHECKLIST_ITEMS.length) {
     lanzarConfetti();
     toast('¡Offboarding completado! 🎉','ok');
   }
 }
 
-function actualizarEstadoOffboarding(bajaId) {
-  if (!bajaId) return;
-  const ck = checklists.filter(c=>c.baja_id===bajaId);
-  const done = ck.filter(c=>c.completado).length;
-  const total = ck.length;
-  const b = bajas.find(x=>x.id===bajaId);
-  if (!b) return;
-  if (done === 0) b.estado_offboarding = 'Pendiente';
-  else if (done === total) b.estado_offboarding = 'Completado';
-  else b.estado_offboarding = 'En proceso';
-}
-
 // ── MODAL BAJA ──
 function abrirModalBaja() {
   try {
-    document.getElementById('baja-motivo').value = '';
     document.getElementById('baja-obs').value = '';
     document.getElementById('baja-fecha').value = new Date().toISOString().split('T')[0];
     document.getElementById('modal-baja-title').textContent = 'Registrar baja de empleado';
-    tipoBajaSel = 'Voluntaria';
-    document.querySelectorAll('#tipo-grid .tipo-opt').forEach(o=>o.classList.toggle('sel', o.dataset.tipo==='Voluntaria'));
+    tipoBajaSel = 'Renuncia';
+    document.querySelectorAll('#tipo-grid .tipo-opt').forEach(o=>o.classList.toggle('sel', o.dataset.tipo==='Renuncia'));
   } catch(e) {}
   llenarSelectEmpleados();
   abrirModal('modal-baja');
@@ -1207,11 +1242,9 @@ async function guardarBaja() {
 
   const datos = {
     empleado_id: empId,
-    tipo_baja: tipoBajaSel,
-    motivo: document.getElementById('baja-motivo').value.trim() || null,
+    motivo: tipoBajaSel,
     fecha_salida: fecha,
     observaciones: document.getElementById('baja-obs').value.trim() || null,
-    estado_offboarding: 'Pendiente'
   };
 
   const btn = document.getElementById('btn-baja-guardar');
@@ -1219,10 +1252,8 @@ async function guardarBaja() {
 
   if (esDemo()) {
     const newId = Date.now();
-    bajas.push({id: newId, ...datos});
-    CHECKLIST_DEFAULT.forEach((c,i) => {
-      checklists.push({id: newId*100+i, baja_id: newId, item: c.item, completado: false, responsable: c.responsable, fecha_completado: null});
-    });
+    bajas.push({id: newId, ...datos, porque_se_va: null, mejoraria: null, recomendaria: null,
+      equipo_entregado: false, accesos_revocados: false, liquidacion_firmada: false, entrevista_realizada: false});
     toast('Baja registrada (demo)','ok');
     bumpBadge();
     renderizarTodo();
@@ -1232,20 +1263,9 @@ async function guardarBaja() {
     return;
   }
 
-  const { data, error } = await db.from('bajas_empleado').insert([datos]).select();
+  const { data, error } = await db.from('salidas').insert([datos]).select();
   if(btn) btn.disabled = false;
   if (error) { toast('Error: '+error.message,'err'); return; }
-
-  if (data && data[0]) {
-    const bajaId = data[0].id;
-    const checkItems = CHECKLIST_DEFAULT.map(c => ({
-      baja_id: bajaId,
-      item: c.item,
-      completado: false,
-      responsable: c.responsable
-    }));
-    await db.from('checklist_offboarding').insert(checkItems);
-  }
 
   toast('Baja registrada correctamente','ok');
   bumpBadge();
@@ -1267,10 +1287,7 @@ function abrirEntrevista(bajaId) {
   try {
     document.getElementById('ent-motivo').value = '';
     document.getElementById('ent-sugerencias').value = '';
-    document.getElementById('ent-recomienda').value = 'true';
-    document.getElementById('ent-fecha').value = new Date().toISOString().split('T')[0];
-    ratings.ambiente = 3; ratings.jefe = 3; ratings.crecimiento = 3;
-    renderStars();
+    document.getElementById('ent-recomienda').value = 'Sí';
     const b = bajas.find(x=>x.id===bajaId);
     const emp = empleados.find(e=>e.id===b?.empleado_id);
     const desc = document.getElementById('ent-desc');
@@ -1281,25 +1298,21 @@ function abrirEntrevista(bajaId) {
 
 async function guardarEntrevista() {
   const motivo = document.getElementById('ent-motivo').value.trim();
-  if (!motivo) { toast('Indica el motivo principal de salida','err'); return; }
+  if (!motivo) { toast('Indica por qué se va el empleado','err'); return; }
 
   const datos = {
-    baja_id: entrevistaBajaId,
-    motivo_principal: motivo,
-    ambiente_laboral: ratings.ambiente,
-    relacion_jefe: ratings.jefe,
-    oportunidades_crecimiento: ratings.crecimiento,
-    recomendaria: document.getElementById('ent-recomienda').value === 'true',
-    sugerencias: document.getElementById('ent-sugerencias').value.trim() || null,
-    entrevistador: document.getElementById('ent-entrevistador').value.trim() || null,
-    fecha: document.getElementById('ent-fecha').value || new Date().toISOString().split('T')[0]
+    porque_se_va: motivo,
+    mejoraria: document.getElementById('ent-sugerencias').value.trim() || null,
+    recomendaria: document.getElementById('ent-recomienda').value,
+    entrevista_realizada: true
   };
 
   const btn = document.getElementById('btn-ent-guardar');
   if(btn) btn.disabled = true;
 
   if (esDemo()) {
-    entrevistas.push({id: Date.now(), ...datos});
+    const b = bajas.find(x=>x.id===entrevistaBajaId);
+    if (b) Object.assign(b, datos);
     toast('Entrevista registrada (demo)','ok');
     perfilTab = 'entrevista';
     renderizarTodo();
@@ -1308,7 +1321,7 @@ async function guardarEntrevista() {
     return;
   }
 
-  const { error } = await db.from('entrevistas_salida').insert([datos]);
+  const { error } = await db.from('salidas').update(datos).eq('id', entrevistaBajaId);
   if(btn) btn.disabled = false;
   if (error) { toast('Error: '+error.message,'err'); return; }
   toast('Entrevista de salida registrada','ok');
@@ -1322,7 +1335,7 @@ function confirmarEliminar(bajaId) {
   const b = bajas.find(x=>x.id===bajaId);
   const emp = empleados.find(e=>e.id===b?.empleado_id);
   document.getElementById('confirm-title').textContent = '¿Eliminar baja?';
-  document.getElementById('confirm-body').textContent = `Se eliminará el registro de baja de ${emp?.nombre || 'este empleado'}, junto con su entrevista y checklist asociados. Esta acción no se puede deshacer.`;
+  document.getElementById('confirm-body').textContent = `Se eliminará el registro de baja de ${emp?.nombre || 'este empleado'}, junto con los datos de su entrevista y checklist. Esta acción no se puede deshacer.`;
   document.getElementById('confirm-ok').onclick = () => eliminarBaja(bajaId);
   abrirModal('modal-confirm');
 }
@@ -1332,8 +1345,6 @@ async function eliminarBaja(bajaId) {
 
   if (esDemo()) {
     bajas = bajas.filter(b=>b.id!==bajaId);
-    entrevistas = entrevistas.filter(e=>e.baja_id!==bajaId);
-    checklists = checklists.filter(c=>c.baja_id!==bajaId);
     bajaSeleccionada = null;
     toast('Baja eliminada (demo)','ok');
     renderizarTodo();
@@ -1341,7 +1352,7 @@ async function eliminarBaja(bajaId) {
     return;
   }
 
-  const { error } = await db.from('bajas_empleado').delete().eq('id', bajaId);
+  const { error } = await db.from('salidas').delete().eq('id', bajaId);
   if (error) { toast('Error: '+error.message,'err'); return; }
   bajaSeleccionada = null;
   toast('Baja eliminada correctamente','ok');
@@ -1378,14 +1389,39 @@ function actualizarStats() {
     return d.getMonth()===ahora.getMonth() && d.getFullYear()===ahora.getFullYear();
   });
 
-  const pendientes = bajas.filter(b => b.estado_offboarding !== 'Completado');
-  const entrevistasTotal = entrevistas.length;
+  const pendientes = bajas.filter(b => estadoOffboarding(b) !== 'Completado');
+  const entrevistasTotal = bajas.filter(b => b.entrevista_realizada).length;
 
   const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
   animarNumero('st-total', bajas.length);
   setTxt('st-total-sub', `${bajas.length} registrada${bajas.length!==1?'s':''} en el sistema`);
   animarNumero('st-mes', bajasMes.length);
   setTxt('st-mes-sub', bajasMes.length ? `${bajasMes.length} en ${ahora.toLocaleDateString('es',{month:'long'})}` : 'Ninguna este mes');
+
+  // comparativa vs mes anterior
+  const mesPrev = new Date(ahora.getFullYear(), ahora.getMonth()-1, 1);
+  const bajasPrev = bajas.filter(b => {
+    if(!b.fecha_salida) return false;
+    const d = new Date(b.fecha_salida);
+    return d.getMonth()===mesPrev.getMonth() && d.getFullYear()===mesPrev.getFullYear();
+  }).length;
+  const trendEl = document.getElementById('st-mes-trend');
+  if (trendEl) {
+    const diff = bajasMes.length - bajasPrev;
+    const nombrePrev = mesPrev.toLocaleDateString('es',{month:'long'});
+    trendEl.classList.remove('trend-up','trend-down','trend-flat');
+    if (diff > 0) {
+      trendEl.classList.add('trend-up');
+      trendEl.innerHTML = `<i class="ti ti-trending-up"></i>+${diff} vs ${nombrePrev} (${bajasPrev})`;
+    } else if (diff < 0) {
+      trendEl.classList.add('trend-down');
+      trendEl.innerHTML = `<i class="ti ti-trending-down"></i>${diff} vs ${nombrePrev} (${bajasPrev})`;
+    } else {
+      trendEl.classList.add('trend-flat');
+      trendEl.innerHTML = `<i class="ti ti-minus"></i>igual que ${nombrePrev} (${bajasPrev})`;
+    }
+    trendEl.style.visibility = 'visible';
+  }
   animarNumero('st-entrevistas', entrevistasTotal);
   setTxt('st-entrevistas-sub', `${entrevistasTotal} de salida realizada${entrevistasTotal!==1?'s':''}`);
   animarNumero('st-pendientes', pendientes.length);
@@ -1394,12 +1430,29 @@ function actualizarStats() {
   renderMiniChart();
 }
 
+// ── AUTO-SELECCIÓN INICIAL ──
+// Al cargar con datos, muestra la baja más reciente en el expediente
+// (solo una vez; no interfiere al eliminar ni con realtime)
+let autoSelHecha = false;
+function autoSeleccionarPrimera() {
+  if (autoSelHecha || bajaSeleccionada !== null || !bajas.length) return;
+  autoSelHecha = true;
+  const primera = [...bajas].sort((a,b)=>new Date(b.fecha_salida)-new Date(a.fecha_salida))[0];
+  bajaSeleccionada = primera.id;
+  perfilTab = 'info';
+  renderPerfil();
+  renderTabla(); // re-render para marcar la fila seleccionada
+}
+
 // ── RENDER TODO ──
 function renderizarTodo() {
   actualizarStats();
   renderChips();
   renderTabla();
+  renderHistorico();
+  renderMotivos();
   if (bajaSeleccionada) renderPerfil();
+  autoSeleccionarPrimera();
 }
 
 function esDemo() { return modoDemoActivo; }
@@ -1445,17 +1498,13 @@ async function iniciar() {
 
 async function cargar() {
   try {
-    const [e, b, en, ck] = await Promise.all([
+    const [e, s] = await Promise.all([
       db.from('empleados').select('*'),
-      db.from('bajas_empleado').select('*').order('fecha_salida',{ascending:false}),
-      db.from('entrevistas_salida').select('*'),
-      db.from('checklist_offboarding').select('*'),
+      db.from('salidas').select('*').order('fecha_salida',{ascending:false}),
     ]);
 
     empleados = e.data || [];
-    bajas = b.data || [];
-    entrevistas = en.data || [];
-    checklists = ck.data || [];
+    bajas = s.data || [];
 
     if(empleados.length === 0) {
       cargarDatosDemo();
@@ -1475,9 +1524,7 @@ async function cargar() {
 function suscribirRealtime() {
   if(!db) return;
   db.channel('salida')
-    .on('postgres_changes',{event:'*',schema:'public',table:'bajas_empleado'}, ()=>cargar())
-    .on('postgres_changes',{event:'*',schema:'public',table:'entrevistas_salida'}, ()=>cargar())
-    .on('postgres_changes',{event:'*',schema:'public',table:'checklist_offboarding'}, ()=>cargar())
+    .on('postgres_changes',{event:'*',schema:'public',table:'salidas'}, ()=>cargar())
     .subscribe();
 }
 
@@ -1495,31 +1542,16 @@ function cargarDatosDemo() {
   ];
 
   bajas = [
-    {id:1,empleado_id:3,tipo_baja:'Voluntaria',motivo:'Oportunidad laboral en otra empresa',fecha_salida:'2026-06-30',observaciones:'Salida amigable, buen desempeño durante su estancia.',estado_offboarding:'Completado'},
-    {id:2,empleado_id:6,tipo_baja:'Fin de contrato',motivo:'Contrato de servicios profesionales finalizado',fecha_salida:'2026-07-15',observaciones:'Contrato no renovado por reestructuración del área comercial.',estado_offboarding:'En proceso'},
-  ];
-
-  entrevistas = [
-    {id:1,baja_id:1,motivo_principal:'Mejor oferta salarial y posición de liderazgo en otra empresa',ambiente_laboral:4,relacion_jefe:4,oportunidades_crecimiento:3,recomendaria:true,sugerencias:'Mejorar las oportunidades de crecimiento interno y revisar escalas salariales del mercado.',entrevistador:'Ana García',fecha:'2026-06-28'},
-  ];
-
-  checklists = [
-    {id:1,baja_id:1,item:'Devolución de laptop y equipo asignado',completado:true,responsable:'TI - Carlos Mora',fecha_completado:'2026-06-28'},
-    {id:2,baja_id:1,item:'Devolución de tarjeta de acceso / badge',completado:true,responsable:'Seguridad',fecha_completado:'2026-06-28'},
-    {id:3,baja_id:1,item:'Desactivación de correo corporativo',completado:true,responsable:'TI - Carlos Mora',fecha_completado:'2026-06-29'},
-    {id:4,baja_id:1,item:'Desactivación de accesos a sistemas',completado:true,responsable:'TI - Carlos Mora',fecha_completado:'2026-06-29'},
-    {id:5,baja_id:1,item:'Firma de carta de renuncia aceptada',completado:true,responsable:'RRHH - Ana García',fecha_completado:'2026-06-25'},
-    {id:6,baja_id:1,item:'Cálculo y pago de finiquito / liquidación',completado:true,responsable:'Finanzas - María Jiménez',fecha_completado:'2026-06-30'},
-    {id:7,baja_id:1,item:'Entrevista de salida realizada',completado:true,responsable:'RRHH - Ana García',fecha_completado:'2026-06-28'},
-    {id:8,baja_id:1,item:'Transferencia de conocimiento documentada',completado:true,responsable:'Marketing',fecha_completado:'2026-06-27'},
-    {id:9,baja_id:2,item:'Devolución de laptop y equipo asignado',completado:false,responsable:'TI - Carlos Mora',fecha_completado:null},
-    {id:10,baja_id:2,item:'Devolución de tarjeta de acceso / badge',completado:false,responsable:'Seguridad',fecha_completado:null},
-    {id:11,baja_id:2,item:'Desactivación de correo corporativo',completado:false,responsable:'TI - Carlos Mora',fecha_completado:null},
-    {id:12,baja_id:2,item:'Desactivación de accesos a sistemas',completado:false,responsable:'TI - Carlos Mora',fecha_completado:null},
-    {id:13,baja_id:2,item:'Firma de documento de fin de contrato',completado:true,responsable:'RRHH - Ana García',fecha_completado:'2026-07-08'},
-    {id:14,baja_id:2,item:'Cálculo y pago de finiquito / liquidación',completado:false,responsable:'Finanzas - María Jiménez',fecha_completado:null},
-    {id:15,baja_id:2,item:'Entrevista de salida realizada',completado:false,responsable:'RRHH - Ana García',fecha_completado:null},
-    {id:16,baja_id:2,item:'Transferencia de conocimiento documentada',completado:false,responsable:'Comercial',fecha_completado:null},
+    {id:1,empleado_id:3,motivo:'Renuncia',fecha_salida:'2026-06-30',
+      observaciones:'Salida amigable, buen desempeño durante su estancia.',
+      porque_se_va:'Mejor oferta salarial y posición de liderazgo en otra empresa',
+      mejoraria:'Mejorar las oportunidades de crecimiento interno y revisar escalas salariales del mercado.',
+      recomendaria:'Sí',
+      equipo_entregado:true, accesos_revocados:true, liquidacion_firmada:true, entrevista_realizada:true},
+    {id:2,empleado_id:6,motivo:'Fin de contrato',fecha_salida:'2026-07-15',
+      observaciones:'Contrato no renovado por reestructuración del área comercial.',
+      porque_se_va:null, mejoraria:null, recomendaria:null,
+      equipo_entregado:false, accesos_revocados:false, liquidacion_firmada:true, entrevista_realizada:false},
   ];
 }
 
@@ -1528,7 +1560,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.overlay').forEach(bg => {
     bg.addEventListener('click', e => { if(e.target===bg) bg.classList.remove('open'); });
   });
-  renderStars();
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));
@@ -1561,7 +1592,6 @@ window.abrirEntrevista = abrirEntrevista;
 window.guardarEntrevista = guardarEntrevista;
 window.confirmarEliminar = confirmarEliminar;
 window.cerrarModal = cerrarModal;
-window.setRating = setRating;
 window.selTipo = selTipo;
 window.onBuscar = onBuscar;
 window.limpiarBusqueda = limpiarBusqueda;
