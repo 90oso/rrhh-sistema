@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 5 — Salida · RRHH Sistema</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.2.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════
+   MODERN FLAT + GLASSMORPHISM · BENTO UI
+   Glass SOLO en: topbar flotante, modales y
+   tarjetas de métricas sobre mesh gradient.
+   ═══════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F6FB;
+  --surface:#FFFFFF;
+  --border:#E6EAF2;
+  --glass-bg:rgba(255,255,255,.58);
+  --glass-border:rgba(255,255,255,.72);
+  --glass-blur:blur(18px) saturate(1.4);
+  --text:#141B2E;--text2:#3D4759;--text3:#6B7690;--text4:#9AA4BB;
+  --sidebar:#0E1526;
+  --blue:#2563EB;--blue-h:#1D4ED8;--blue-soft:#EDF3FE;
+  --green:#16A34A;--red:#DC2626;--red-h:#B91C1C;
+  --orange:#EA580C;--purple:#7C3AED;--amber:#F59E0B;
+  --radius:20px;--radius-sm:12px;
+  /* sombras amplias, difusas, con tinte del color primario — nunca negras duras */
+  --shadow:0 6px 24px -6px rgba(37,99,235,.08),0 2px 8px -2px rgba(37,99,235,.05);
+  --shadow-md:0 14px 40px -8px rgba(37,99,235,.14),0 4px 12px -4px rgba(37,99,235,.07);
+  --shadow-lg:0 32px 80px -12px rgba(37,99,235,.22),0 12px 28px -8px rgba(30,58,138,.10);
+  --ease:cubic-bezier(.22,.68,0,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+::selection{background:#BFDBFE}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+/* scrollbars sutiles */
+.content::-webkit-scrollbar,.modal::-webkit-scrollbar,.sidebar::-webkit-scrollbar{width:8px}
+.content::-webkit-scrollbar-thumb,.modal::-webkit-scrollbar-thumb{background:#D4DBE8;border-radius:99px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:99px}
+
+/* ═══ LAYOUT ═══ */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:224px;background:var(--sidebar);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+/* mesh gradient corporativo muy sutil bajo el contenido */
+.main::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(600px 420px at 12% -5%, rgba(59,130,246,.13), transparent 60%),
+    radial-gradient(520px 380px at 88% 8%, rgba(139,92,246,.10), transparent 60%),
+    radial-gradient(700px 460px at 55% 108%, rgba(14,165,233,.09), transparent 62%);
+}
+.content{flex:1;overflow-y:auto;padding:18px 26px 26px;position:relative;z-index:1}
+
+/* ═══ SIDEBAR (flat, modo oscuro profundo) ═══ */
+.logo{padding:22px 16px 16px}
+.logo-mark{font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
+.logo-mark i{font-size:18px;color:#60A5FA}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.32);margin-top:2px;font-weight:500}
+.nav-section{padding:14px 8px 4px}
+.nav-label{padding:6px 10px;font-size:10px;font-weight:700;color:rgba(255,255,255,.28);letter-spacing:1.2px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:1px 0;cursor:pointer;color:rgba(255,255,255,.52);font-size:13px;font-weight:500;transition:all .18s var(--ease);text-decoration:none;border-radius:10px}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.92);transform:translateX(3px)}
+.nav-item.active{background:linear-gradient(135deg,rgba(37,99,235,.85),rgba(59,130,246,.65));color:#fff;font-weight:600;box-shadow:0 8px 20px -6px rgba(37,99,235,.5)}
+.nav-item i{font-size:16px;width:18px}
+.nav-badge{margin-left:auto;background:rgba(255,255,255,.18);color:#DBEAFE;font-size:10px;padding:1px 7px;border-radius:99px;font-weight:700;transition:transform .3s var(--ease)}
+.nav-badge.bump{transform:scale(1.35)}
+.sb-footer{margin-top:auto;padding:14px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.06)}
+.user-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;color:rgba(255,255,255,.88);font-weight:600}
+.user-role{font-size:10px;color:rgba(255,255,255,.34);font-weight:500}
+
+/* ═══ TOPBAR — barra flotante con GLASS ═══ */
+.topbar{
+  margin:14px 26px 0;position:relative;z-index:10;
+  background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);border-radius:16px;
+  padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;flex-shrink:0;
+  box-shadow:var(--shadow);
+}
+.topbar-l{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text3);font-weight:500}
+.page-title{color:var(--text);font-weight:700;font-size:15px;letter-spacing:-.01em}
+.topbar-r{display:flex;align-items:center;gap:10px}
+.search-wrap{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid transparent;border-radius:12px;background:rgba(255,255,255,.65);transition:all .2s var(--ease)}
+.search-wrap:focus-within{background:#fff;border-color:#BFDBFE;box-shadow:0 4px 16px -4px rgba(37,99,235,.18)}
+.search-wrap input{border:none;outline:none;font-size:13px;color:var(--text2);width:190px;background:transparent;font-family:inherit;font-weight:500}
+.search-wrap input::placeholder{color:var(--text4);font-weight:400}
+.search-kbd{font-size:10px;color:var(--text4);border:1px solid var(--border);border-radius:5px;padding:1px 5px;background:rgba(255,255,255,.7);font-weight:600}
+.search-clear{display:none;border:none;background:transparent;cursor:pointer;color:var(--text4);font-size:13px;padding:0;line-height:1}
+.search-clear:hover{color:var(--red)}
+.icon-btn{width:36px;height:36px;border-radius:12px;border:none;background:rgba(255,255,255,.65);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:16px;position:relative;transition:all .18s var(--ease)}
+.icon-btn:hover{background:#fff;transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(37,99,235,.2)}
+.notif-dot{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff;animation:pulse-dot 2.4s infinite}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)}50%{box-shadow:0 0 0 4px rgba(220,38,38,0)}}
+.av-top{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+
+/* ═══════════ BENTO GRID ═══════════ */
+.bento{
+  display:grid;gap:16px;
+  grid-template-columns:repeat(6,1fr);
+  grid-template-areas:
+    "hero hero mes  mes  ent  pend"
+    "tbl  tbl  tbl  tbl  perf perf";
+  align-items:start;
+}
+.b-hero{grid-area:hero}
+.b-mes{grid-area:mes}
+.b-ent{grid-area:ent}
+.b-pend{grid-area:pend}
+.b-tbl{grid-area:tbl}
+.b-perf{grid-area:perf}
+
+/* contenedor bento base (flat) */
+.bcard{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;box-shadow:var(--shadow);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease);
+  animation:rise .5s var(--ease) both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.bento>.bcard:nth-child(2){animation-delay:.05s}
+.bento>.bcard:nth-child(3){animation-delay:.1s}
+.bento>.bcard:nth-child(4){animation-delay:.15s}
+.bento>.bcard:nth-child(5){animation-delay:.2s}
+.bento>.bcard:nth-child(6){animation-delay:.25s}
+
+/* tarjetas de métricas → GLASS sobre el mesh gradient */
+.stat-glass{
+  background:var(--glass-bg);
+  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-border);
+}
+.stat-glass:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+
+/* hero 2x1 */
+.b-hero{display:flex;gap:18px;align-items:stretch}
+.hero-info{flex:1;display:flex;flex-direction:column}
+.stat-ico{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;margin-bottom:12px}
+.ico-blue{background:linear-gradient(135deg,#DBEAFE,#EDF3FE);color:var(--blue)}
+.ico-orange{background:linear-gradient(135deg,#FFEDD5,#FFF7ED);color:var(--orange)}
+.ico-green{background:linear-gradient(135deg,#DCFCE7,#F0FDF4);color:var(--green)}
+.ico-red{background:linear-gradient(135deg,#FEE2E2,#FEF2F2);color:var(--red)}
+.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
+.stat-val{font-size:32px;font-weight:800;color:var(--text);line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat-sub{font-size:11.5px;color:var(--text4);margin-top:4px;font-weight:500}
+.trend-warn{font-size:11.5px;color:var(--orange);margin-top:4px;font-weight:600}
+
+/* mini gráfico de barras del hero */
+.mini-chart{display:flex;align-items:flex-end;gap:8px;width:170px;padding:6px 0 0}
+.mc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
+.mc-bar{width:100%;max-width:20px;border-radius:6px 6px 3px 3px;background:linear-gradient(180deg,#3B82F6,#93C5FD);min-height:5px;transition:height .7s var(--ease);transform-origin:bottom}
+.mc-col:hover .mc-bar{background:linear-gradient(180deg,#1D4ED8,#60A5FA);transform:scaleY(1.04)}
+.mc-col span{font-size:9.5px;color:var(--text4);font-weight:600;text-transform:uppercase}
+
+/* stats compactas 1x1 */
+.stat-sm .stat-ico{width:38px;height:38px;font-size:18px;border-radius:12px;margin-bottom:10px}
+.stat-sm .stat-val{font-size:26px}
+
+/* ═══ CARD HEADERS ═══ */
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap}
+.card-title{font-size:14.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
+.count-pill{background:var(--blue-soft);color:var(--blue);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px}
+
+/* ═══ TABLE (jerarquía por peso y tono, sin líneas duras) ═══ */
+.tbl-wrap{overflow-x:auto;margin:0 -8px}
+table{width:100%;border-collapse:separate;border-spacing:0 2px}
+th{text-align:left;padding:8px 12px;font-size:10.5px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
+td{padding:10px 12px;color:var(--text2);vertical-align:middle;font-size:13px}
+tbody tr{cursor:pointer;transition:all .18s var(--ease);animation:rowIn .3s var(--ease) both}
+tbody tr td:first-child{border-radius:12px 0 0 12px}
+tbody tr td:last-child{border-radius:0 12px 12px 0}
+tbody tr:nth-child(1){animation-delay:.02s}tbody tr:nth-child(2){animation-delay:.05s}
+tbody tr:nth-child(3){animation-delay:.08s}tbody tr:nth-child(4){animation-delay:.11s}
+tbody tr:nth-child(5){animation-delay:.14s}tbody tr:nth-child(6){animation-delay:.17s}
+@keyframes rowIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+tbody tr:hover td{background:#F6F8FC}
+tbody tr.selected td{background:var(--blue-soft)}
+tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--blue)}
+.empty-row td{text-align:center;padding:28px;color:var(--text4);font-size:13px;cursor:default}
+
+/* skeleton */
+.sk{background:linear-gradient(90deg,#EDF1F8 25%,#F8FAFD 50%,#EDF1F8 75%);background-size:200% 100%;animation:shimmer 1.3s infinite;border-radius:6px;display:inline-block}
+@keyframes shimmer{to{background-position:-200% 0}}
+.sk-circle{width:32px;height:32px;border-radius:50%}
+.sk-line{height:11px}
+
+/* ═══ AVATAR ═══ */
+.av{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.av-xl{width:54px;height:54px;font-size:17px;border-radius:18px}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2.5px 9px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge i{font-size:11px}
+.b-gray{background:#F1F4F9;color:#5A6478}
+.b-blue{background:#EDF3FE;color:#1D4ED8}
+.b-yellow{background:#FEF9E7;color:#92400E}
+.b-purple{background:#F5F3FF;color:#5B21B6}
+.b-green{background:#EEFBF2;color:#15803D}
+.b-red{background:#FEF1F1;color:#B91C1C}
+.b-orange{background:#FFF4EA;color:#C2410C}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:11px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;cursor:pointer;font-weight:600;transition:all .18s var(--ease);white-space:nowrap;font-family:inherit}
+.btn:hover{background:#F6F8FC;border-color:#CBD8EE;transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(37,99,235,.15)}
+.btn:active{transform:translateY(0);box-shadow:none}
+.btn-sm{padding:5px 11px;font-size:12px;border-radius:9px}
+.btn-primary{background:linear-gradient(135deg,var(--blue),#3B82F6);color:#fff;border-color:transparent;box-shadow:0 8px 20px -6px rgba(37,99,235,.45)}
+.btn-primary:hover{background:linear-gradient(135deg,var(--blue-h),var(--blue));box-shadow:0 12px 28px -6px rgba(37,99,235,.5)}
+.btn-blue-o{color:var(--blue);border-color:#C7DBFC;background:#fff}
+.btn-blue-o:hover{background:var(--blue-soft)}
+.btn-danger{color:var(--red);border-color:#F8D3D3;background:#fff}
+.btn-danger:hover{background:#FEF1F1;box-shadow:0 8px 20px -6px rgba(220,38,38,.18)}
+.btn-danger-solid{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 8px 20px -6px rgba(220,38,38,.4)}
+.btn-danger-solid:hover{background:var(--red-h);border-color:var(--red-h)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* select de orden */
+.sort-select{border:1px solid var(--border);border-radius:10px;background:#fff;font-size:12px;color:var(--text3);font-weight:600;padding:6px 26px 6px 10px;cursor:pointer;font-family:inherit;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239AA4BB'%3E%3Cpath stroke-linecap='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;background-size:14px;transition:all .18s var(--ease)}
+.sort-select:hover{border-color:#BFDBFE;box-shadow:0 4px 14px -4px rgba(37,99,235,.15)}
+
+/* ═══ MODALS — GLASS ═══ */
+.overlay{position:fixed;inset:0;background:rgba(20,27,46,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:100;align-items:center;justify-content:center;display:flex;opacity:0;pointer-events:none;transition:opacity .22s var(--ease)}
+.overlay.open{opacity:1;pointer-events:auto}
+.modal{
+  background:rgba(255,255,255,.78);
+  backdrop-filter:blur(24px) saturate(1.5);-webkit-backdrop-filter:blur(24px) saturate(1.5);
+  border:1px solid rgba(255,255,255,.75);
+  border-radius:24px;padding:26px;width:560px;max-height:90vh;overflow-y:auto;position:relative;
+  box-shadow:var(--shadow-lg);
+  transform:translateY(16px) scale(.97);opacity:0;transition:all .28s var(--ease);
+}
+.overlay.open .modal{transform:translateY(0) scale(1);opacity:1}
+.modal-wide{width:700px}
+.modal-sm{width:400px}
+.modal-title{font-size:17px;font-weight:800;color:var(--text);margin-bottom:4px;letter-spacing:-.01em}
+.modal-desc{font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:500}
+.modal-close{position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:10px;border:none;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px;transition:all .18s var(--ease)}
+.modal-close:hover{background:#FEF1F1;color:var(--red);transform:rotate(90deg)}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px}
+
+/* ═══ FORMS ═══ */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{margin-bottom:13px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
+.req{color:var(--red)}
+.form-control{width:100%;padding:9px 12px;border:1px solid rgba(230,234,242,.9);border-radius:11px;font-size:13px;color:var(--text);background:rgba(255,255,255,.85);outline:none;transition:all .18s var(--ease);font-family:inherit;font-weight:500}
+.form-control::placeholder{font-weight:400;color:var(--text4)}
+.form-control:focus{border-color:#93C5FD;background:#fff;box-shadow:0 0 0 4px rgba(147,197,253,.22)}
+select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239AA4BB'%3E%3Cpath stroke-linecap='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px;padding-right:30px}
+textarea.form-control{resize:vertical;min-height:64px}
+.form-hint{font-size:11px;color:var(--text4);margin-top:3px;display:flex;align-items:center;gap:5px;font-weight:500}
+.section-hd{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin:16px 0 8px}
+
+/* ═══ SEGMENTED TIPO DE BAJA ═══ */
+.tipo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tipo-opt{border:1.5px solid rgba(230,234,242,.9);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s var(--ease);background:rgba(255,255,255,.7)}
+.tipo-opt i{font-size:20px;display:block;margin-bottom:5px;color:var(--text4);transition:color .2s}
+.tipo-opt span{font-size:11px;font-weight:600;color:var(--text3);display:block;line-height:1.25}
+.tipo-opt:hover{border-color:#BFDBFE;transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(37,99,235,.18)}
+.tipo-opt.sel{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 0 0 4px rgba(147,197,253,.2)}
+.tipo-opt.sel i,.tipo-opt.sel span{color:var(--blue)}
+
+/* ═══ STAR RATING (input) ═══ */
+.rating-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0}
+.rating-lbl{font-size:13px;color:var(--text2);font-weight:600}
+.stars{display:flex;gap:3px}
+.star{font-size:21px;color:#DFE5F0;cursor:pointer;transition:all .14s var(--ease);line-height:1}
+.star:hover{transform:scale(1.25)}
+.star.on{color:var(--amber);text-shadow:0 2px 8px rgba(245,158,11,.45)}
+.star-num{font-size:12px;font-weight:700;color:var(--text3);width:30px;text-align:right}
+
+/* ═══ RATING DISPLAY (perfil) ═══ */
+.rating-bar{display:flex;align-items:center;gap:8px;padding:6px 0}
+.rating-label{font-size:12px;color:var(--text2);font-weight:600;width:140px;flex-shrink:0}
+.rating-track{flex:1;height:7px;background:#EDF1F8;border-radius:99px;overflow:hidden}
+.rating-fill{height:100%;border-radius:99px;width:0;transition:width .7s var(--ease)}
+.rating-val{font-size:12px;font-weight:700;width:30px;text-align:right}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;gap:2px;background:#EFF2F9;padding:3px;border-radius:12px;margin-bottom:14px}
+.tab{flex:1;text-align:center;padding:7px 10px;font-size:12.5px;color:var(--text3);cursor:pointer;border-radius:9px;font-weight:600;transition:all .2s var(--ease);white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--blue);background:#fff;box-shadow:0 4px 14px -4px rgba(37,99,235,.18);font-weight:700}
+#tab-content{animation:fadeIn .25s var(--ease)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ CHECKLIST ═══ */
+.check-item{display:flex;align-items:center;gap:10px;padding:9px 10px;transition:all .2s var(--ease);border-radius:11px}
+.check-item:hover{background:#F6F8FC}
+.check-item.done{opacity:.55}
+.check-item.done .check-text{text-decoration:line-through}
+.check-box{width:21px;height:21px;border-radius:8px;border:2px solid #CBD5E4;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s var(--ease);flex-shrink:0}
+.check-box:hover{border-color:var(--blue);transform:scale(1.15)}
+.check-box.checked{background:var(--green);border-color:var(--green);animation:pop .25s var(--ease)}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.check-box.checked i{color:#fff;font-size:12px}
+.check-text{font-size:13px;color:var(--text2);flex:1;font-weight:500;transition:all .2s}
+.check-resp{font-size:11px;color:var(--text4);white-space:nowrap;font-weight:500}
+.check-date{font-size:11px;color:var(--text4);white-space:nowrap;width:78px;text-align:right;font-weight:500}
+
+/* ═══ PROGRESS ═══ */
+.prog-wrap{width:100%;height:7px;background:#EDF1F8;border-radius:99px;overflow:hidden}
+.prog-bar{height:100%;border-radius:99px;width:0;transition:width .6s var(--ease)}
+
+/* anillo SVG */
+.ring-wrap{position:relative;width:58px;height:58px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:#EDF1F8;stroke-width:5}
+.ring-fg{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .8s var(--ease),stroke .4s}
+.ring-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--text)}
+.ring-wrap.complete{animation:ringPulse .6s var(--ease)}
+@keyframes ringPulse{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+
+/* ═══ PROFILE (jerarquía por tono, sin divisores) ═══ */
+.profile-field{display:flex;justify-content:space-between;padding:7.5px 0;font-size:13px;gap:12px}
+.pf-lbl{color:var(--text4);flex-shrink:0;font-weight:500}
+.pf-val{color:var(--text);font-weight:600;text-align:right}
+#perfil-content{animation:fadeIn .3s var(--ease)}
+
+/* ═══ FILTER CHIPS ═══ */
+.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.chip{padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;color:var(--text3);font-weight:600;transition:all .2s var(--ease);display:inline-flex;align-items:center;gap:6px}
+.chip .chip-n{font-size:10px;font-weight:800;background:#EFF2F9;color:var(--text3);border-radius:99px;padding:0 6px;min-width:18px;text-align:center;transition:all .2s}
+.chip:hover{border-color:#BFDBFE;color:var(--blue);transform:translateY(-2px);box-shadow:0 6px 16px -5px rgba(37,99,235,.18)}
+.chip.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 8px 20px -6px rgba(37,99,235,.45)}
+.chip.active .chip-n{background:rgba(255,255,255,.25);color:#fff}
+
+/* ═══ TOAST ═══ */
+#toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:rgba(20,27,46,.92);backdrop-filter:blur(10px);color:#fff;padding:11px 16px;border-radius:14px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;opacity:0;transform:translateX(24px);transition:all .3s var(--ease);max-width:340px;box-shadow:var(--shadow-lg)}
+.toast i{font-size:16px}
+.toast.show{opacity:1;transform:translateX(0)}
+.toast.ok{background:linear-gradient(135deg,rgba(21,128,61,.95),rgba(22,163,74,.92))}
+.toast.err{background:linear-gradient(135deg,rgba(185,28,28,.95),rgba(220,38,38,.92))}
+
+/* ═══ STATUS ═══ */
+#db-status{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow-md);z-index:50;transition:all .5s var(--ease)}
+#db-status.hidden{opacity:0;transform:translate(-50%,-16px);pointer-events:none}
+.sdot{width:7px;height:7px;border-radius:50%}
+
+/* ═══ EMPTY STATE ═══ */
+.empty-state{text-align:center;padding:36px 16px;color:var(--text4)}
+.empty-state .es-ico{width:64px;height:64px;border-radius:22px;background:#F6F8FC;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.empty-state .es-ico i{font-size:28px;color:#C6CFDF}
+.empty-state p{font-size:13px;margin-top:4px;font-weight:500}
+
+/* ═══ CONFETTI ═══ */
+.confetti{position:fixed;width:8px;height:8px;top:-10px;z-index:400;pointer-events:none;border-radius:2px;animation:confetti-fall linear forwards}
+@keyframes confetti-fall{to{transform:translateY(105vh) rotate(720deg);opacity:.7}}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1200px){
+  .bento{
+    grid-template-columns:repeat(2,1fr);
+    grid-template-areas:
+      "hero hero"
+      "mes  ent"
+      "pend pend"
+      "tbl  tbl"
+      "perf perf";
+  }
+  .b-pend{display:flex;gap:16px;align-items:center}
+  .b-pend .stat-ico{margin-bottom:0}
+}
+@media(max-width:900px){
+  .sidebar{width:58px}
+  .logo-mark span,.logo-sub,.nav-item span,.user-info,.nav-label,.nav-badge{display:none}
+  .nav-item{justify-content:center;padding:10px}
+  .nav-item:hover{transform:none}
+  .search-wrap input{width:100px}
+  .topbar{margin:12px 14px 0}
+  .content{padding:14px}
+  .tipo-grid{grid-template-columns:1fr 1fr}
+  .bento{grid-template-columns:1fr;grid-template-areas:"hero" "mes" "ent" "pend" "tbl" "perf"}
+  .mini-chart{width:130px}
+}
+</style>
+</head>
+<body>
+
+<div id="db-status">
+  <div class="sdot" id="sdot" style="background:#F59E0B"></div>
+  <span id="stxt">Conectando...</span>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-mark"><i class="ti ti-building-community"></i><span>RRHH Sistema</span></div>
+      <div class="logo-sub">Gestión de Talento Humano</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Módulos</div>
+      <a class="nav-item" href="../modulo1-reclutamiento/index.html"><i class="ti ti-user-search"></i><span>Reclutamiento</span></a>
+      <a class="nav-item" href="../modulo2-personal/index.html"><i class="ti ti-users"></i><span>Personal</span></a>
+      <a class="nav-item" href="../modulo3-control/index.html"><i class="ti ti-clock-check"></i><span>Control Diario</span></a>
+      <a class="nav-item" href="../modulo4-desarrollo/index.html"><i class="ti ti-school"></i><span>Desarrollo</span></a>
+      <div class="nav-item active"><i class="ti ti-door-exit"></i><span>Salida</span><span class="nav-badge" id="badge-bajas">—</span></div>
+      <a class="nav-item" href="../modulo6-reportes/index.html"><i class="ti ti-chart-bar"></i><span>Reportes</span></a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Sistema</div>
+      <div class="nav-item"><i class="ti ti-settings"></i><span>Configuración</span></div>
+      <div class="nav-item"><i class="ti ti-help-circle"></i><span>Ayuda</span></div>
+    </div>
+    <div class="sb-footer">
+      <div class="user-av">AG</div>
+      <div class="user-info">
+        <div class="user-name">Ana García</div>
+        <div class="user-role">Gerente RRHH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- Topbar flotante glass -->
+    <div class="topbar">
+      <div class="topbar-l">
+        <i class="ti ti-home" style="font-size:14px"></i>
+        <span style="color:#C6CFDF">/</span>
+        <span class="page-title">Salida / Offboarding</span>
+      </div>
+      <div class="topbar-r">
+        <div class="search-wrap">
+          <i class="ti ti-search" style="font-size:14px;color:var(--text4)"></i>
+          <input id="search-input" placeholder="Buscar empleado o motivo..." oninput="onBuscar()">
+          <button class="search-clear" id="search-clear" onclick="limpiarBusqueda()" title="Limpiar"><i class="ti ti-x"></i></button>
+          <span class="search-kbd">/</span>
+        </div>
+        <div class="icon-btn" title="Notificaciones"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
+        <div class="av-top">AG</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══════════ BENTO GRID ══════════ -->
+      <div class="bento">
+
+        <!-- HERO 2x1 · glass -->
+        <div class="bcard stat-glass b-hero">
+          <div class="hero-info">
+            <div class="stat-ico ico-blue"><i class="ti ti-users-minus"></i></div>
+            <div class="stat-label">Total de bajas</div>
+            <div class="stat-val" id="st-total">—</div>
+            <div class="stat-sub" id="st-total-sub">registradas en el sistema</div>
+          </div>
+          <div class="mini-chart" id="mini-chart" title="Bajas últimos 6 meses"></div>
+        </div>
+
+        <!-- MES 2x1 · glass -->
+        <div class="bcard stat-glass b-mes">
+          <div class="stat-ico ico-orange"><i class="ti ti-calendar-event"></i></div>
+          <div class="stat-label">Bajas este mes</div>
+          <div class="stat-val" id="st-mes">—</div>
+          <div class="trend-warn" id="st-mes-sub">—</div>
+        </div>
+
+        <!-- ENTREVISTAS 1x1 · glass -->
+        <div class="bcard stat-glass stat-sm b-ent">
+          <div class="stat-ico ico-green"><i class="ti ti-message-circle-check"></i></div>
+          <div class="stat-label">Entrevistas</div>
+          <div class="stat-val" id="st-entrevistas">—</div>
+          <div class="stat-sub" id="st-entrevistas-sub">de salida realizadas</div>
+        </div>
+
+        <!-- PENDIENTES 1x1 · glass -->
+        <div class="bcard stat-glass stat-sm b-pend">
+          <div class="stat-ico ico-red"><i class="ti ti-clipboard-x"></i></div>
+          <div>
+            <div class="stat-label">Pendientes</div>
+            <div class="stat-val" id="st-pendientes">—</div>
+            <div class="stat-sub" id="st-pendientes-sub">procesos sin completar</div>
+          </div>
+        </div>
+
+        <!-- TABLA 4x2 · flat -->
+        <div class="bcard b-tbl" style="display:flex;flex-direction:column">
+          <div class="card-hd">
+            <div class="card-title">Registro de Bajas <span class="count-pill" id="tbl-count">0</span></div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select class="sort-select" id="sort-select" onchange="cambiarOrden(this.value)">
+                <option value="fecha-desc">Más recientes</option>
+                <option value="fecha-asc">Más antiguas</option>
+                <option value="nombre">Nombre A–Z</option>
+                <option value="progreso">Menor progreso</option>
+              </select>
+              <button class="btn btn-primary btn-sm" onclick="abrirModalBaja()"><i class="ti ti-user-minus"></i>Registrar Baja</button>
+            </div>
+          </div>
+          <div class="filter-row" id="filter-row"></div>
+          <div class="tbl-wrap" style="flex:1">
+            <table>
+              <thead>
+                <tr>
+                  <th>Empleado</th>
+                  <th>Tipo baja</th>
+                  <th>Salida</th>
+                  <th>Offboarding</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PERFIL 2x2 · flat -->
+        <div class="bcard b-perf" id="perfil-card">
+          <div id="perfil-content">
+            <div class="empty-state">
+              <div class="es-ico"><i class="ti ti-door-exit"></i></div>
+              <p><strong style="color:var(--text3)">Expediente de salida</strong></p>
+              <p>Selecciona una baja de la lista para ver su detalle, entrevista y checklist</p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /bento -->
+    </div><!-- /content -->
+  </div>
+</div>
+
+<!-- ══ MODAL: REGISTRAR BAJA ══ -->
+<div class="overlay" id="modal-baja">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrarModal('modal-baja')"><i class="ti ti-x"></i></button>
+    <div class="modal-title" id="modal-baja-title">Registrar baja de empleado</div>
+    <div class="modal-desc">Completa los datos de la salida. El checklist de offboarding se genera automáticamente.</div>
+    <div class="form-group">
+      <label class="form-label">Empleado <span class="req">*</span></label>
+      <select class="form-control" id="baja-empleado"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipo de baja <span class="req">*</span></label>
+      <div class="tipo-grid" id="tipo-grid">
+        <div class="tipo-opt sel" data-tipo="Voluntaria" onclick="selTipo(this)"><i class="ti ti-user-check"></i><span>Voluntaria</span></div>
+        <div class="tipo-opt" data-tipo="Involuntaria" onclick="selTipo(this)"><i class="ti ti-user-x"></i><span>Involuntaria</span></div>
+        <div class="tipo-opt" data-tipo="Fin de contrato" onclick="selTipo(this)"><i class="ti ti-file-off"></i><span>Fin de contrato</span></div>
+        <div class="tipo-opt" data-tipo="Jubilación" onclick="selTipo(this)"><i class="ti ti-beach"></i><span>Jubilación</span></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Fecha de salida <span class="req">*</span></label>
+        <input class="form-control" id="baja-fecha" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Motivo</label>
+        <input class="form-control" id="baja-motivo" placeholder="Motivo principal...">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Observaciones</label>
+      <textarea class="form-control" id="baja-obs" placeholder="Notas adicionales sobre la baja..."></textarea>
+    </div>
+    <div class="form-hint">
+      <i class="ti ti-sparkles" style="font-size:13px;color:var(--blue)"></i>
+      Se creará automáticamente un checklist de offboarding con 8 tareas estándar.
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-baja')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-baja-guardar" onclick="guardarBaja()"><i class="ti ti-check"></i>Registrar Baja</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: ENTREVISTA DE SALIDA ══ -->
+<div class="overlay" id="modal-entrevista">
+  <div class="modal modal-wide">
+    <button class="modal-close" onclick="cerrarModal('modal-entrevista')"><i class="ti ti-x"></i></button>
+    <div class="modal-title">Entrevista de Salida</div>
+    <div class="modal-desc" id="ent-desc">Registra la retroalimentación del empleado antes de su salida.</div>
+    <div class="form-group">
+      <label class="form-label">Motivo principal de salida <span class="req">*</span></label>
+      <textarea class="form-control" id="ent-motivo" placeholder="¿Cuál es la razón principal por la que deja la empresa?"></textarea>
+    </div>
+    <div class="section-hd">Calificación del ambiente (1–5 estrellas)</div>
+    <div class="rating-row">
+      <span class="rating-lbl">Ambiente laboral</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="stars" id="stars-ambiente"></div>
+        <span class="star-num" id="num-ambiente">3/5</span>
+      </div>
+    </div>
+    <div class="rating-row">
+      <span class="rating-lbl">Relación con jefe directo</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="stars" id="stars-jefe"></div>
+        <span class="star-num" id="num-jefe">3/5</span>
+      </div>
+    </div>
+    <div class="rating-row">
+      <span class="rating-lbl">Oportunidades de crecimiento</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="stars" id="stars-crecimiento"></div>
+        <span class="star-num" id="num-crecimiento">3/5</span>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:14px">
+      <label class="form-label">¿Recomendaría la empresa?</label>
+      <select class="form-control" id="ent-recomienda">
+        <option value="true">Sí, la recomendaría</option>
+        <option value="false">No la recomendaría</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Sugerencias de mejora</label>
+      <textarea class="form-control" id="ent-sugerencias" placeholder="¿Qué mejoraría de la empresa?"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Entrevistador</label>
+        <input class="form-control" id="ent-entrevistador" value="Ana García">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha</label>
+        <input class="form-control" id="ent-fecha" type="date">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="cerrarModal('modal-entrevista')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-ent-guardar" onclick="guardarEntrevista()"><i class="ti ti-check"></i>Guardar Entrevista</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CONFIRMACIÓN ══ -->
+<div class="overlay" id="modal-confirm">
+  <div class="modal modal-sm" style="text-align:center">
+    <div style="width:52px;height:52px;border-radius:18px;background:#FEF1F1;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+      <i class="ti ti-alert-triangle" style="font-size:24px;color:#DC2626"></i>
+    </div>
+    <div class="modal-title" style="text-align:center" id="confirm-title">¿Confirmar acción?</div>
+    <p style="font-size:13px;color:var(--text3);margin:8px 0 18px" id="confirm-body"></p>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn" onclick="cerrarModal('modal-confirm')">Cancelar</button>
+      <button class="btn btn-danger-solid" id="confirm-ok"><i class="ti ti-trash"></i>Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
+<script type="module">
+// ── SUPABASE ──
+let db = null;
+
+async function cargarSupabase() {
+  try {
+    const mod = await import('../supabase-client.js');
+    db = mod.supabase;
+    if (!db) throw new Error('supabase-client.js no exporta "supabase"');
+  } catch (err) {
+    console.error('No se pudo cargar supabase-client.js:', err);
+    db = null;
+  }
+}
+
+// ── captura global de errores fatales ──
+window.addEventListener('error', (e) => {
+  console.error('Error fatal capturado:', e.error || e.message);
+  const st = document.getElementById('db-status');
+  if (st) {
+    st.classList.remove('hidden');
+    const txt = document.getElementById('stxt');
+    const dot = document.getElementById('sdot');
+    if (txt) txt.textContent = 'Error cargando el módulo — revisa la consola';
+    if (dot) dot.style.background = '#EF4444';
+  }
+});
+
+// ── ESTADO ──
+let empleados = [];
+let bajas = [];
+let entrevistas = [];
+let checklists = [];
+let filtroTipo = 'todos';
+let ordenActual = 'fecha-desc';
+let bajaSeleccionada = null;
+let perfilTab = 'info';
+let modoDemoActivo = false;
+let entrevistaBajaId = null;
+let cargando = true;
+const ratings = { ambiente: 3, jefe: 3, crecimiento: 3 };
+const TIPOS = ['Voluntaria','Involuntaria','Fin de contrato','Jubilación'];
+let tipoBajaSel = 'Voluntaria';
+
+// ── HELPERS ──
+const AV_COLORS = ['#8B5CF6','#3B82F6','#EC4899','#0EA5E9','#10B981','#F59E0B','#6366F1','#14B8A6','#EF4444','#F97316'];
+function avColor(id) { return AV_COLORS[(id||0) % AV_COLORS.length]; }
+function iniciales(nombre) { return (nombre||'??').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase(); }
+function fmtFecha(iso) { if(!iso) return '—'; const d=new Date(iso+'T12:00:00'); return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'}); }
+
+// fecha relativa: "hace 3 días" / "en 6 días" / "hoy"
+function fmtRel(iso) {
+  if(!iso) return '';
+  const d = new Date(iso+'T12:00:00');
+  const hoy = new Date(); hoy.setHours(12,0,0,0);
+  const dias = Math.round((d - hoy) / 86400000);
+  if (dias === 0) return 'hoy';
+  if (dias === 1) return 'mañana';
+  if (dias === -1) return 'ayer';
+  if (dias > 0) return dias > 60 ? `en ${Math.round(dias/30)} meses` : `en ${dias} días`;
+  const abs = -dias;
+  return abs > 60 ? `hace ${Math.round(abs/30)} meses` : `hace ${abs} días`;
+}
+
+function tipoBadge(tipo) {
+  const m = {'Voluntaria':['b-blue','ti-user-check'],'Involuntaria':['b-red','ti-user-x'],'Fin de contrato':['b-orange','ti-file-off'],'Jubilación':['b-purple','ti-beach']};
+  const [cls,ico] = m[tipo]||['b-gray','ti-user'];
+  return `<span class="badge ${cls}"><i class="ti ${ico}"></i>${tipo}</span>`;
+}
+
+function offBadge(estado) {
+  const m = {'Pendiente':'b-yellow','En proceso':'b-orange','Completado':'b-green'};
+  return `<span class="badge ${m[estado]||'b-gray'}">${estado}</span>`;
+}
+
+function calcAntiguedad(fechaIngreso, fechaSalida) {
+  if (!fechaIngreso) return '—';
+  const ini = new Date(fechaIngreso+'T12:00:00');
+  const fin = fechaSalida ? new Date(fechaSalida+'T12:00:00') : new Date();
+  const diff = fin - ini;
+  const anios = Math.floor(diff / (365.25*24*60*60*1000));
+  const meses = Math.floor((diff % (365.25*24*60*60*1000)) / (30.44*24*60*60*1000));
+  if (anios > 0) return `${anios} año${anios>1?'s':''} ${meses} mes${meses!==1?'es':''}`;
+  return `${meses} mes${meses!==1?'es':''}`;
+}
+
+// contador animado para stats
+const statPrev = {};
+function animarNumero(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const from = statPrev[id] ?? 0;
+  statPrev[id] = target;
+  if (from === target) { el.textContent = target; return; }
+  const dur = 600, t0 = performance.now();
+  function tick(t) {
+    const p = Math.min((t - t0) / dur, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (target - from) * eased);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// mini gráfico de barras: bajas de los últimos 6 meses (hero bento)
+function renderMiniChart() {
+  const box = document.getElementById('mini-chart');
+  if (!box) return;
+  const hoy = new Date();
+  const meses = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(hoy.getFullYear(), hoy.getMonth()-i, 1);
+    meses.push({ y: d.getFullYear(), m: d.getMonth(), lbl: d.toLocaleDateString('es',{month:'narrow'}) });
+  }
+  const counts = meses.map(mm => bajas.filter(b => {
+    if (!b.fecha_salida) return false;
+    const d = new Date(b.fecha_salida+'T12:00:00');
+    return d.getMonth()===mm.m && d.getFullYear()===mm.y;
+  }).length);
+  const max = Math.max(...counts, 1);
+  box.innerHTML = meses.map((mm,i) =>
+    `<div class="mc-col" title="${counts[i]} baja${counts[i]!==1?'s':''} — ${mm.lbl.toUpperCase()}">
+      <div class="mc-bar" style="height:${Math.max(counts[i]/max*72, 5)}px"></div>
+      <span>${mm.lbl}</span>
+    </div>`).join('');
+}
+
+// ── CHECKLIST ITEMS DEFAULT ──
+const CHECKLIST_DEFAULT = [
+  { item: 'Devolución de laptop y equipo asignado', responsable: 'TI' },
+  { item: 'Devolución de tarjeta de acceso / badge', responsable: 'Seguridad' },
+  { item: 'Desactivación de correo corporativo', responsable: 'TI' },
+  { item: 'Desactivación de accesos a sistemas', responsable: 'TI' },
+  { item: 'Firma de documento de baja / renuncia', responsable: 'RRHH' },
+  { item: 'Cálculo y pago de finiquito / liquidación', responsable: 'Finanzas' },
+  { item: 'Entrevista de salida realizada', responsable: 'RRHH' },
+  { item: 'Transferencia de conocimiento documentada', responsable: 'Departamento' },
+];
+
+// ── STAR RATING ──
+function renderStars() {
+  Object.keys(ratings).forEach(campo => {
+    const box = document.getElementById('stars-'+campo);
+    const num = document.getElementById('num-'+campo);
+    if (!box) return;
+    box.innerHTML = [1,2,3,4,5].map(v =>
+      `<i class="ti ti-star-filled star ${v<=ratings[campo]?'on':''}" onclick="setRating('${campo}',${v})"></i>`
+    ).join('');
+    if (num) num.textContent = ratings[campo]+'/5';
+  });
+}
+function setRating(campo, val) { ratings[campo] = val; renderStars(); }
+
+// ── TIPO DE BAJA (segmentado) ──
+function selTipo(el) {
+  tipoBajaSel = el.dataset.tipo;
+  document.querySelectorAll('#tipo-grid .tipo-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+// ── FILTROS / BÚSQUEDA / ORDEN ──
+function filtrarPor(tipo) {
+  filtroTipo = tipo;
+  renderChips();
+  renderTabla();
+}
+
+function renderChips() {
+  const row = document.getElementById('filter-row');
+  if (!row) return;
+  const conteo = t => t==='todos' ? bajas.length : bajas.filter(b=>b.tipo_baja===t).length;
+  const chip = (t, lbl) =>
+    `<div class="chip ${filtroTipo===t?'active':''}" onclick="filtrarPor('${t}')">${lbl}<span class="chip-n">${conteo(t)}</span></div>`;
+  row.innerHTML = `<span style="font-size:12px;color:var(--text3);font-weight:600">Tipo:</span>` +
+    chip('todos','Todos') + TIPOS.map(t=>chip(t,t)).join('');
+}
+
+let debounceTimer = null;
+function onBuscar() {
+  const inp = document.getElementById('search-input');
+  const clr = document.getElementById('search-clear');
+  if (clr) clr.style.display = inp && inp.value ? 'block' : 'none';
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(renderTabla, 160);
+}
+function limpiarBusqueda() {
+  const inp = document.getElementById('search-input');
+  if (inp) { inp.value=''; inp.focus(); }
+  onBuscar();
+}
+
+function cambiarOrden(v) { ordenActual = v; renderTabla(); }
+
+// ── TABLA ──
+function skeletonRows(n=4) {
+  return Array.from({length:n}).map(()=>`<tr style="cursor:default">
+    <td><div style="display:flex;align-items:center;gap:9px"><span class="sk sk-circle"></span><span><span class="sk sk-line" style="width:110px;display:block;margin-bottom:5px"></span><span class="sk sk-line" style="width:70px;display:block"></span></span></div></td>
+    <td><span class="sk sk-line" style="width:80px"></span></td>
+    <td><span class="sk sk-line" style="width:64px"></span></td>
+    <td><span class="sk sk-line" style="width:110px"></span></td>
+    <td></td>
+  </tr>`).join('');
+}
+
+function renderTabla() {
+  const tbody = document.getElementById('tbody');
+  if(!tbody) return;
+
+  if (cargando) { tbody.innerHTML = skeletonRows(); return; }
+
+  const sInp = document.getElementById('search-input');
+  const busqueda = (sInp ? sInp.value : '').toLowerCase().trim();
+
+  let lista = bajas.filter(b => {
+    const emp = empleados.find(e=>e.id===b.empleado_id);
+    const nombre = emp ? emp.nombre.toLowerCase() : '';
+    const matchT = filtroTipo==='todos' || b.tipo_baja===filtroTipo;
+    const matchB = !busqueda || nombre.includes(busqueda) || (b.motivo||'').toLowerCase().includes(busqueda);
+    return matchT && matchB;
+  });
+
+  const pctDe = b => {
+    const ck = checklists.filter(c=>c.baja_id===b.id);
+    return ck.length ? Math.round(ck.filter(c=>c.completado).length/ck.length*100) : 0;
+  };
+  const nombreDe = b => (empleados.find(e=>e.id===b.empleado_id)?.nombre)||'';
+
+  lista.sort((a,b) => {
+    switch (ordenActual) {
+      case 'fecha-asc': return new Date(a.fecha_salida)-new Date(b.fecha_salida);
+      case 'nombre':    return nombreDe(a).localeCompare(nombreDe(b),'es');
+      case 'progreso':  return pctDe(a)-pctDe(b);
+      default:          return new Date(b.fecha_salida)-new Date(a.fecha_salida);
+    }
+  });
+
+  const pill = document.getElementById('tbl-count');
+  if (pill) pill.textContent = lista.length;
+
+  if (!lista.length) {
+    const conBusqueda = busqueda || filtroTipo!=='todos';
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">
+      <i class="ti ${conBusqueda?'ti-filter-off':'ti-users-minus'}" style="font-size:24px;display:block;margin:0 auto 8px;color:#C6CFDF"></i>
+      ${conBusqueda ? 'Sin resultados con los filtros actuales' : 'Sin bajas registradas'}
+      ${conBusqueda ? '<br><button class="btn btn-sm" style="margin-top:10px" onclick="resetFiltros()"><i class=\"ti ti-restore\"></i>Limpiar filtros</button>' : ''}
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = lista.map(b => {
+    const emp = empleados.find(e=>e.id===b.empleado_id);
+    const nombre = emp ? emp.nombre : 'Empleado #'+b.empleado_id;
+    const cargo = emp ? emp.cargo : '';
+    const ini = iniciales(nombre);
+    const col = avColor(b.empleado_id);
+    const pct = pctDe(b);
+    const isSelected = bajaSeleccionada===b.id;
+
+    return `<tr onclick="seleccionarBaja(${b.id})" class="${isSelected?'selected':''}">
+      <td>
+        <div style="display:flex;align-items:center;gap:9px">
+          <div class="av" style="background:${col}">${ini}</div>
+          <div>
+            <div style="font-weight:600;font-size:13px;color:var(--text)">${nombre}</div>
+            <div style="font-size:11px;color:var(--text4);font-weight:500">${cargo}</div>
+          </div>
+        </div>
+      </td>
+      <td>${tipoBadge(b.tipo_baja)}</td>
+      <td>
+        <div style="font-size:12px;font-weight:600;color:var(--text2)">${fmtFecha(b.fecha_salida)}</div>
+        <div style="font-size:10.5px;color:var(--text4)">${fmtRel(b.fecha_salida)}</div>
+      </td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${offBadge(b.estado_offboarding)}
+          <div style="width:48px">
+            <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${pct===100?'var(--green)':'var(--blue)'}"></div></div>
+          </div>
+          <span style="font-size:10px;color:var(--text4);font-weight:600;font-variant-numeric:tabular-nums">${pct}%</span>
+        </div>
+      </td>
+      <td><button class="btn btn-sm" title="Ver expediente" onclick="event.stopPropagation();seleccionarBaja(${b.id})"><i class="ti ti-chevron-right"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+
+function resetFiltros() {
+  filtroTipo = 'todos';
+  const inp = document.getElementById('search-input');
+  if (inp) inp.value = '';
+  onBuscar();
+  renderChips();
+  renderTabla();
+}
+
+// ── PERFIL / DETALLE ──
+function seleccionarBaja(id) {
+  if (bajaSeleccionada !== id) perfilTab = 'info';
+  bajaSeleccionada = id;
+  renderPerfil();
+  renderTabla();
+  if (window.innerWidth <= 1200) {
+    document.getElementById('perfil-card')?.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+function ringSVG(pct) {
+  const r = 24, c = 2*Math.PI*r;
+  const off = c - (pct/100)*c;
+  const color = pct===100 ? 'var(--green)' : 'var(--blue)';
+  return `<div class="ring-wrap ${pct===100?'complete':''}" title="Progreso de offboarding">
+    <svg width="58" height="58" viewBox="0 0 58 58">
+      <circle class="ring-bg" cx="29" cy="29" r="${r}"></circle>
+      <circle class="ring-fg" cx="29" cy="29" r="${r}" stroke="${color}" stroke-dasharray="${c}" stroke-dashoffset="${off}"></circle>
+    </svg>
+    <div class="ring-txt">${pct}%</div>
+  </div>`;
+}
+
+function renderPerfil() {
+  const b = bajas.find(x=>x.id===bajaSeleccionada);
+  if (!b) return;
+
+  const emp = empleados.find(e=>e.id===b.empleado_id);
+  const nombre = emp ? emp.nombre : 'Empleado #'+b.empleado_id;
+  const cargo = emp ? emp.cargo : '—';
+  const depto = emp ? emp.departamento : '—';
+  const ini = iniciales(nombre);
+  const col = avColor(b.empleado_id);
+
+  const ent = entrevistas.find(e=>e.baja_id===b.id);
+  const ck = checklists.filter(c=>c.baja_id===b.id);
+  const ckDone = ck.filter(c=>c.completado).length;
+  const ckTotal = ck.length;
+  const pct = ckTotal ? Math.round((ckDone/ckTotal)*100) : 0;
+
+  const pBox = document.getElementById('perfil-content');
+  if(!pBox) return;
+
+  pBox.innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div class="av av-xl" style="background:linear-gradient(135deg,${col},${col}CC)">${ini}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:16px;font-weight:700;margin-bottom:2px;letter-spacing:-.01em">${nombre}</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500">${cargo} · ${depto}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${tipoBadge(b.tipo_baja)}
+          ${offBadge(b.estado_offboarding)}
+        </div>
+      </div>
+      ${ringSVG(pct)}
+    </div>
+    <div class="tabs">
+      <div class="tab ${perfilTab==='info'?'active':''}" onclick="cambiarTab('info')"><i class="ti ti-id" style="font-size:13px"></i> Información</div>
+      <div class="tab ${perfilTab==='entrevista'?'active':''}" onclick="cambiarTab('entrevista')"><i class="ti ti-message-circle" style="font-size:13px"></i> Entrevista ${ent?'✓':''}</div>
+      <div class="tab ${perfilTab==='checklist'?'active':''}" onclick="cambiarTab('checklist')"><i class="ti ti-checklist" style="font-size:13px"></i> Checklist ${ckDone}/${ckTotal}</div>
+    </div>
+    <div id="tab-content">${renderTabContent(b, emp, ent, ck, pct)}</div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      ${!ent ? `<button class="btn btn-sm btn-blue-o" onclick="abrirEntrevista(${b.id})"><i class="ti ti-message-circle"></i>Entrevista de salida</button>` : ''}
+      <button class="btn btn-sm btn-danger" onclick="confirmarEliminar(${b.id})"><i class="ti ti-trash"></i>Eliminar baja</button>
+    </div>`;
+
+  requestAnimationFrame(()=>{
+    pBox.querySelectorAll('.rating-fill[data-w]').forEach(el=>{ el.style.width = el.dataset.w+'%'; });
+    pBox.querySelectorAll('.prog-bar[data-w]').forEach(el=>{ el.style.width = el.dataset.w+'%'; });
+  });
+}
+
+function cambiarTab(tab) {
+  perfilTab = tab;
+  renderPerfil();
+}
+
+function renderTabContent(b, emp, ent, ck, pct) {
+  if (perfilTab === 'info') {
+    return `
+      <div class="profile-field"><span class="pf-lbl">Fecha de ingreso</span><span class="pf-val">${fmtFecha(emp?.fecha_ingreso)}</span></div>
+      <div class="profile-field"><span class="pf-lbl">Fecha de salida</span><span class="pf-val">${fmtFecha(b.fecha_salida)} <span style="color:var(--text4);font-weight:400">(${fmtRel(b.fecha_salida)})</span></span></div>
+      <div class="profile-field"><span class="pf-lbl">Antigüedad</span><span class="pf-val">${calcAntiguedad(emp?.fecha_ingreso, b.fecha_salida)}</span></div>
+      <div class="profile-field"><span class="pf-lbl">Tipo de baja</span><span class="pf-val">${b.tipo_baja}</span></div>
+      <div class="profile-field"><span class="pf-lbl">Motivo</span><span class="pf-val">${b.motivo||'—'}</span></div>
+      <div class="profile-field"><span class="pf-lbl">Offboarding</span><span class="pf-val">${offBadge(b.estado_offboarding)}</span></div>
+      ${b.observaciones ? `<div style="margin-top:12px;padding:12px 14px;background:#F6F8FC;border-radius:12px;font-size:12px;color:var(--text3)"><strong style="color:var(--text2)"><i class="ti ti-note" style="font-size:12px"></i> Observaciones:</strong><br>${b.observaciones}</div>` : ''}`;
+  }
+
+  if (perfilTab === 'entrevista') {
+    if (!ent) {
+      return `<div class="empty-state">
+        <div class="es-ico"><i class="ti ti-message-circle-off"></i></div>
+        <p>No se ha realizado entrevista de salida</p>
+        <button class="btn btn-sm btn-blue-o" style="margin-top:12px" onclick="abrirEntrevista(${b.id})"><i class="ti ti-message-circle"></i>Registrar entrevista</button>
+      </div>`;
+    }
+
+    function ratingBar(label, value, color) {
+      const p = ((value||0)/5)*100;
+      return `<div class="rating-bar">
+        <span class="rating-label">${label}</span>
+        <div class="rating-track"><div class="rating-fill" data-w="${p}" style="background:${color}"></div></div>
+        <span class="rating-val" style="color:${color}">${value||0}/5</span>
+      </div>`;
+    }
+
+    const prom = ((ent.ambiente_laboral+ent.relacion_jefe+ent.oportunidades_crecimiento)/3).toFixed(1);
+
+    return `
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Motivo principal</div>
+        <div style="padding:12px 14px;background:#F6F8FC;border-radius:12px;font-size:13px;color:var(--text2);font-weight:500">${ent.motivo_principal||'—'}</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px">Calificaciones</span>
+        <span class="badge ${prom>=3.5?'b-green':prom>=2.5?'b-yellow':'b-red'}"><i class="ti ti-star-filled"></i>Promedio ${prom}</span>
+      </div>
+      ${ratingBar('Ambiente laboral', ent.ambiente_laboral, '#2563EB')}
+      ${ratingBar('Relación con jefe', ent.relacion_jefe, '#7C3AED')}
+      ${ratingBar('Crecimiento', ent.oportunidades_crecimiento, '#EA580C')}
+      <div class="profile-field" style="margin-top:10px">
+        <span class="pf-lbl">¿Recomendaría la empresa?</span>
+        <span class="pf-val">${ent.recomendaria ? '<span class="badge b-green"><i class="ti ti-thumb-up"></i>Sí</span>' : '<span class="badge b-red"><i class="ti ti-thumb-down"></i>No</span>'}</span>
+      </div>
+      ${ent.sugerencias ? `<div style="margin-top:10px"><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Sugerencias</div><div style="padding:12px 14px;background:#FEF9E7;border-radius:12px;font-size:12px;color:#92400E;font-style:italic;font-weight:500">"${ent.sugerencias}"</div></div>` : ''}
+      <div style="margin-top:10px;font-size:11px;color:var(--text4);font-weight:500"><i class="ti ti-user" style="font-size:11px"></i> Entrevistado por ${ent.entrevistador||'—'} · ${fmtFecha(ent.fecha)}</div>`;
+  }
+
+  if (perfilTab === 'checklist') {
+    if (!ck.length) {
+      return `<div class="empty-state"><div class="es-ico"><i class="ti ti-checklist"></i></div><p>Sin items en el checklist</p></div>`;
+    }
+
+    return `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div class="prog-wrap" style="flex:1"><div class="prog-bar" data-w="${pct}" style="background:${pct===100?'var(--green)':'var(--blue)'}"></div></div>
+        <span style="font-size:12px;font-weight:700;color:${pct===100?'var(--green)':'var(--blue)'};font-variant-numeric:tabular-nums">${pct}%</span>
+      </div>
+      ${pct===100 ? `<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#EEFBF2;border-radius:12px;margin-bottom:10px;font-size:12px;color:#15803D;font-weight:600"><i class="ti ti-confetti"></i>¡Offboarding completado!</div>` : ''}
+      ${ck.map(c => `
+        <div class="check-item ${c.completado?'done':''}">
+          <div class="check-box ${c.completado?'checked':''}" onclick="toggleCheck(${c.id}, ${!c.completado})" title="${c.completado?'Marcar pendiente':'Marcar completado'}">
+            ${c.completado ? '<i class="ti ti-check"></i>' : ''}
+          </div>
+          <span class="check-text">${c.item}</span>
+          <span class="check-resp">${c.responsable||''}</span>
+          <span class="check-date">${c.completado ? fmtFecha(c.fecha_completado) : ''}</span>
+        </div>`).join('')}`;
+  }
+
+  return '';
+}
+
+// ── CONFETTI (al completar offboarding) ──
+function lanzarConfetti() {
+  const colores = ['#2563EB','#16A34A','#F59E0B','#EC4899','#8B5CF6','#F97316'];
+  for (let i=0;i<36;i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random()*100+'vw';
+    c.style.background = colores[i%colores.length];
+    c.style.animationDuration = (1.4+Math.random()*1.4)+'s';
+    c.style.animationDelay = (Math.random()*.3)+'s';
+    c.style.width = c.style.height = (5+Math.random()*6)+'px';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 3200);
+  }
+}
+
+// ── TOGGLE CHECKLIST ──
+async function toggleCheck(checkId, nuevoEstado) {
+  const hoy = new Date().toISOString().split('T')[0];
+  const item = checklists.find(c=>c.id===checkId);
+  const bajaId = item?.baja_id;
+
+  const antes = bajaId ? checklists.filter(c=>c.baja_id===bajaId && c.completado).length : 0;
+
+  if (esDemo()) {
+    if(item) { item.completado = nuevoEstado; item.fecha_completado = nuevoEstado ? hoy : null; }
+    actualizarEstadoOffboarding(bajaId);
+    celebrarSiCompleto(bajaId, antes);
+    renderizarTodo();
+    return;
+  }
+
+  const { error } = await db.from('checklist_offboarding').update({
+    completado: nuevoEstado,
+    fecha_completado: nuevoEstado ? hoy : null
+  }).eq('id', checkId);
+
+  if (error) { toast('Error: '+error.message,'err'); return; }
+  if(item) { item.completado = nuevoEstado; item.fecha_completado = nuevoEstado ? hoy : null; }
+  celebrarSiCompleto(bajaId, antes);
+  await cargar();
+}
+
+function celebrarSiCompleto(bajaId, antes) {
+  if (!bajaId) return;
+  const ck = checklists.filter(c=>c.baja_id===bajaId);
+  const done = ck.filter(c=>c.completado).length;
+  if (ck.length > 0 && done === ck.length && antes < ck.length) {
+    lanzarConfetti();
+    toast('¡Offboarding completado! 🎉','ok');
+  }
+}
+
+function actualizarEstadoOffboarding(bajaId) {
+  if (!bajaId) return;
+  const ck = checklists.filter(c=>c.baja_id===bajaId);
+  const done = ck.filter(c=>c.completado).length;
+  const total = ck.length;
+  const b = bajas.find(x=>x.id===bajaId);
+  if (!b) return;
+  if (done === 0) b.estado_offboarding = 'Pendiente';
+  else if (done === total) b.estado_offboarding = 'Completado';
+  else b.estado_offboarding = 'En proceso';
+}
+
+// ── MODAL BAJA ──
+function abrirModalBaja() {
+  try {
+    document.getElementById('baja-motivo').value = '';
+    document.getElementById('baja-obs').value = '';
+    document.getElementById('baja-fecha').value = new Date().toISOString().split('T')[0];
+    document.getElementById('modal-baja-title').textContent = 'Registrar baja de empleado';
+    tipoBajaSel = 'Voluntaria';
+    document.querySelectorAll('#tipo-grid .tipo-opt').forEach(o=>o.classList.toggle('sel', o.dataset.tipo==='Voluntaria'));
+  } catch(e) {}
+  llenarSelectEmpleados();
+  abrirModal('modal-baja');
+}
+
+async function guardarBaja() {
+  const empId = Number(document.getElementById('baja-empleado').value);
+  const fecha = document.getElementById('baja-fecha').value;
+  if (!empId || !fecha) { toast('Completa empleado y fecha de salida','err'); return; }
+
+  const datos = {
+    empleado_id: empId,
+    tipo_baja: tipoBajaSel,
+    motivo: document.getElementById('baja-motivo').value.trim() || null,
+    fecha_salida: fecha,
+    observaciones: document.getElementById('baja-obs').value.trim() || null,
+    estado_offboarding: 'Pendiente'
+  };
+
+  const btn = document.getElementById('btn-baja-guardar');
+  if(btn) btn.disabled = true;
+
+  if (esDemo()) {
+    const newId = Date.now();
+    bajas.push({id: newId, ...datos});
+    CHECKLIST_DEFAULT.forEach((c,i) => {
+      checklists.push({id: newId*100+i, baja_id: newId, item: c.item, completado: false, responsable: c.responsable, fecha_completado: null});
+    });
+    toast('Baja registrada (demo)','ok');
+    bumpBadge();
+    renderizarTodo();
+    cerrarModal('modal-baja');
+    seleccionarBaja(newId);
+    if(btn) btn.disabled = false;
+    return;
+  }
+
+  const { data, error } = await db.from('bajas_empleado').insert([datos]).select();
+  if(btn) btn.disabled = false;
+  if (error) { toast('Error: '+error.message,'err'); return; }
+
+  if (data && data[0]) {
+    const bajaId = data[0].id;
+    const checkItems = CHECKLIST_DEFAULT.map(c => ({
+      baja_id: bajaId,
+      item: c.item,
+      completado: false,
+      responsable: c.responsable
+    }));
+    await db.from('checklist_offboarding').insert(checkItems);
+  }
+
+  toast('Baja registrada correctamente','ok');
+  bumpBadge();
+  cerrarModal('modal-baja');
+  await cargar();
+  if (data && data[0]) seleccionarBaja(data[0].id);
+}
+
+function bumpBadge() {
+  const el = document.getElementById('badge-bajas');
+  if (!el) return;
+  el.classList.add('bump');
+  setTimeout(()=>el.classList.remove('bump'), 350);
+}
+
+// ── MODAL ENTREVISTA ──
+function abrirEntrevista(bajaId) {
+  entrevistaBajaId = bajaId;
+  try {
+    document.getElementById('ent-motivo').value = '';
+    document.getElementById('ent-sugerencias').value = '';
+    document.getElementById('ent-recomienda').value = 'true';
+    document.getElementById('ent-fecha').value = new Date().toISOString().split('T')[0];
+    ratings.ambiente = 3; ratings.jefe = 3; ratings.crecimiento = 3;
+    renderStars();
+    const b = bajas.find(x=>x.id===bajaId);
+    const emp = empleados.find(e=>e.id===b?.empleado_id);
+    const desc = document.getElementById('ent-desc');
+    if (desc && emp) desc.textContent = `Retroalimentación de ${emp.nombre} antes de su salida.`;
+  } catch(e) {}
+  abrirModal('modal-entrevista');
+}
+
+async function guardarEntrevista() {
+  const motivo = document.getElementById('ent-motivo').value.trim();
+  if (!motivo) { toast('Indica el motivo principal de salida','err'); return; }
+
+  const datos = {
+    baja_id: entrevistaBajaId,
+    motivo_principal: motivo,
+    ambiente_laboral: ratings.ambiente,
+    relacion_jefe: ratings.jefe,
+    oportunidades_crecimiento: ratings.crecimiento,
+    recomendaria: document.getElementById('ent-recomienda').value === 'true',
+    sugerencias: document.getElementById('ent-sugerencias').value.trim() || null,
+    entrevistador: document.getElementById('ent-entrevistador').value.trim() || null,
+    fecha: document.getElementById('ent-fecha').value || new Date().toISOString().split('T')[0]
+  };
+
+  const btn = document.getElementById('btn-ent-guardar');
+  if(btn) btn.disabled = true;
+
+  if (esDemo()) {
+    entrevistas.push({id: Date.now(), ...datos});
+    toast('Entrevista registrada (demo)','ok');
+    perfilTab = 'entrevista';
+    renderizarTodo();
+    cerrarModal('modal-entrevista');
+    if(btn) btn.disabled = false;
+    return;
+  }
+
+  const { error } = await db.from('entrevistas_salida').insert([datos]);
+  if(btn) btn.disabled = false;
+  if (error) { toast('Error: '+error.message,'err'); return; }
+  toast('Entrevista de salida registrada','ok');
+  perfilTab = 'entrevista';
+  cerrarModal('modal-entrevista');
+  await cargar();
+}
+
+// ── ELIMINAR BAJA ──
+function confirmarEliminar(bajaId) {
+  const b = bajas.find(x=>x.id===bajaId);
+  const emp = empleados.find(e=>e.id===b?.empleado_id);
+  document.getElementById('confirm-title').textContent = '¿Eliminar baja?';
+  document.getElementById('confirm-body').textContent = `Se eliminará el registro de baja de ${emp?.nombre || 'este empleado'}, junto con su entrevista y checklist asociados. Esta acción no se puede deshacer.`;
+  document.getElementById('confirm-ok').onclick = () => eliminarBaja(bajaId);
+  abrirModal('modal-confirm');
+}
+
+async function eliminarBaja(bajaId) {
+  cerrarModal('modal-confirm');
+
+  if (esDemo()) {
+    bajas = bajas.filter(b=>b.id!==bajaId);
+    entrevistas = entrevistas.filter(e=>e.baja_id!==bajaId);
+    checklists = checklists.filter(c=>c.baja_id!==bajaId);
+    bajaSeleccionada = null;
+    toast('Baja eliminada (demo)','ok');
+    renderizarTodo();
+    resetPerfil();
+    return;
+  }
+
+  const { error } = await db.from('bajas_empleado').delete().eq('id', bajaId);
+  if (error) { toast('Error: '+error.message,'err'); return; }
+  bajaSeleccionada = null;
+  toast('Baja eliminada correctamente','ok');
+  await cargar();
+  resetPerfil();
+}
+
+function resetPerfil() {
+  const pBox = document.getElementById('perfil-content');
+  if(pBox) pBox.innerHTML = `<div class="empty-state">
+    <div class="es-ico"><i class="ti ti-door-exit"></i></div>
+    <p><strong style="color:var(--text3)">Expediente de salida</strong></p>
+    <p>Selecciona una baja de la lista para ver su detalle, entrevista y checklist</p>
+  </div>`;
+}
+
+// ── SELECTS ──
+function llenarSelectEmpleados() {
+  const bajasIds = new Set(bajas.map(b=>b.empleado_id));
+  const disponibles = empleados.filter(e => !bajasIds.has(e.id) && (e.estado||'Activo')==='Activo');
+  const opts = disponibles.length
+    ? disponibles.map(e=>`<option value="${e.id}">${e.nombre} — ${e.cargo||''}</option>`).join('')
+    : '<option value="">No hay empleados disponibles</option>';
+  const sel = document.getElementById('baja-empleado');
+  if(sel) sel.innerHTML = opts;
+}
+
+// ── STATS ──
+function actualizarStats() {
+  const ahora = new Date();
+  const bajasMes = bajas.filter(b => {
+    if(!b.fecha_salida) return false;
+    const d = new Date(b.fecha_salida);
+    return d.getMonth()===ahora.getMonth() && d.getFullYear()===ahora.getFullYear();
+  });
+
+  const pendientes = bajas.filter(b => b.estado_offboarding !== 'Completado');
+  const entrevistasTotal = entrevistas.length;
+
+  const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  animarNumero('st-total', bajas.length);
+  setTxt('st-total-sub', `${bajas.length} registrada${bajas.length!==1?'s':''} en el sistema`);
+  animarNumero('st-mes', bajasMes.length);
+  setTxt('st-mes-sub', bajasMes.length ? `${bajasMes.length} en ${ahora.toLocaleDateString('es',{month:'long'})}` : 'Ninguna este mes');
+  animarNumero('st-entrevistas', entrevistasTotal);
+  setTxt('st-entrevistas-sub', `${entrevistasTotal} de salida realizada${entrevistasTotal!==1?'s':''}`);
+  animarNumero('st-pendientes', pendientes.length);
+  setTxt('st-pendientes-sub', `${pendientes.length} proceso${pendientes.length!==1?'s':''} sin completar`);
+  setTxt('badge-bajas', bajas.length);
+  renderMiniChart();
+}
+
+// ── RENDER TODO ──
+function renderizarTodo() {
+  actualizarStats();
+  renderChips();
+  renderTabla();
+  if (bajaSeleccionada) renderPerfil();
+}
+
+function esDemo() { return modoDemoActivo; }
+
+function abrirModal(id) {
+  const el = document.getElementById(id);
+  if(el) {
+    el.classList.add('open');
+    setTimeout(()=>el.querySelector('input,select,textarea')?.focus(), 120);
+  }
+}
+function cerrarModal(id) { const el = document.getElementById(id); if(el) el.classList.remove('open'); }
+
+// ── INICIO ──
+async function iniciar() {
+  const dot = document.getElementById('sdot');
+  const txt = document.getElementById('stxt');
+  const st  = document.getElementById('db-status');
+
+  try {
+    if (!db) throw new Error("Cliente de Supabase no inicializado");
+
+    const { data, error } = await db.from('empleados').select('id').limit(1);
+    if (error) throw error;
+
+    if(dot) dot.style.background = '#22C55E';
+    if(txt) txt.textContent = 'Conectado a Supabase';
+    if(st) setTimeout(()=>st.classList.add('hidden'),2000);
+
+    await cargar();
+    suscribirRealtime();
+  } catch (err) {
+    console.error("Fallo de conexión, activando fallback demo:", err);
+    modoDemoActivo = true;
+    if(dot) dot.style.background = '#F59E0B';
+    if(txt) txt.textContent = 'Modo demo — Fallback activo';
+    if(st) setTimeout(()=>st.classList.add('hidden'),4000);
+    cargarDatosDemo();
+    cargando = false;
+    renderizarTodo();
+  }
+}
+
+async function cargar() {
+  try {
+    const [e, b, en, ck] = await Promise.all([
+      db.from('empleados').select('*'),
+      db.from('bajas_empleado').select('*').order('fecha_salida',{ascending:false}),
+      db.from('entrevistas_salida').select('*'),
+      db.from('checklist_offboarding').select('*'),
+    ]);
+
+    empleados = e.data || [];
+    bajas = b.data || [];
+    entrevistas = en.data || [];
+    checklists = ck.data || [];
+
+    if(empleados.length === 0) {
+      cargarDatosDemo();
+    }
+
+    cargando = false;
+    renderizarTodo();
+  } catch(err) {
+    console.error("Error cargando colecciones:", err);
+    modoDemoActivo = true;
+    cargarDatosDemo();
+    cargando = false;
+    renderizarTodo();
+  }
+}
+
+function suscribirRealtime() {
+  if(!db) return;
+  db.channel('salida')
+    .on('postgres_changes',{event:'*',schema:'public',table:'bajas_empleado'}, ()=>cargar())
+    .on('postgres_changes',{event:'*',schema:'public',table:'entrevistas_salida'}, ()=>cargar())
+    .on('postgres_changes',{event:'*',schema:'public',table:'checklist_offboarding'}, ()=>cargar())
+    .subscribe();
+}
+
+// ── DATOS DEMO ──
+function cargarDatosDemo() {
+  empleados = [
+    {id:1,nombre:'Ana García',cargo:'Gerente RRHH',departamento:'RRHH',estado:'Activo',fecha_ingreso:'2020-01-15'},
+    {id:2,nombre:'Carlos Mora',cargo:'Analista TI',departamento:'TI',estado:'Activo',fecha_ingreso:'2021-03-10'},
+    {id:3,nombre:'Lucía Pérez',cargo:'Diseñadora',departamento:'Marketing',estado:'Inactivo',fecha_ingreso:'2022-06-01'},
+    {id:4,nombre:'Roberto Sánchez',cargo:'Dev Backend',departamento:'TI',estado:'Activo',fecha_ingreso:'2021-08-15'},
+    {id:5,nombre:'María Jiménez',cargo:'Contadora',departamento:'Finanzas',estado:'Activo',fecha_ingreso:'2020-11-20'},
+    {id:6,nombre:'Diego Vargas',cargo:'Vendedor',departamento:'Comercial',estado:'Inactivo',fecha_ingreso:'2023-02-01'},
+    {id:7,nombre:'Patricia López',cargo:'Asistente RRHH',departamento:'RRHH',estado:'Activo',fecha_ingreso:'2023-09-15'},
+    {id:8,nombre:'Fernando Ruiz',cargo:'Supervisor',departamento:'Operaciones',estado:'Activo',fecha_ingreso:'2022-04-10'},
+  ];
+
+  bajas = [
+    {id:1,empleado_id:3,tipo_baja:'Voluntaria',motivo:'Oportunidad laboral en otra empresa',fecha_salida:'2026-06-30',observaciones:'Salida amigable, buen desempeño durante su estancia.',estado_offboarding:'Completado'},
+    {id:2,empleado_id:6,tipo_baja:'Fin de contrato',motivo:'Contrato de servicios profesionales finalizado',fecha_salida:'2026-07-15',observaciones:'Contrato no renovado por reestructuración del área comercial.',estado_offboarding:'En proceso'},
+  ];
+
+  entrevistas = [
+    {id:1,baja_id:1,motivo_principal:'Mejor oferta salarial y posición de liderazgo en otra empresa',ambiente_laboral:4,relacion_jefe:4,oportunidades_crecimiento:3,recomendaria:true,sugerencias:'Mejorar las oportunidades de crecimiento interno y revisar escalas salariales del mercado.',entrevistador:'Ana García',fecha:'2026-06-28'},
+  ];
+
+  checklists = [
+    {id:1,baja_id:1,item:'Devolución de laptop y equipo asignado',completado:true,responsable:'TI - Carlos Mora',fecha_completado:'2026-06-28'},
+    {id:2,baja_id:1,item:'Devolución de tarjeta de acceso / badge',completado:true,responsable:'Seguridad',fecha_completado:'2026-06-28'},
+    {id:3,baja_id:1,item:'Desactivación de correo corporativo',completado:true,responsable:'TI - Carlos Mora',fecha_completado:'2026-06-29'},
+    {id:4,baja_id:1,item:'Desactivación de accesos a sistemas',completado:true,responsable:'TI - Carlos Mora',fecha_completado:'2026-06-29'},
+    {id:5,baja_id:1,item:'Firma de carta de renuncia aceptada',completado:true,responsable:'RRHH - Ana García',fecha_completado:'2026-06-25'},
+    {id:6,baja_id:1,item:'Cálculo y pago de finiquito / liquidación',completado:true,responsable:'Finanzas - María Jiménez',fecha_completado:'2026-06-30'},
+    {id:7,baja_id:1,item:'Entrevista de salida realizada',completado:true,responsable:'RRHH - Ana García',fecha_completado:'2026-06-28'},
+    {id:8,baja_id:1,item:'Transferencia de conocimiento documentada',completado:true,responsable:'Marketing',fecha_completado:'2026-06-27'},
+    {id:9,baja_id:2,item:'Devolución de laptop y equipo asignado',completado:false,responsable:'TI - Carlos Mora',fecha_completado:null},
+    {id:10,baja_id:2,item:'Devolución de tarjeta de acceso / badge',completado:false,responsable:'Seguridad',fecha_completado:null},
+    {id:11,baja_id:2,item:'Desactivación de correo corporativo',completado:false,responsable:'TI - Carlos Mora',fecha_completado:null},
+    {id:12,baja_id:2,item:'Desactivación de accesos a sistemas',completado:false,responsable:'TI - Carlos Mora',fecha_completado:null},
+    {id:13,baja_id:2,item:'Firma de documento de fin de contrato',completado:true,responsable:'RRHH - Ana García',fecha_completado:'2026-07-08'},
+    {id:14,baja_id:2,item:'Cálculo y pago de finiquito / liquidación',completado:false,responsable:'Finanzas - María Jiménez',fecha_completado:null},
+    {id:15,baja_id:2,item:'Entrevista de salida realizada',completado:false,responsable:'RRHH - Ana García',fecha_completado:null},
+    {id:16,baja_id:2,item:'Transferencia de conocimiento documentada',completado:false,responsable:'Comercial',fecha_completado:null},
+  ];
+}
+
+// ── EVENT LISTENERS ──
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.overlay').forEach(bg => {
+    bg.addEventListener('click', e => { if(e.target===bg) bg.classList.remove('open'); });
+  });
+  renderStars();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));
+  if (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) {
+    e.preventDefault();
+    document.getElementById('search-input')?.focus();
+  }
+});
+
+function toast(msg, tipo='') {
+  const wrap = document.getElementById('toast-wrap');
+  if(!wrap) return;
+  const el = document.createElement('div');
+  el.className = `toast ${tipo==='ok'?'ok':tipo==='err'?'err':''}`;
+  el.innerHTML = `<i class="ti ${tipo==='ok'?'ti-circle-check':tipo==='err'?'ti-alert-circle':'ti-info-circle'}"></i>${msg}`;
+  wrap.appendChild(el);
+  setTimeout(()=>el.classList.add('show'),10);
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},3000);
+}
+
+// ── WINDOW EXPORTS (para onclick en HTML) ──
+window.renderTabla = renderTabla;
+window.filtrarPor = filtrarPor;
+window.seleccionarBaja = seleccionarBaja;
+window.cambiarTab = cambiarTab;
+window.toggleCheck = toggleCheck;
+window.abrirModalBaja = abrirModalBaja;
+window.guardarBaja = guardarBaja;
+window.abrirEntrevista = abrirEntrevista;
+window.guardarEntrevista = guardarEntrevista;
+window.confirmarEliminar = confirmarEliminar;
+window.cerrarModal = cerrarModal;
+window.setRating = setRating;
+window.selTipo = selTipo;
+window.onBuscar = onBuscar;
+window.limpiarBusqueda = limpiarBusqueda;
+window.cambiarOrden = cambiarOrden;
+window.resetFiltros = resetFiltros;
+
+// ── ARRANCAR ──
+renderChips();
+renderTabla(); // skeleton mientras carga
+(async () => {
+  await cargarSupabase();
+  await iniciar();
+})();
+</script>
+</body>
+</html>
