@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Desarrollo · TalentHub B2B</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "tertiary-fixed-dim": "#c0c1ff", "on-tertiary-container": "#7073ff", "on-tertiary": "#ffffff",
+          "secondary-container": "#40c2fd", "surface-container": "#eceef0", "inverse-on-surface": "#eff1f3",
+          "on-background": "#191c1e", "on-secondary-fixed-variant": "#004c69", "surface-variant": "#e0e3e5",
+          "on-primary-fixed": "#131b2e", "inverse-surface": "#2d3133", "error": "#ba1a1a",
+          "on-tertiary-fixed-variant": "#2f2ebe", "surface-container-highest": "#e0e3e5", "primary-fixed": "#dae2fd",
+          "tertiary-container": "#07006c", "surface-bright": "#f7f9fb", "tertiary": "#000000",
+          "on-error": "#ffffff", "error-container": "#ffdad6", "outline": "#76777d",
+          "surface-container-lowest": "#ffffff", "inverse-primary": "#bec6e0", "tertiary-fixed": "#e1e0ff",
+          "on-secondary": "#ffffff", "on-tertiary-fixed": "#07006c", "surface-dim": "#d8dadc",
+          "primary-container": "#131b2e", "primary": "#000000", "on-secondary-container": "#004d6a",
+          "on-error-container": "#93000a", "on-primary": "#ffffff", "on-primary-fixed-variant": "#3f465c",
+          "secondary-fixed-dim": "#7bd0ff", "primary-fixed-dim": "#bec6e0", "secondary": "#00668a",
+          "on-surface-variant": "#45464d", "surface-container-high": "#e6e8ea", "outline-variant": "#c6c6cd",
+          "secondary-fixed": "#c4e7ff", "on-secondary-fixed": "#001e2c", "surface-container-low": "#f2f4f6",
+          "background": "#f7f9fb", "on-primary-container": "#7c839b", "surface-tint": "#565e74",
+          "surface": "#f7f9fb", "on-surface": "#191c1e"
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        spacing: { "table-row-height": "48px", "sidebar-width": "280px", "base": "8px", "container-padding": "24px", "bento-gap": "16px" },
+        fontFamily: { sans: ["Plus Jakarta Sans", "sans-serif"] }
+      }
+    }
+  }
+</script>
+<style>
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+.glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.5); }
+.bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+.modal-overlay { background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(8px); transition: all 0.2s ease-out; }
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal-overlay:not(.open) { opacity: 0; pointer-events: none; }
+.modal-overlay.open > div { scale: 1; }
+.modal-overlay > div { scale: 0.95; }
+input[type=range].accent-primary { accent-color: #000; }
+</style>
+</head>
+<body class="bg-surface font-sans text-on-surface antialiased">
+
+<!-- INDICADOR DE ESTADO BASE DE DATOS (Premium Glass) -->
+<div id="db-status" class="fixed top-4 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg z-[100] transition-opacity duration-500">
+  <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="status-dot"></div>
+  <span id="status-text" class="text-primary">Sincronizando ecosistema...</span>
+</div>
+
+<div class="flex min-h-screen">
+  <!-- ── SIDEBAR NAVIGATION ── -->
+  <aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-white/70 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50">
+    <div class="px-6 mb-8">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl">
+          <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">hub</span>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-primary tracking-tight">TalentHub B2B</h1>
+          <p class="text-xs font-medium text-on-surface-variant opacity-70">HR Intelligence</p>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo1-reclutamiento/index.html">
+        <span class="material-symbols-outlined">person_search</span>
+        <span class="text-sm">Reclutamiento</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html">
+        <span class="material-symbols-outlined">groups</span>
+        <span class="text-sm">Personal</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo3-control/index.html">
+        <span class="material-symbols-outlined">event_available</span>
+        <span class="text-sm">Control diario</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
+        <span class="material-symbols-outlined">trending_up</span>
+        <span class="text-sm">Desarrollo</span>
+        <span class="ml-auto bg-primary text-white text-[10px] px-2 py-0.5 rounded-full" id="badge-eval">0</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo5-salida/index.html">
+        <span class="material-symbols-outlined">exit_to_app</span>
+        <span class="text-sm">Salida</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo6-reportes/index.html">
+        <span class="material-symbols-outlined">analytics</span>
+        <span class="text-sm">Reportes</span>
+      </a>
+    </nav>
+
+    <div class="px-6 mt-auto pt-6 border-t border-outline-variant/20">
+      <div class="space-y-1">
+        <a class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" href="#">
+          <span class="material-symbols-outlined text-xl">settings</span>
+          <span>Configuración</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
+        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">AG</div>
+        <div>
+          <p class="font-bold text-xs">Ana García</p>
+          <p class="text-[10px] text-on-surface-variant">Gerente RRHH</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT CANVAS ── -->
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col">
+    <header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-6 z-40">
+      <div class="flex items-center gap-4 flex-1">
+        <div class="relative w-full max-w-md">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
+          <input id="search-input" class="w-full pl-10 pr-4 py-1.5 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Buscar empleado..." oninput="renderTabla()">
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all">notifications</span>
+        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4">
+          <div class="text-right">
+            <p class="font-bold text-xs">Admin HR</p>
+            <p class="text-[10px] text-on-surface-variant">Superuser</p>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">HR</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="pt-24 pb-12 px-6 max-w-[1600px] w-full mx-auto space-y-8 flex-1">
+      <div class="flex justify-between items-end">
+        <div>
+          <h2 class="font-bold text-2xl text-primary tracking-tight">Módulo de Desarrollo</h2>
+          <p class="text-sm text-on-surface-variant mt-1">Capacitaciones y evaluación de desempeño por competencias.</p>
+        </div>
+      </div>
+
+      <!-- ══ BENTO GRID: STATS ══ -->
+      <div class="bento-grid">
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-primary text-white rounded-3xl p-6 shadow-xl shadow-primary/10 relative overflow-hidden h-40 flex flex-col justify-between">
+          <div class="relative z-10">
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Promedio de desempeño</p>
+            <h3 class="text-4xl font-extrabold mt-2 tracking-tight" id="st-promedio">—</h3>
+          </div>
+          <div class="relative z-10 text-xs text-secondary-fixed font-semibold" id="st-promedio-sub">sobre 5.0</div>
+          <div class="absolute right-[-10px] bottom-[-15px] opacity-10">
+            <span class="material-symbols-outlined !text-[110px]">star</span>
+          </div>
+        </div>
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 shadow-sm h-40 flex flex-col justify-between">
+          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Capacitaciones</p>
+          <div class="space-y-2.5">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="font-bold text-green-600">Completadas</span>
+                <span class="text-on-surface-variant font-semibold" id="st-cap-comp">0</span>
+              </div>
+              <div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+                <div id="bar-cap-comp" class="h-full bg-green-500 transition-all duration-500" style="width: 0%"></div>
+              </div>
+            </div>
+            <p class="text-[11px] text-on-surface-variant" id="st-cap-pct">Sin registros</p>
+          </div>
+        </div>
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 h-40 flex flex-col justify-center gap-3">
+          <div class="w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined">pending_actions</span>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Capacitaciones pendientes</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5"><span id="st-cap-pend">—</span> <span class="text-xs font-normal text-on-surface-variant">inscritas / en curso</span></p>
+          </div>
+        </div>
+
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 h-40 flex flex-col justify-center gap-3">
+          <div class="w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center text-secondary">
+            <span class="material-symbols-outlined">fact_check</span>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Evaluaciones registradas</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5" id="st-eval-total">—</p>
+            <p class="text-[11px] text-green-600 font-semibold mt-0.5" id="st-eval-mes">—</p>
+          </div>
+        </div>
+
+        <!-- COL IZQUIERDA: DIRECTORIO (8/12) -->
+        <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="font-bold text-base text-primary">Desarrollo del personal</h3>
+              <p class="text-xs text-on-surface-variant mt-0.5">Selecciona un empleado para ver su historial.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="abrirCapacitacion()" class="flex items-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest text-primary text-[11px] font-bold px-3 py-2 rounded-xl transition-all"><span class="material-symbols-outlined text-sm">workspace_premium</span>Capacitación</button>
+              <button onclick="abrirEvaluacion()" class="flex items-center gap-1.5 bg-primary hover:bg-black text-white text-[11px] font-bold px-3 py-2 rounded-xl transition-all active:scale-95"><span class="material-symbols-outlined text-sm">star</span>Evaluación</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1.5 flex-wrap mb-4" id="filter-row">
+            <span class="text-xs text-on-surface-variant font-medium">Departamento:</span>
+            <button class="chip px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full shadow-sm transition-all" onclick="filtrarPor('todos',this)">Todos</button>
+          </div>
+
+          <div class="overflow-x-auto custom-scrollbar flex-1">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-outline-variant/20 text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
+                  <th class="pb-3 pl-2">Empleado</th>
+                  <th class="pb-3">Desempeño</th>
+                  <th class="pb-3">Capacitaciones</th>
+                  <th class="pb-3 pr-2"></th>
+                </tr>
+              </thead>
+              <tbody id="tbody" class="divide-y divide-outline-variant/10">
+                <tr><td colspan="4" class="py-12 text-center"><div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- COL DERECHA: PERFIL DESARROLLO (4/12) -->
+        <div class="col-span-12 lg:col-span-4 space-y-6">
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20" id="perfil-card">
+            <div id="perfil-content">
+              <div class="text-center py-6 text-on-surface-variant">
+                <span class="material-symbols-outlined text-3xl block mb-2 opacity-40">trending_up</span>
+                <p class="text-xs">Selecciona un empleado para ver su desarrollo</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="font-bold text-sm text-primary">Certificaciones por vencer</h3>
+              <span class="text-[10px] text-on-surface-variant">próximos 60 días</span>
+            </div>
+            <div id="venc-wrap"><div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mx-auto my-4"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ══ MODAL: NUEVA CAPACITACIÓN ══ -->
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-cap">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 custom-scrollbar">
+    <div class="flex justify-between items-center mb-6 pb-2 border-b border-outline-variant/10">
+      <h3 class="font-bold text-base text-primary">Registrar capacitación</h3>
+      <button onclick="cerrarModal('modal-cap')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Empleado <span class="text-error">*</span></label>
+        <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="cap-empleado"></select>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Nombre de la capacitación <span class="text-error">*</span></label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="cap-nombre" placeholder="Ej: Excel Avanzado">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Proveedor</label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="cap-proveedor" placeholder="Ej: Capacita Panamá">
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Fecha <span class="text-error">*</span></label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="cap-fecha" type="date">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Horas</label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="cap-horas" type="number" min="0" placeholder="8">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Estado</label>
+          <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="cap-estado">
+            <option>Inscrito</option>
+            <option>En curso</option>
+            <option selected>Completado</option>
+            <option>No completado</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Fecha de vencimiento (si certifica)</label>
+        <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="cap-vencimiento" type="date">
+        <p class="text-[10px] text-on-surface-variant mt-1">Déjalo vacío si la capacitación no otorga certificación con vigencia.</p>
+      </div>
+    </div>
+    <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-outline-variant/10">
+      <button class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors" onclick="cerrarModal('modal-cap')">Cancelar</button>
+      <button class="px-4 py-2 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all active:scale-95" id="btn-cap-guardar" onclick="guardarCapacitacion()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: NUEVA EVALUACIÓN ══ -->
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-eval">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 custom-scrollbar">
+    <div class="flex justify-between items-center mb-6 pb-2 border-b border-outline-variant/10">
+      <h3 class="font-bold text-base text-primary">Evaluación de desempeño</h3>
+      <button onclick="cerrarModal('modal-eval')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Empleado <span class="text-error">*</span></label>
+        <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="eval-empleado"></select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Fecha <span class="text-error">*</span></label>
+        <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="eval-fecha" type="date">
+      </div>
+    </div>
+    <div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-2 pb-1.5 border-b border-outline-variant/10">Calificación por competencia (escala 1–5)</div>
+    <div class="space-y-1">
+      <div class="flex items-center justify-between py-2 border-b border-outline-variant/10">
+        <span class="text-xs font-semibold text-on-surface-variant">Puntualidad</span>
+        <div class="flex items-center gap-2">
+          <input type="range" min="1" max="5" step="0.5" value="4" id="r-punt" class="accent-primary w-28" oninput="actualizarRating('r-punt')">
+          <span class="text-xs font-bold text-primary w-7 text-right" id="rv-punt">4.0</span>
+        </div>
+      </div>
+      <div class="flex items-center justify-between py-2 border-b border-outline-variant/10">
+        <span class="text-xs font-semibold text-on-surface-variant">Trabajo en equipo</span>
+        <div class="flex items-center gap-2">
+          <input type="range" min="1" max="5" step="0.5" value="4" id="r-equipo" class="accent-primary w-28" oninput="actualizarRating('r-equipo')">
+          <span class="text-xs font-bold text-primary w-7 text-right" id="rv-equipo">4.0</span>
+        </div>
+      </div>
+      <div class="flex items-center justify-between py-2 border-b border-outline-variant/10">
+        <span class="text-xs font-semibold text-on-surface-variant">Resultados</span>
+        <div class="flex items-center gap-2">
+          <input type="range" min="1" max="5" step="0.5" value="4" id="r-result" class="accent-primary w-28" oninput="actualizarRating('r-result')">
+          <span class="text-xs font-bold text-primary w-7 text-right" id="rv-result">4.0</span>
+        </div>
+      </div>
+      <div class="flex items-center justify-between py-2">
+        <span class="text-xs font-semibold text-on-surface-variant">Liderazgo</span>
+        <div class="flex items-center gap-2">
+          <input type="range" min="1" max="5" step="0.5" value="4" id="r-lider" class="accent-primary w-28" oninput="actualizarRating('r-lider')">
+          <span class="text-xs font-bold text-primary w-7 text-right" id="rv-lider">4.0</span>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 p-3.5 bg-surface-container-low rounded-2xl flex items-center justify-between">
+      <span class="text-xs font-bold text-primary">Promedio calculado</span>
+      <span class="text-lg font-extrabold text-primary" id="eval-promedio">4.00</span>
+    </div>
+    <div class="mt-4">
+      <label class="block text-xs font-bold text-primary mb-1">Comentarios</label>
+      <textarea class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 min-h-[64px]" id="eval-desc" placeholder="Observaciones sobre el desempeño..."></textarea>
+    </div>
+    <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-outline-variant/10">
+      <button class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors" onclick="cerrarModal('modal-eval')">Cancelar</button>
+      <button class="px-4 py-2 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all active:scale-95" id="btn-eval-guardar" onclick="guardarEvaluacion()">Guardar evaluación</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap" class="fixed bottom-6 right-6 z-[300] flex flex-col gap-2 pointer-events-none"></div>
+
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
+<script type="module" src="script.js"></script>
+</body>
+</html>
