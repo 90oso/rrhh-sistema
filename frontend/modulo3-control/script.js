@@ -2,18 +2,23 @@ import { supabase } from '../supabase-client.js';
 const db = supabase;
 
 // ── GEOCERCA (configurable; persiste en localStorage) ──
-const SEDE_DEFAULT = { lat: 9.0238, lng: -79.5300, radio: 150 };
+// Sede por defecto: Universidad Tecnológica de Panamá — Campus Víctor Levi Sasso (Tocumen).
+const SEDE_DEFAULT = { lat: 9.0246, lng: -79.5312, radio: 400 };
 function getSede() {
-  try { const s = JSON.parse(localStorage.getItem('geofence_m3')); if (s && s.lat) return s; } catch (e) {}
+  try { const s = JSON.parse(localStorage.getItem('geofence_m3_utp')); if (s && s.lat) return s; } catch (e) {}
   return SEDE_DEFAULT;
 }
-function setSede(s) { localStorage.setItem('geofence_m3', JSON.stringify(s)); }
+function setSede(s) { localStorage.setItem('geofence_m3_utp', JSON.stringify(s)); }
 
 // ── ESTADO ──
 let empleados = [];
-let asistencia = [];   // marcaciones de HOY
+let asistencia = [];    // marcaciones de HOY
+let asistenciaMes = []; // marcaciones del mes en curso (para KPIs personales del empleado)
 let ausencias = [];
 let vacaciones = [];
+
+// Después de esta hora (08:05) una entrada cuenta como tardanza.
+const HORA_ENTRADA_LIMITE = 8 * 60 + 5;
 let vista = 'marcaciones';
 let sideTab = 'ausencias';
 let filtroMarc = 'todos';
@@ -31,6 +36,36 @@ const cargoDe = id => (empleados.find(e => e.id === id)?.cargo) || '';
 const fmtHora = iso => iso ? new Date(iso).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' }) : '—';
 const fmtFecha = iso => { if (!iso) return '—'; const d = new Date(iso + 'T12:00:00'); return d.toLocaleDateString('es', { day: '2-digit', month: 'short' }); };
 const rangoActivo = (ini, fin) => ini && fin && HOY >= ini && HOY <= fin;
+
+// ── VISIBILIDAD POR ROL ──
+// RRHH y Admin ven a todo el personal. Cualquier otro rol (p. ej. Empleado)
+// solo se ve a sí mismo, identificado por su correo (o su nombre) de sesión.
+const ROLES_TOTAL = ['RRHH', 'Admin'];
+const rolSesion = () => (window.SESSION && window.SESSION.rol) || sessionStorage.getItem('rol') || '';
+const esRRHH = () => ROLES_TOTAL.includes(rolSesion());
+
+function miEmpleado() {
+  const email = (((window.SESSION && window.SESSION.email) || sessionStorage.getItem('email') || '')).toLowerCase();
+  const nombre = (((window.SESSION && window.SESSION.nombre) || sessionStorage.getItem('nombre') || '')).toLowerCase();
+  return empleados.find(e =>
+    (email && (e.email || '').toLowerCase() === email) ||
+    (nombre && (e.nombre || '').toLowerCase() === nombre)
+  ) || null;
+}
+
+// Empleados que el usuario actual tiene permitido ver.
+function empleadosVisibles() {
+  if (esRRHH()) return empleados;
+  const yo = miEmpleado();
+  if (yo) return [yo];
+  // Sin coincidencia en el roster (p. ej. cuenta demo): se muestra al propio
+  // usuario a partir de los datos de su sesión, para que solo vea su nombre.
+  const nombre = (window.SESSION && window.SESSION.nombre) || sessionStorage.getItem('nombre');
+  if (nombre) return [{ id: -1, nombre, cargo: rolSesion(), estado: 'Activo', email: (window.SESSION && window.SESSION.email) || '' }];
+  return [];
+}
+// Ids visibles, para filtrar marcaciones / ausencias / vacaciones.
+const idsVisibles = () => new Set(empleadosVisibles().map(e => e.id));
 
 // Haversine: distancia en metros entre dos coordenadas GPS
 function haversine(lat1, lon1, lat2, lon2) {
@@ -77,15 +112,57 @@ function estadoEmpleado(emp) {
 }
 
 // ── KPIs ──
+const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+// Reconfigura una de las 3 primeras tarjetas KPI (ícono, etiqueta, valor, subtítulo).
+function setKPI(n, icon, label, valor, sub) {
+  const valorIds = { 1: 'k-presentes', 2: 'k-ausentes', 3: 'k-vacaciones' };
+  setTxt('kpi' + n + '-icon', icon);
+  setTxt('kpi' + n + '-label', label);
+  setTxt('kpi' + n + '-sub', sub);
+  setTxt(valorIds[n], valor);
+}
+
+// Métricas personales del empleado a partir de las marcaciones del mes.
+function statsEmpleadoMes(empId) {
+  const mes = HOY.slice(0, 7);
+  const mias = asistenciaMes.filter(m => m.empleado_id === empId && (m.fecha_hora || '').slice(0, 7) === mes);
+  const porDia = {};
+  mias.forEach(m => { const d = (m.fecha_hora || '').slice(0, 10); if (d) (porDia[d] = porDia[d] || []).push(m); });
+  let tardanzas = 0, horas = 0, diasLaborados = 0;
+  Object.keys(porDia).forEach(d => {
+    const marcas = porDia[d].slice().sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora));
+    const entrada = marcas.find(m => m.tipo === 'Entrada');
+    const salida = [...marcas].reverse().find(m => m.tipo === 'Salida');
+    if (entrada) {
+      diasLaborados++;
+      const f = new Date(entrada.fecha_hora);
+      if (f.getHours() * 60 + f.getMinutes() > HORA_ENTRADA_LIMITE) tardanzas++;
+      if (salida) horas += Math.max(0, (new Date(salida.fecha_hora) - f) / 3600000);
+    }
+  });
+  return { tardanzas, diasLaborados, horas: Math.round(horas) };
+}
+
 function actualizarStats() {
-  const activos = empleados.filter(e => (e.estado || 'Activo') === 'Activo');
-  const estados = activos.map(e => estadoEmpleado(e));
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('k-presentes', estados.filter(s => s.tipo === 'Presente').length);
-  set('k-ausentes', estados.filter(s => s.tipo === 'Ausente').length);
-  set('k-vacaciones', estados.filter(s => s.tipo === 'Vacaciones').length);
-  set('k-fuera', asistencia.filter(m => m.aprobado === false).length);
-  set('badge-hoy', asistencia.length);
+  const ids = idsVisibles();
+  if (esRRHH()) {
+    // Vista RRHH/Admin: indicadores de toda la empresa.
+    const activos = empleadosVisibles().filter(e => (e.estado || 'Activo') === 'Activo');
+    const estados = activos.map(e => estadoEmpleado(e));
+    setKPI(1, 'how_to_reg', 'Presentes', estados.filter(s => s.tipo === 'Presente').length, 'en la empresa ahora');
+    setKPI(2, 'event_busy', 'Ausencias', estados.filter(s => s.tipo === 'Ausente').length, 'activas hoy');
+    setKPI(3, 'beach_access', 'Vacaciones', estados.filter(s => s.tipo === 'Vacaciones').length, 'de vacaciones hoy');
+  } else {
+    // Vista empleado: métricas personales del mes.
+    const yo = empleadosVisibles()[0];
+    const st = yo ? statsEmpleadoMes(yo.id) : { tardanzas: 0, diasLaborados: 0, horas: 0 };
+    setKPI(1, 'running_with_errors', 'Tardanzas', st.tardanzas, 'este mes');
+    setKPI(2, 'event_available', 'Días laborados', st.diasLaborados, 'este mes');
+    setKPI(3, 'timer', 'Horas trabajadas', st.horas, 'horas este mes');
+  }
+  setTxt('k-fuera', asistencia.filter(m => ids.has(m.empleado_id) && m.aprobado === false).length);
+  setTxt('badge-hoy', asistencia.filter(m => ids.has(m.empleado_id)).length);
   const sr = document.getElementById('sede-radio');
   if (sr) sr.textContent = getSede().radio + ' m';
 }
@@ -107,9 +184,11 @@ function renderChips() {
   const row = document.getElementById('filter-row');
   if (!row) return;
   if (vista !== 'marcaciones') { row.innerHTML = ''; return; }
-  const n = f => f === 'todos' ? asistencia.length
-    : f === 'fuera' ? asistencia.filter(m => m.aprobado === false).length
-    : asistencia.filter(m => m.tipo === f).length;
+  const ids = idsVisibles();
+  const visibles = asistencia.filter(m => ids.has(m.empleado_id));
+  const n = f => f === 'todos' ? visibles.length
+    : f === 'fuera' ? visibles.filter(m => m.aprobado === false).length
+    : visibles.filter(m => m.tipo === f).length;
   const activeClass = 'bg-primary text-white shadow-sm';
   const idleClass = 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest';
   const chip = (f, lbl) => `<button class="chip px-3 py-1 text-xs font-semibold rounded-full transition-all flex items-center gap-1.5 ${filtroMarc === f ? activeClass : idleClass}" onclick="filtrarMarc('${f}')">${lbl}<span class="text-[10px] font-extrabold rounded-full px-1.5 min-w-[16px] text-center ${filtroMarc === f ? 'bg-white/25 text-white' : 'bg-surface-container-highest text-on-surface-variant'}">${n(f)}</span></button>`;
@@ -131,7 +210,9 @@ function renderTabla() {
   if (vista === 'marcaciones') {
     thead.innerHTML = `<tr class="border-b border-outline-variant/20"><th class="${thCls} pl-2">Empleado</th><th class="${thCls}">Tipo</th><th class="${thCls}">Hora</th><th class="${thCls}">Distancia</th><th class="${thCls} pr-2">Validación GPS</th></tr>`;
     if (cargando) { tbody.innerHTML = filaCargando(5); return; }
+    const ids = idsVisibles();
     let lista = asistencia.filter(m => {
+      if (!ids.has(m.empleado_id)) return false;
       const matchF = filtroMarc === 'todos' || (filtroMarc === 'fuera' ? m.aprobado === false : m.tipo === filtroMarc);
       const matchB = !busq || nombreDe(m.empleado_id).toLowerCase().includes(busq);
       return matchF && matchB;
@@ -162,7 +243,7 @@ function renderTabla() {
   // vista: estado del personal
   thead.innerHTML = `<tr class="border-b border-outline-variant/20"><th class="${thCls} pl-2">Empleado</th><th class="${thCls}">Estado hoy</th><th class="${thCls} pr-2">Detalle</th></tr>`;
   if (cargando) { tbody.innerHTML = filaCargando(3); return; }
-  let lista = empleados.filter(e => (e.estado || 'Activo') === 'Activo' && (!busq || e.nombre.toLowerCase().includes(busq)));
+  let lista = empleadosVisibles().filter(e => (e.estado || 'Activo') === 'Activo' && (!busq || e.nombre.toLowerCase().includes(busq)));
   const pill = document.getElementById('tbl-count'); if (pill) pill.textContent = lista.length;
   if (!lista.length) {
     tbody.innerHTML = `<tr><td colspan="3" class="py-12 text-center text-on-surface-variant text-sm">Sin empleados activos</td></tr>`;
@@ -199,9 +280,11 @@ function cambiarSideTab(t) {
 function renderSide() {
   const box = document.getElementById('side-list');
   if (!box) return;
+  const ids = idsVisibles();
   if (sideTab === 'ausencias') {
-    if (!ausencias.length) { box.innerHTML = `<div class="text-center py-6 text-on-surface-variant"><span class="material-symbols-outlined text-2xl block mb-2 opacity-40">event_busy</span><p class="text-xs">Sin ausencias registradas</p></div>`; return; }
-    box.innerHTML = [...ausencias].sort((a, b) => (b.fecha_inicio || '').localeCompare(a.fecha_inicio || '')).map(a => `
+    const lista = ausencias.filter(a => ids.has(a.empleado_id));
+    if (!lista.length) { box.innerHTML = `<div class="text-center py-6 text-on-surface-variant"><span class="material-symbols-outlined text-2xl block mb-2 opacity-40">event_busy</span><p class="text-xs">Sin ausencias registradas</p></div>`; return; }
+    box.innerHTML = [...lista].sort((a, b) => (b.fecha_inicio || '').localeCompare(a.fecha_inicio || '')).map(a => `
       <div class="border border-outline-variant/20 rounded-2xl p-3 hover:shadow-sm transition-all">
         <div class="flex items-center gap-2 mb-1">
           <div class="w-6 h-6 rounded-full flex items-center justify-center font-bold text-white text-[9px] flex-shrink-0" style="background:${avColor(a.empleado_id)}">${iniciales(nombreDe(a.empleado_id))}</div>
@@ -217,8 +300,9 @@ function renderSide() {
       </div>`).join('');
     return;
   }
-  if (!vacaciones.length) { box.innerHTML = `<div class="text-center py-6 text-on-surface-variant"><span class="material-symbols-outlined text-2xl block mb-2 opacity-40">beach_access</span><p class="text-xs">Sin solicitudes de vacaciones</p></div>`; return; }
-  box.innerHTML = [...vacaciones].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')).map(v => `
+  const listaVac = vacaciones.filter(v => ids.has(v.empleado_id));
+  if (!listaVac.length) { box.innerHTML = `<div class="text-center py-6 text-on-surface-variant"><span class="material-symbols-outlined text-2xl block mb-2 opacity-40">beach_access</span><p class="text-xs">Sin solicitudes de vacaciones</p></div>`; return; }
+  box.innerHTML = [...listaVac].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')).map(v => `
     <div class="border border-outline-variant/20 rounded-2xl p-3 hover:shadow-sm transition-all">
       <div class="flex items-center gap-2 mb-1">
         <div class="w-6 h-6 rounded-full flex items-center justify-center font-bold text-white text-[9px] flex-shrink-0" style="background:${avColor(v.empleado_id)}">${iniciales(nombreDe(v.empleado_id))}</div>
@@ -438,6 +522,10 @@ function abrirSede() {
   document.getElementById('sede-lat').value = s.lat;
   document.getElementById('sede-lng').value = s.lng;
   document.getElementById('sede-radio-inp').value = s.radio;
+  // Solo RRHH/Admin puede ver y editar latitud, longitud y radio.
+  // El resto solo dispone del botón "Usar mi ubicación actual como sede".
+  const campos = document.getElementById('sede-admin-fields');
+  if (campos) campos.style.display = esRRHH() ? '' : 'none';
   abrirModal('modal-sede');
 }
 function guardarSede() {
@@ -464,7 +552,7 @@ function usarMiUbicacion() {
 function llenarSelect(id) {
   const sel = document.getElementById(id);
   if (!sel) return;
-  const activos = empleados.filter(e => (e.estado || 'Activo') === 'Activo');
+  const activos = empleadosVisibles().filter(e => (e.estado || 'Activo') === 'Activo');
   sel.innerHTML = activos.length
     ? activos.map(e => `<option value="${e.id}">${e.nombre} — ${e.cargo || ''}</option>`).join('')
     : '<option value="">Sin empleados activos</option>';
@@ -512,16 +600,19 @@ async function iniciar() {
 async function cargar() {
   try {
     const inicioHoy = HOY + 'T00:00:00';
-    const [e, a, au, va] = await Promise.all([
+    const inicioMes = HOY.slice(0, 7) + '-01T00:00:00';
+    const [e, a, au, va, am] = await Promise.all([
       db.from('empleados').select('*'),
       db.from('asistencia').select('*').gte('fecha_hora', inicioHoy).order('fecha_hora', { ascending: false }),
       db.from('ausencias').select('*').order('fecha_inicio', { ascending: false }),
       db.from('vacaciones').select('*').order('created_at', { ascending: false }),
+      db.from('asistencia').select('empleado_id,tipo,fecha_hora').gte('fecha_hora', inicioMes),
     ]);
     empleados = e.data || [];
     asistencia = a.data || [];
     ausencias = au.data || [];
     vacaciones = va.data || [];
+    asistenciaMes = am.data || [];
     if (empleados.length === 0) cargarDatosDemo();
     cargando = false;
     renderizarTodo();
@@ -544,14 +635,14 @@ function suscribirRealtime() {
 // ── DATOS DEMO ──
 function cargarDatosDemo() {
   empleados = [
-    { id: 1, nombre: 'Ana García', cargo: 'Gerente RRHH', departamento: 'RRHH', estado: 'Activo' },
-    { id: 2, nombre: 'Carlos Mora', cargo: 'Analista TI', departamento: 'TI', estado: 'Activo' },
-    { id: 3, nombre: 'Lucía Pérez', cargo: 'Diseñadora', departamento: 'Marketing', estado: 'Activo' },
-    { id: 4, nombre: 'Roberto Sánchez', cargo: 'Dev Backend', departamento: 'TI', estado: 'Activo' },
-    { id: 5, nombre: 'María Jiménez', cargo: 'Contadora', departamento: 'Finanzas', estado: 'Activo' },
-    { id: 6, nombre: 'Diego Vargas', cargo: 'Vendedor', departamento: 'Comercial', estado: 'Activo' },
-    { id: 7, nombre: 'Patricia López', cargo: 'Asistente RRHH', departamento: 'RRHH', estado: 'Activo' },
-    { id: 8, nombre: 'Fernando Ruiz', cargo: 'Supervisor', departamento: 'Operaciones', estado: 'Activo' },
+    { id: 1, nombre: 'Ana García', email: 'ana@empresa.com', cargo: 'Gerente RRHH', departamento: 'RRHH', estado: 'Activo' },
+    { id: 2, nombre: 'Carlos Mora', email: 'carlos@empresa.com', cargo: 'Analista TI', departamento: 'TI', estado: 'Activo' },
+    { id: 3, nombre: 'Lucía Pérez', email: 'lucia@empresa.com', cargo: 'Diseñadora', departamento: 'Marketing', estado: 'Activo' },
+    { id: 4, nombre: 'Roberto Sánchez', email: 'roberto@empresa.com', cargo: 'Dev Backend', departamento: 'TI', estado: 'Activo' },
+    { id: 5, nombre: 'María Jiménez', email: 'maria@empresa.com', cargo: 'Contadora', departamento: 'Finanzas', estado: 'Activo' },
+    { id: 6, nombre: 'Diego Vargas', email: 'diego@empresa.com', cargo: 'Vendedor', departamento: 'Comercial', estado: 'Activo' },
+    { id: 7, nombre: 'Patricia López', email: 'patricia@empresa.com', cargo: 'Asistente RRHH', departamento: 'RRHH', estado: 'Activo' },
+    { id: 8, nombre: 'Fernando Ruiz', email: 'fernando@empresa.com', cargo: 'Supervisor', departamento: 'Operaciones', estado: 'Activo' },
   ];
   const h = (hh, mm) => { const d = new Date(); d.setHours(hh, mm, 0, 0); return d.toISOString(); };
   asistencia = [
@@ -561,6 +652,15 @@ function cargarDatosDemo() {
     { id: 4, empleado_id: 5, tipo: 'Entrada', fecha_hora: h(7, 48), lat: null, lng: null, distancia_m: null, aprobado: true },
     { id: 5, empleado_id: 2, tipo: 'Salida', fecha_hora: h(12, 5), lat: 9.0240, lng: -79.5300, distancia_m: 22.1, aprobado: true },
   ];
+  // Marcaciones del mes (para los KPIs personales del empleado en modo demo)
+  const diaMes = (back, hh, mm) => { const d = new Date(); d.setDate(d.getDate() - back); d.setHours(hh, mm, 0, 0); return d.toISOString(); };
+  asistenciaMes = [];
+  [[2, [[0, 8, 2], [1, 8, 0], [2, 8, 20], [3, 7, 58], [6, 8, 12]]], [4, [[0, 8, 10], [1, 8, 35], [4, 9, 2]]]].forEach(([id, dias]) => {
+    dias.forEach(([back, hh, mm]) => {
+      asistenciaMes.push({ empleado_id: id, tipo: 'Entrada', fecha_hora: diaMes(back, hh, mm) });
+      asistenciaMes.push({ empleado_id: id, tipo: 'Salida', fecha_hora: diaMes(back, 17, 0) });
+    });
+  });
   const addDias = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().split('T')[0]; };
   ausencias = [
     { id: 1, empleado_id: 6, tipo: 'Incapacidad', fecha_inicio: addDias(-1), fecha_fin: addDias(2), observaciones: 'Certificado médico CSS por 4 días.' },
