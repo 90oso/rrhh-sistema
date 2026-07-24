@@ -29,7 +29,7 @@ function actualizarRating(id) {
   if (!el) return;
   const v = parseFloat(el.value);
   const numEl = document.getElementById('rv-' + id.split('-')[1]);
-  if (numEl) numEl.textContent = v.toFixed(1);
+  if (numEl) numEl.textContent = v.toFixed(0);
   recalcPromedio();
 }
 
@@ -321,16 +321,19 @@ async function guardarEvaluacion() {
   const empId = Number(document.getElementById('eval-empleado').value);
   if (!empId) { toast('Selecciona un empleado', 'err'); return; }
 
-  const punt = parseFloat(document.getElementById('r-punt').value);
-  const equipo = parseFloat(document.getElementById('r-equipo').value);
-  const result = parseFloat(document.getElementById('r-result').value);
-  const lider = parseFloat(document.getElementById('r-lider').value);
-  const promedio = (punt + equipo + result + lider) / 4;
+  // Las columnas de nota son INTEGER (check 1-5) en la DB: redondeamos para evitar
+  // errores de inserción si el slider trajera un valor decimal.
+  const punt = Math.round(parseFloat(document.getElementById('r-punt').value));
+  const equipo = Math.round(parseFloat(document.getElementById('r-equipo').value));
+  const result = Math.round(parseFloat(document.getElementById('r-result').value));
+  const lider = Math.round(parseFloat(document.getElementById('r-lider').value));
+  const promedio = Number(((punt + equipo + result + lider) / 4).toFixed(2));
 
   const datos = {
     empleado_id: empId,
     fecha: document.getElementById('eval-fecha').value || new Date().toISOString().split('T')[0],
     puntualidad: punt, trabajo_equipo: equipo, resultados: result, liderazgo: lider,
+    promedio,
     comentarios: document.getElementById('eval-desc').value.trim() || null,
   };
 
@@ -338,7 +341,7 @@ async function guardarEvaluacion() {
   if (btn) btn.disabled = true;
 
   if (esDemo()) {
-    evaluaciones.unshift({ id: Date.now(), ...datos, promedio });
+    evaluaciones.unshift({ id: Date.now(), ...datos });
     toast('Evaluación registrada (demo)', 'ok');
     renderizarTodo();
     cerrarModal('modal-eval');
