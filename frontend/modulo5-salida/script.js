@@ -109,8 +109,8 @@ function renderMiniChart() {
   const max = Math.max(...counts, 1);
   box.innerHTML = meses.map((mm, i) =>
     `<div class="flex-1 flex flex-col items-center gap-1 h-full justify-end" title="${counts[i]} baja${counts[i] !== 1 ? 's' : ''} — ${mm.lbl.toUpperCase()}">
-      <div class="w-full max-w-[16px] rounded-t bg-sky-400/80" style="height:${Math.max(counts[i] / max * 44, 3)}px"></div>
-      <span class="text-[9px] text-on-surface-variant font-bold uppercase">${mm.lbl}</span>
+      <div class="w-full max-w-[16px] rounded-t bg-white/70" style="height:${Math.max(counts[i] / max * 44, 3)}px"></div>
+      <span class="text-[9px] text-white/60 font-bold uppercase">${mm.lbl}</span>
     </div>`).join('');
 }
 

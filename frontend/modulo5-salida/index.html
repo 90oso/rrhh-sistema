@@ -153,24 +153,21 @@
       <div class="bento-grid">
 
         <!-- HERO -->
-        <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col justify-between">
-          <div>
-            <div class="w-11 h-11 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-600 mb-3">
-              <span class="material-symbols-outlined text-xl">group_remove</span>
-            </div>
-            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Total de bajas</p>
-            <h3 class="text-3xl font-extrabold mt-1 tracking-tight text-primary tabular-nums" id="st-total">—</h3>
-            <p class="text-[11px] text-on-surface-variant mt-1" id="st-total-sub">registradas en el sistema</p>
+        <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-primary text-white rounded-3xl p-6 shadow-xl shadow-primary/10 relative overflow-hidden flex flex-col justify-between">
+          <div class="relative z-10">
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Total de bajas</p>
+            <h3 class="text-3xl font-extrabold mt-1 tracking-tight tabular-nums" id="st-total">—</h3>
+            <p class="text-[11px] opacity-70 mt-1" id="st-total-sub">registradas en el sistema</p>
           </div>
-          <div class="flex items-end gap-2 h-16 mt-4" id="mini-chart" title="Bajas últimos 6 meses"></div>
+          <div class="flex items-end gap-2 h-16 mt-4 relative z-10" id="mini-chart" title="Bajas últimos 6 meses"></div>
+          <div class="absolute right-[-6px] top-[-10px] opacity-10">
+            <span class="material-symbols-outlined !text-[90px]">group_remove</span>
+          </div>
         </div>
 
         <!-- MES -->
-        <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col justify-between">
+        <div class="col-span-12 md:col-span-6 lg:col-span-4 glass-card rounded-3xl p-6 shadow-sm flex flex-col justify-between">
           <div>
-            <div class="w-11 h-11 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-3">
-              <span class="material-symbols-outlined text-xl">calendar_month</span>
-            </div>
             <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Bajas este mes</p>
             <h3 class="text-3xl font-extrabold mt-1 tracking-tight text-primary tabular-nums" id="st-mes">—</h3>
             <p class="text-[11px] text-on-surface-variant mt-1" id="st-mes-sub">—</p>

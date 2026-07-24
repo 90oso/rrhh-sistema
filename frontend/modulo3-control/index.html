@@ -181,21 +181,20 @@
         </div>
 
         <!-- KPIs -->
-        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
-          <div class="w-10 h-10 bg-green-50 rounded-2xl flex items-center justify-center text-green-600"><span class="material-symbols-outlined text-lg">how_to_reg</span></div>
-          <div>
-            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Presentes</p>
-            <p class="font-extrabold text-xl text-primary mt-0.5" id="k-presentes">—</p>
-            <p class="text-[10px] text-on-surface-variant">en la empresa ahora</p>
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-primary text-white rounded-3xl p-5 shadow-xl shadow-primary/10 relative overflow-hidden flex flex-col justify-between">
+          <div class="relative z-10">
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Presentes</p>
+            <h3 class="text-3xl font-extrabold mt-1 tracking-tight" id="k-presentes">—</h3>
+          </div>
+          <p class="text-[10px] opacity-70 relative z-10 mt-2">en la empresa ahora</p>
+          <div class="absolute right-[-10px] bottom-[-15px] opacity-10">
+            <span class="material-symbols-outlined !text-[80px]">how_to_reg</span>
           </div>
         </div>
-        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
-          <div class="w-10 h-10 bg-red-50 rounded-2xl flex items-center justify-center text-red-600"><span class="material-symbols-outlined text-lg">person_off</span></div>
-          <div>
-            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Ausencias</p>
-            <p class="font-extrabold text-xl text-primary mt-0.5" id="k-ausentes">—</p>
-            <p class="text-[10px] text-on-surface-variant">activas hoy</p>
-          </div>
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 glass-card rounded-3xl p-5 shadow-sm flex flex-col justify-center gap-1">
+          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Ausencias</p>
+          <p class="font-extrabold text-2xl text-primary" id="k-ausentes">—</p>
+          <p class="text-[10px] text-on-surface-variant">activas hoy</p>
         </div>
         <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
           <div class="w-10 h-10 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600"><span class="material-symbols-outlined text-lg">beach_access</span></div>
