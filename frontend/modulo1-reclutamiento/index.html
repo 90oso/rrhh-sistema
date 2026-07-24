@@ -4,6 +4,8 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>TalentHub B2B - Reclutamiento Inteligente</title>
+<script>window.CURRENT_MODULE = 'modulo1-reclutamiento';</script>
+<script src="../shared/auth-guard.js"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script id="tailwind-config">
@@ -118,28 +120,28 @@
       </div>
       
       <nav class="flex-1 space-y-1">
-        <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
+        <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#" data-modulo="modulo1-reclutamiento">
           <span class="material-symbols-outlined">person_search</span>
           <span class="text-sm">Reclutamiento</span>
           <span class="ml-auto bg-primary text-white text-[10px] px-2 py-0.5 rounded-full" id="badge-total">0</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html" data-modulo="modulo2-personal">
           <span class="material-symbols-outlined">groups</span>
           <span class="text-sm">Personal</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo3-control/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo3-control/index.html" data-modulo="modulo3-control">
           <span class="material-symbols-outlined">event_available</span>
           <span class="text-sm">Control diario</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo4-desarrollo/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo4-desarrollo/index.html" data-modulo="modulo4-desarrollo">
           <span class="material-symbols-outlined">trending_up</span>
           <span class="text-sm">Desarrollo</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo5-salida/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo5-salida/index.html" data-modulo="modulo5-salida">
           <span class="material-symbols-outlined">exit_to_app</span>
           <span class="text-sm">Salida</span>
         </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo6-reportes/index.html">
+        <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo6-reportes/index.html" data-modulo="modulo6-reportes">
           <span class="material-symbols-outlined">analytics</span>
           <span class="text-sm">Reportes</span>
         </a>
