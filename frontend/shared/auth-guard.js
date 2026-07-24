@@ -26,6 +26,7 @@
 
   const rol = sessionStorage.getItem('rol');
   const email = sessionStorage.getItem('email');
+  const nombre = sessionStorage.getItem('nombre') || email;
   const moduloActual = window.CURRENT_MODULE;
 
   if (!rol || !email) {
@@ -39,18 +40,30 @@
     return;
   }
 
-  // Expone el rol/email actuales para que cada módulo los use si lo necesita
-  // (ej. mostrar "Bienvenido, {nombre}" o filtrar datos por empleado_id)
-  window.SESSION = { rol, email };
+  // Expone el rol/email/nombre actuales para que cada módulo los use si lo
+  // necesita (ej. filtrar datos por empleado_id)
+  window.SESSION = { rol, email, nombre };
 
-  // Oculta del sidebar los links a módulos que este rol no puede usar.
-  // Requiere que cada <a> del menú tenga data-modulo="modulo2-personal" (etc).
   document.addEventListener('DOMContentLoaded', () => {
+    // Oculta del sidebar los links a módulos que este rol no puede usar.
+    // Requiere que cada <a> del menú tenga data-modulo="modulo2-personal" (etc).
     document.querySelectorAll('[data-modulo]').forEach(link => {
       const destino = link.getAttribute('data-modulo');
       if (!permitidos.includes(destino)) {
         link.style.display = 'none';
       }
     });
+
+    // Muestra el nombre/rol de quien inició sesión en el pie del sidebar,
+    // en vez del usuario "Ana García" por defecto.
+    const nameEl = document.getElementById('sidebar-user-name');
+    const roleEl = document.getElementById('sidebar-user-role');
+    const avEl = document.getElementById('sidebar-user-av');
+    if (nameEl) nameEl.textContent = nombre;
+    if (roleEl) roleEl.textContent = rol;
+    if (avEl) {
+      const iniciales = nombre.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+      avEl.textContent = iniciales || '?';
+    }
   });
 })();

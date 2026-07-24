@@ -306,7 +306,8 @@
         </div>
         <div class="field">
           <label for="password">Contraseña</label>
-          <input type="password" id="password" placeholder="••••••••" required>
+          <input type="password" id="password" placeholder="demo123" required>
+          <small style="color:#94a3b8;font-size:11px">Usa tu correo registrado en empleados + contraseña "demo123"</small>
         </div>
         <button type="submit" class="btn-primary" id="btnLogin">Entrar</button>
         <div class="msg" id="msgBox"></div>
@@ -318,15 +319,15 @@
         <div class="title">Modo demo — sin Supabase configurado</div>
         <div class="demo-row">
           <div class="who">Empleado demo<small>Solo Control Diario</small></div>
-          <button data-rol="Empleado" data-email="empleado.demo@empresapanama.com">Entrar</button>
+          <button data-rol="Empleado" data-email="empleado.demo@empresapanama.com" data-nombre="Empleado Demo">Entrar</button>
         </div>
         <div class="demo-row">
           <div class="who">Gerente demo<small>Solo Reportes</small></div>
-          <button data-rol="Gerente" data-email="gerente.demo@empresapanama.com">Entrar</button>
+          <button data-rol="Gerente" data-email="gerente.demo@empresapanama.com" data-nombre="Gerente Demo">Entrar</button>
         </div>
         <div class="demo-row">
           <div class="who">RRHH demo<small>Reclutamiento, Personal, Desarrollo, Salida</small></div>
-          <button data-rol="RRHH" data-email="rrhh.demo@empresapanama.com">Entrar</button>
+          <button data-rol="RRHH" data-email="rrhh.demo@empresapanama.com" data-nombre="RRHH Demo">Entrar</button>
         </div>
       </div>
 
@@ -336,21 +337,8 @@
 
 </div>
 
-<script>
-/* =========================================================================
-   CONFIGURA AQUÍ TU PROYECTO SUPABASE
-   Si ya tienes shared/supabase-client.js con el cliente inicializado,
-   reemplaza este bloque por: import { supabase } from './shared/supabase-client.js'
-   ========================================================================= */
-const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co';
-const SUPABASE_ANON_KEY = 'TU-ANON-KEY';
-
-let supabaseClient = null;
-try {
-  if (window.supabase && SUPABASE_URL.indexOf('TU-PROYECTO') === -1) {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-} catch (e) { /* sin conexión configurada: se usa modo demo */ }
+<script type="module">
+import { supabase } from './frontend/supabase-client.js';
 
 /* Mapa de acceso: rol -> módulos permitidos (deben coincidir con las carpetas de frontend/) */
 const ACCESO_POR_ROL = {
@@ -360,9 +348,10 @@ const ACCESO_POR_ROL = {
   Admin:    ['modulo1-reclutamiento','modulo2-personal','modulo3-control','modulo4-desarrollo','modulo5-salida','modulo6-reportes','configuracion']
 };
 
-function irAModulo(rol, email) {
+function irAModulo(rol, email, nombre) {
   sessionStorage.setItem('rol', rol);
   sessionStorage.setItem('email', email);
+  sessionStorage.setItem('nombre', nombre || email);
   const destino = ACCESO_POR_ROL[rol] ? ACCESO_POR_ROL[rol][0] : null;
   if (!destino) {
     mostrarMensaje('Tu usuario no tiene un rol asignado. Contacta a RRHH.', 'error');
@@ -385,24 +374,22 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   btn.disabled = true; btn.textContent = 'Verificando...';
 
   try {
-    if (!supabaseClient) {
-      throw new Error('Supabase no está configurado en este archivo. Usa una cuenta demo abajo, o completa SUPABASE_URL / SUPABASE_ANON_KEY.');
-    }
-
-    const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (authError) throw new Error('Correo o contraseña incorrectos.');
+    // Contraseña única compartida (proyecto de clase, sin Supabase Auth real).
+    // La verificación de "quién eres" la hace el correo contra la tabla empleados.
+    if (password !== 'demo123') throw new Error('Contraseña incorrecta.');
 
     // Se busca el rol del empleado por su correo en la tabla empleados
-    const { data: empleado, error: empError } = await supabaseClient
+    const { data: empleado, error: empError } = await supabase
       .from('empleados')
       .select('rol, nombre')
       .eq('email', email)
       .single();
 
     if (empError || !empleado) throw new Error('No se encontró un empleado asociado a este correo.');
+    if (!empleado.rol) throw new Error('Tu usuario no tiene un rol asignado. Contacta a RRHH.');
 
     mostrarMensaje('Bienvenido, ' + empleado.nombre + '. Redirigiendo...', 'ok');
-    setTimeout(() => irAModulo(empleado.rol, email), 600);
+    setTimeout(() => irAModulo(empleado.rol, email, empleado.nombre), 600);
 
   } catch (err) {
     mostrarMensaje(err.message, 'error');
@@ -415,14 +402,12 @@ document.querySelectorAll('.demo-row button').forEach(b => {
   b.addEventListener('click', () => {
     const rol = b.getAttribute('data-rol');
     const email = b.getAttribute('data-email');
+    const nombre = b.getAttribute('data-nombre');
     mostrarMensaje('Entrando como ' + rol + ' (demo)...', 'ok');
-    setTimeout(() => irAModulo(rol, email), 500);
+    setTimeout(() => irAModulo(rol, email, nombre), 500);
   });
 });
 </script>
-
-<!-- Si usas Supabase Auth real, incluye el SDK antes de este script: -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
 
 </body>
 </html>

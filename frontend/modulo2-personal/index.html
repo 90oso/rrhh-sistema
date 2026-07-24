@@ -105,16 +105,16 @@
 
     <div class="px-6 mt-auto pt-6 border-t border-outline-variant/20">
       <div class="space-y-1">
-        <a class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" href="#">
-          <span class="material-symbols-outlined text-xl">settings</span>
-          <span>Configuración</span>
+        <a class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" href="#" onclick="event.preventDefault();sessionStorage.clear();window.location.href='../../index.html';">
+          <span class="material-symbols-outlined text-xl">logout</span>
+          <span>Cerrar sesión</span>
         </a>
       </div>
       <div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
-        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">AG</div>
+        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs" id="sidebar-user-av">AG</div>
         <div>
-          <p class="font-bold text-xs">Ana García</p>
-          <p class="text-[10px] text-on-surface-variant">Gerente RRHH</p>
+          <p class="font-bold text-xs" id="sidebar-user-name">Ana García</p>
+          <p class="text-[10px] text-on-surface-variant" id="sidebar-user-role">Gerente RRHH</p>
         </div>
       </div>
     </div>
