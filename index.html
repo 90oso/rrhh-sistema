@@ -1,114 +1,428 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Digital Integrado de RRHH</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121824;
-            color: #e2e8f0;
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            color: #3b82f6;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #94a3b8;
-            margin-bottom: 40px;
-            text-align: center;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            width: 100%;
-        }
-        .card {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: left;
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: #3b82f6;
-        }
-        .card h3 {
-            margin: 0 0 10px 0;
-            color: #f1f5f9;
-        }
-        .card p {
-            margin: 0;
-            font-size: 14px;
-            color: #94a3b8;
-            text-align: left;
-        }
-        .status {
-            display: inline-block;
-            margin-top: 15px;
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-        .ready { background-color: #065f46; color: #34d399; }
-        .pending { background-color: #78350f; color: #fbbf24; }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TalentHub B2B — Iniciar sesión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void: #0A0A0F;
+    --void-2: #121218;
+    --violet: #6D5BD0;
+    --violet-soft: #8B7CF6;
+    --pink: #E85D9E;
+    --teal: #2DD4BF;
+    --amber: #F5A623;
+    --canvas: #F3F4F7;
+    --surface: #FFFFFF;
+    --ink: #14141A;
+    --ink-soft: #6B6B76;
+    --ink-faint: #A0A0AA;
+    --border: #E7E7EC;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+    --shadow-tint: 0 20px 60px -20px rgba(109, 91, 208, 0.35);
+    --shadow-tint-soft: 0 12px 30px -12px rgba(109, 91, 208, 0.25);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0; height:100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--canvas);
+    color: var(--ink);
+  }
+
+  .stage{
+    min-height:100vh;
+    display:flex;
+  }
+
+  /* ---------- LEFT: hero / brand / bento preview ---------- */
+  .hero{
+    position:relative;
+    flex: 1.05;
+    min-width: 0;
+    background: var(--void);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding: 48px 56px;
+    color: #fff;
+  }
+
+  .mesh{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(650px 500px at 18% 12%, rgba(109,91,208,0.55), transparent 60%),
+      radial-gradient(600px 480px at 85% 30%, rgba(232,93,158,0.28), transparent 55%),
+      radial-gradient(700px 600px at 30% 95%, rgba(45,212,191,0.20), transparent 55%),
+      var(--void);
+    z-index:0;
+  }
+
+  .hero > * { position:relative; z-index:1; }
+
+  .brand{
+    display:flex; align-items:center; gap:12px;
+  }
+  .brand-mark{
+    width:40px; height:40px; border-radius:12px;
+    background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-mark svg{ width:20px; height:20px; }
+  .brand-text .name{ font-weight:800; font-size:17px; letter-spacing:-0.01em; }
+  .brand-text .tag{ font-weight:500; font-size:12px; color: rgba(255,255,255,0.55); }
+
+  .hero-copy{ max-width: 420px; margin-top: 40px; }
+  .hero-eyebrow{
+    font-size:12px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase;
+    color: var(--violet-soft);
+    margin-bottom:14px;
+  }
+  .hero-copy h1{
+    font-size: 34px; line-height:1.15; font-weight:800; letter-spacing:-0.02em;
+    margin: 0 0 14px 0;
+  }
+  .hero-copy p{
+    font-size:15px; line-height:1.6; color: rgba(255,255,255,0.62); font-weight:500;
+    margin:0;
+  }
+
+  /* signature element: bento glass preview of destinations by role */
+  .bento-preview{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:12px;
+    margin-top: 36px;
+  }
+  .bento-card{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: var(--radius-sm);
+    padding: 16px 14px;
+    transition: transform .25s ease, background .25s ease;
+  }
+  .bento-card:hover{ transform: translateY(-3px); background: rgba(255,255,255,0.09); }
+  .bento-card .dot{
+    width:8px; height:8px; border-radius:50%;
+    margin-bottom:12px;
+  }
+  .bento-card .role{ font-size:11px; font-weight:700; color: rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:0.08em; }
+  .bento-card .dest{ font-size:13.5px; font-weight:600; margin-top:4px; color:#fff; }
+
+  .hero-footer{
+    font-size:12.5px; color: rgba(255,255,255,0.4); font-weight:500;
+  }
+
+  /* ---------- RIGHT: login panel ---------- */
+  .panel{
+    flex:1;
+    display:flex; align-items:center; justify-content:center;
+    padding: 40px;
+  }
+
+  .card{
+    width:100%; max-width: 380px;
+  }
+
+  .card h2{
+    font-size: 24px; font-weight:800; letter-spacing:-0.01em; margin: 0 0 6px 0;
+  }
+  .card .sub{
+    font-size: 14px; color: var(--ink-soft); font-weight:500; margin: 0 0 32px 0;
+  }
+
+  label{
+    display:block; font-size:12.5px; font-weight:700; color: var(--ink);
+    margin-bottom:8px; letter-spacing:0.01em;
+  }
+
+  .field{ margin-bottom:18px; }
+
+  input[type=email], input[type=password]{
+    width:100%;
+    padding: 13px 16px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-family:inherit;
+    font-size:14.5px;
+    font-weight:500;
+    color: var(--ink);
+    outline:none;
+    transition: border-color .18s ease, box-shadow .18s ease;
+  }
+  input::placeholder{ color: var(--ink-faint); font-weight:500; }
+  input:focus{
+    border-color: var(--violet);
+    box-shadow: 0 0 0 4px rgba(109,91,208,0.14);
+  }
+
+  .btn-primary{
+    width:100%;
+    padding: 14px 16px;
+    border:none;
+    border-radius: var(--radius-sm);
+    background: var(--void);
+    color:#fff;
+    font-family:inherit;
+    font-size:14.5px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top: 6px;
+    box-shadow: var(--shadow-tint-soft);
+    transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+  .btn-primary:hover{ transform: translateY(-1px); box-shadow: var(--shadow-tint); }
+  .btn-primary:active{ transform: translateY(0); }
+  .btn-primary:disabled{ opacity:0.6; cursor:progress; transform:none; }
+
+  .msg{
+    margin-top:14px;
+    font-size:13px;
+    font-weight:600;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    display:none;
+  }
+  .msg.error{ background: #FCEAEF; color:#B23A63; display:block; }
+  .msg.ok{ background:#EAF9F2; color:#1B8E63; display:block; }
+
+  .divider{
+    display:flex; align-items:center; gap:12px;
+    margin: 26px 0 18px 0;
+    color: var(--ink-faint); font-size:12px; font-weight:600;
+  }
+  .divider::before, .divider::after{
+    content:""; flex:1; height:1px; background: var(--border);
+  }
+
+  .demo-box{
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+  }
+  .demo-box .title{
+    font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em;
+    color: var(--ink-faint); margin-bottom:10px;
+  }
+  .demo-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+  }
+  .demo-row:first-of-type{ border-top:none; }
+  .demo-row .who{ font-size:13.5px; font-weight:600; }
+  .demo-row .who small{ display:block; font-weight:500; color: var(--ink-soft); font-size:11.5px; }
+  .demo-row button{
+    border:none; background: var(--canvas); color: var(--ink);
+    font-family:inherit; font-weight:700; font-size:12px;
+    padding: 7px 12px; border-radius: 999px; cursor:pointer;
+    transition: background .15s ease;
+  }
+  .demo-row button:hover{ background:#E7E7EE; }
+
+  .foot-note{
+    margin-top:26px; font-size:12.5px; color: var(--ink-faint); text-align:center;
+  }
+
+  @media (max-width: 880px){
+    .stage{ flex-direction:column; }
+    .hero{ padding: 32px 28px; min-height: 300px; }
+    .bento-preview{ grid-template-columns: repeat(3,1fr); }
+    .hero-copy h1{ font-size:26px; }
+    .panel{ padding: 28px; }
+  }
+</style>
 </head>
 <body>
 
-    <h1>Sistema de Recursos Humanos</h1>
-    <p>Centralización, automatización y análisis del talento humano (300 colaboradores)</p>
+<div class="stage">
 
-    <div class="grid">
-        <a href="frontend/modulo1-reclutamiento/index.html" class="card">
-            <h3>Módulo 1 — Reclutamiento</h3>
-            <p>Formulario de postulantes, filtros de candidatos y pipeline de estados.</p>
-            <span class="status ready">Disponible</span>
-        </a>
+  <!-- ================= LEFT: HERO ================= -->
+  <div class="hero">
+    <div class="mesh"></div>
 
-        <a href="frontend/modulo2-personal/index.html" class="card">
-            <h3>Módulo 2 — Personal</h3>
-            <p>Ingreso de empleados, historial clínico/laboral y organigrama interactivo.</p>
-            <span class="status ready">Disponible</span>
-        </a>
-
-        <a href="frontend/modulo3-control/index.html" class="card">
-            <h3>Módulo 3 — Control Diario</h3>
-            <p>Marcación de asistencia móvil con Geofencing (GPS) vía Supabase.</p>
-            <span class="status ready">Disponible</span>
-        </a>
-
-        <a href="frontend/modulo4-desarrollo/index.html" class="card">
-            <h3>Módulo 4 — Desarrollo</h3>
-            <p>Capacitaciones y evaluación de desempeño por competencias.</p>
-            <span class="status pending">En Desarrollo</span>
-        </a>
-
-        <a href="frontend/modulo5-salida/index.html" class="card">
-            <h3>Módulo 5 — Salida</h3>
-            <p>Registro de bajas, entrevistas de salida y checklist de offboarding.</p>
-            <span class="status pending">En Desarrollo</span>
-        </a>
-
-        <a href="frontend/modulo6-reportes/index.html" class="card">
-            <h3>Módulo 6 — Reportes Gerenciales</h3>
-            <p>Indicadores clave, tasas de rotación y gráficos en tiempo real con Chart.js.</p>
-            <span class="status ready">Disponible</span>
-        </a>
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 10a3 3 0 0 1 3-3h1V6a3 3 0 1 1 3 3h1a3 3 0 1 1 0 4h-1v1a3 3 0 1 1-3 3v-1H7a3 3 0 1 1 0-4h1v-1H7a3 3 0 0 1-3-3Z" fill="#0A0A0F"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="name">TalentHub B2B</div>
+        <div class="tag">HR Intelligence</div>
+      </div>
     </div>
+
+    <div class="hero-copy">
+      <div class="hero-eyebrow">Acceso por rol</div>
+      <h1>Hola, bienvenido a TalentHub&nbsp;B2B.</h1>
+      <p>Inicia sesión con tu correo corporativo. El sistema reconoce tu rol automáticamente y te lleva directo a tu espacio de trabajo.</p>
+
+      <div class="bento-preview">
+        <div class="bento-card">
+          <div class="dot" style="background: var(--teal);"></div>
+          <div class="role">Empleado</div>
+          <div class="dest">Control Diario</div>
+        </div>
+        <div class="bento-card">
+          <div class="dot" style="background: var(--violet-soft);"></div>
+          <div class="role">Gerente</div>
+          <div class="dest">Reportes</div>
+        </div>
+        <div class="bento-card">
+          <div class="dot" style="background: var(--pink);"></div>
+          <div class="role">RRHH</div>
+          <div class="dest">Personal &amp; +</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-footer">© 2026 TalentHub B2B — Sistema interno de Recursos Humanos</div>
+  </div>
+
+  <!-- ================= RIGHT: LOGIN ================= -->
+  <div class="panel">
+    <div class="card">
+      <h2>Iniciar sesión</h2>
+      <p class="sub">Ingresa con tu cuenta para continuar.</p>
+
+      <form id="loginForm" autocomplete="off">
+        <div class="field">
+          <label for="email">Correo</label>
+          <input type="email" id="email" placeholder="nombre.apellido@empresapanama.com" required>
+        </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary" id="btnLogin">Entrar</button>
+        <div class="msg" id="msgBox"></div>
+      </form>
+
+      <div class="divider">O prueba una cuenta demo</div>
+
+      <div class="demo-box">
+        <div class="title">Modo demo — sin Supabase configurado</div>
+        <div class="demo-row">
+          <div class="who">Empleado demo<small>Solo Control Diario</small></div>
+          <button data-rol="Empleado" data-email="empleado.demo@empresapanama.com">Entrar</button>
+        </div>
+        <div class="demo-row">
+          <div class="who">Gerente demo<small>Solo Reportes</small></div>
+          <button data-rol="Gerente" data-email="gerente.demo@empresapanama.com">Entrar</button>
+        </div>
+        <div class="demo-row">
+          <div class="who">RRHH demo<small>Reclutamiento, Personal, Desarrollo, Salida</small></div>
+          <button data-rol="RRHH" data-email="rrhh.demo@empresapanama.com">Entrar</button>
+        </div>
+      </div>
+
+      <div class="foot-note">¿Problemas para ingresar? Contacta a Recursos Humanos.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================================
+   CONFIGURA AQUÍ TU PROYECTO SUPABASE
+   Si ya tienes shared/supabase-client.js con el cliente inicializado,
+   reemplaza este bloque por: import { supabase } from './shared/supabase-client.js'
+   ========================================================================= */
+const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co';
+const SUPABASE_ANON_KEY = 'TU-ANON-KEY';
+
+let supabaseClient = null;
+try {
+  if (window.supabase && SUPABASE_URL.indexOf('TU-PROYECTO') === -1) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+} catch (e) { /* sin conexión configurada: se usa modo demo */ }
+
+/* Mapa de acceso: rol -> módulos permitidos (deben coincidir con las carpetas de frontend/) */
+const ACCESO_POR_ROL = {
+  Empleado: ['modulo3-control'],
+  Gerente:  ['modulo6-reportes'],
+  RRHH:     ['modulo1-reclutamiento','modulo2-personal','modulo3-control','modulo4-desarrollo','modulo5-salida'],
+  Admin:    ['modulo1-reclutamiento','modulo2-personal','modulo3-control','modulo4-desarrollo','modulo5-salida','modulo6-reportes','configuracion']
+};
+
+function irAModulo(rol, email) {
+  sessionStorage.setItem('rol', rol);
+  sessionStorage.setItem('email', email);
+  const destino = ACCESO_POR_ROL[rol] ? ACCESO_POR_ROL[rol][0] : null;
+  if (!destino) {
+    mostrarMensaje('Tu usuario no tiene un rol asignado. Contacta a RRHH.', 'error');
+    return;
+  }
+  window.location.href = '../frontend/' + destino + '/index.html';
+}
+
+function mostrarMensaje(texto, tipo) {
+  const box = document.getElementById('msgBox');
+  box.textContent = texto;
+  box.className = 'msg ' + tipo;
+}
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('btnLogin');
+  btn.disabled = true; btn.textContent = 'Verificando...';
+
+  try {
+    if (!supabaseClient) {
+      throw new Error('Supabase no está configurado en este archivo. Usa una cuenta demo abajo, o completa SUPABASE_URL / SUPABASE_ANON_KEY.');
+    }
+
+    const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (authError) throw new Error('Correo o contraseña incorrectos.');
+
+    // Se busca el rol del empleado por su correo en la tabla empleados
+    const { data: empleado, error: empError } = await supabaseClient
+      .from('empleados')
+      .select('rol, nombre')
+      .eq('email', email)
+      .single();
+
+    if (empError || !empleado) throw new Error('No se encontró un empleado asociado a este correo.');
+
+    mostrarMensaje('Bienvenido, ' + empleado.nombre + '. Redirigiendo...', 'ok');
+    setTimeout(() => irAModulo(empleado.rol, email), 600);
+
+  } catch (err) {
+    mostrarMensaje(err.message, 'error');
+    btn.disabled = false; btn.textContent = 'Entrar';
+  }
+});
+
+/* Botones de cuentas demo: simulan el login sin necesidad de Supabase */
+document.querySelectorAll('.demo-row button').forEach(b => {
+  b.addEventListener('click', () => {
+    const rol = b.getAttribute('data-rol');
+    const email = b.getAttribute('data-email');
+    mostrarMensaje('Entrando como ' + rol + ' (demo)...', 'ok');
+    setTimeout(() => irAModulo(rol, email), 500);
+  });
+});
+</script>
+
+<!-- Si usas Supabase Auth real, incluye el SDK antes de este script: -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
 
 </body>
 </html>
