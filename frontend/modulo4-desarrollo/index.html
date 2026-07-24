@@ -4,6 +4,13 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Desarrollo · TalentHub B2B</title>
+
+<!-- definimos el modulo actual antes de cargar el portero -->
+<script>window.CURRENT_MODULE = 'modulo4-desarrollo';</script>
+
+<!-- cargamos el script de proteccion de rutas -->
+<script src="../shared/auth-guard.js"></script>
+
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -75,28 +82,28 @@ input[type=range].accent-primary { accent-color: #000; }
     </div>
 
     <nav class="flex-1 space-y-1">
-      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo1-reclutamiento/index.html">
+      <a data-modulo="modulo1-reclutamiento" class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo1-reclutamiento/index.html">
         <span class="material-symbols-outlined">person_search</span>
         <span class="text-sm">Reclutamiento</span>
       </a>
-      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html">
+      <a data-modulo="modulo2-personal" class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html">
         <span class="material-symbols-outlined">groups</span>
         <span class="text-sm">Personal</span>
       </a>
-      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo3-control/index.html">
+      <a data-modulo="modulo3-control" class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo3-control/index.html">
         <span class="material-symbols-outlined">event_available</span>
         <span class="text-sm">Control diario</span>
       </a>
-      <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
+      <a data-modulo="modulo4-desarrollo" class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
         <span class="material-symbols-outlined">trending_up</span>
         <span class="text-sm">Desarrollo</span>
         <span class="ml-auto bg-primary text-white text-[10px] px-2 py-0.5 rounded-full" id="badge-eval">0</span>
       </a>
-      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo5-salida/index.html">
+      <a data-modulo="modulo5-salida" class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo5-salida/index.html">
         <span class="material-symbols-outlined">exit_to_app</span>
         <span class="text-sm">Salida</span>
       </a>
-      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo6-reportes/index.html">
+      <a data-modulo="modulo6-reportes" class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo6-reportes/index.html">
         <span class="material-symbols-outlined">analytics</span>
         <span class="text-sm">Reportes</span>
       </a>
@@ -104,7 +111,7 @@ input[type=range].accent-primary { accent-color: #000; }
 
     <div class="px-6 mt-auto pt-6 border-t border-outline-variant/20">
       <div class="space-y-1">
-        <a class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" href="#">
+        <a data-modulo="configuracion" class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" href="#">
           <span class="material-symbols-outlined text-xl">settings</span>
           <span>Configuración</span>
         </a>
@@ -365,7 +372,7 @@ input[type=range].accent-primary { accent-color: #000; }
       </div>
     </div>
     <div class="mt-4 p-3.5 bg-surface-container-low rounded-2xl flex items-center justify-between">
-      <span class="text-xs font-bold text-primary">Promedio calculado</span>
+      <span class="text-xs font-bold text-primary">Promedio calculated</span>
       <span class="text-lg font-extrabold text-primary" id="eval-promedio">4.00</span>
     </div>
     <div class="mt-4">
