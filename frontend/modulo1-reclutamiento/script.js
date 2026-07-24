@@ -55,6 +55,20 @@ async function subirCV(idCandidato) {
   return data.publicUrl;
 }
 
+// Sube el CV sin dejar que un fallo de Storage rompa el guardado del candidato
+// (bucket faltante, política RLS, archivo demasiado grande, etc.)
+async function subirCVSeguro(idCandidato) {
+  const input = document.getElementById('f-cv-archivo');
+  if (!input || !input.files.length) return;
+  try {
+    const urlCV = await subirCV(idCandidato);
+    if (urlCV) await db.from("candidatos").update({ cv_archivo: urlCV }).eq("id", idCandidato);
+  } catch (err) {
+    console.error('Error subiendo CV:', err);
+    toast('El candidato se guardó, pero el CV no se pudo subir: ' + (err.message || err), 'err');
+  }
+}
+
 function diasEntre(iso1, iso2) {
   if (!iso1 || !iso2) return null;
   return Math.round((new Date(iso2) - new Date(iso1)) / 86400000);
@@ -383,6 +397,7 @@ function abrirNuevo() {
   document.getElementById('f-estado').value = 'Postulado';
   document.getElementById('f-entrevista').value = '';
   document.getElementById('f-cv').value = '';
+  document.getElementById('f-cv-archivo').value = '';
   document.getElementById('f-comentario').value = '';
   document.getElementById('f-motivo').value = '';
   toggleMotivoRechazo('Postulado');
@@ -403,6 +418,7 @@ function editarCandidato(id) {
   document.getElementById('f-estado').value = c.estado || 'Postulado';
   document.getElementById('f-entrevista').value = c.entrevista || '';
   document.getElementById('f-cv').value = c.cv_link || '';
+  document.getElementById('f-cv-archivo').value = '';
   document.getElementById('f-comentario').value = c.comentario || '';
   document.getElementById('f-motivo').value = c.motivo_rechazo || '';
   toggleMotivoRechazo(c.estado);
@@ -471,20 +487,14 @@ async function guardar() {
 
   if (editandoId) {
     const { error } = await db.from('candidatos').update(datos).eq('id', editandoId);
-    const urlCV = await subirCV(editandoId);
-    if(urlCV){
-      await db.from("candidatos").update({cv_archivo:urlCV}).eq("id",editandoId);
-    }
     if (error) { toast('Error al guardar: ' + error.message, 'err'); if (btnG) btnG.disabled = false; return; }
+    await subirCVSeguro(editandoId);
     toast(`${nombre} actualizado`, 'ok');
   } else {
     const { data: nuevo, error } = await db.from('candidatos').insert([datos]).select().single();
     if (error) { toast('Error al guardar: ' + error.message, 'err'); if (btnG) btnG.disabled = false; return; }
     toast(`${nombre} agregado`, 'ok');
-    const urlCV = await subirCV(nuevo.id);
-    if(urlCV) { 
-      await db.from("candidatos").update({cv_archivo:urlCV}).eq("id", nuevo.id);
-    }
+    await subirCVSeguro(nuevo.id);
   }
   cerrarModal('modal-form');
   if (btnG) btnG.disabled = false;
