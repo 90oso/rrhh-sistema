@@ -6,6 +6,7 @@
 <title>Salida / Offboarding · TalentHub B2B</title>
 <script>window.CURRENT_MODULE = 'modulo5-salida';</script>
 <script src="../shared/auth-guard.js"></script>
+<script src="../shared/user-prefs.js"></script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -132,13 +133,12 @@
         </div>
       </div>
       <div class="flex items-center gap-4">
-        <span class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all">notifications</span>
-        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4">
+        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4 cursor-pointer group" onclick="abrirConfig()" title="Personalizar perfil">
           <div class="text-right">
-            <p class="font-bold text-xs">Admin HR</p>
-            <p class="text-[10px] text-on-surface-variant">Superuser</p>
+            <p class="font-bold text-xs" id="hdr-user-name">Admin HR</p>
+            <p class="text-[10px] text-on-surface-variant" id="hdr-user-role">Superuser</p>
           </div>
-          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">HR</div>
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm transition-all group-hover:ring-4 group-hover:ring-primary/15" id="hdr-user-av">HR</div>
         </div>
       </div>
     </header>
@@ -182,8 +182,8 @@
           <div class="w-10 h-10 bg-green-50 rounded-2xl flex items-center justify-center text-green-600"><span class="material-symbols-outlined text-lg">forum</span></div>
           <div>
             <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Entrevistas</p>
-            <p class="font-extrabold text-xl text-primary mt-0.5" id="st-entrevistas">—</p>
-            <p class="text-[10px] text-on-surface-variant" id="st-entrevistas-sub">de salida realizadas</p>
+            <p class="font-extrabold text-2xl text-primary mt-0.5 tabular-nums" id="st-entrevistas">—</p>
+            <p class="text-xs text-on-surface-variant" id="st-entrevistas-sub">de salida realizadas</p>
           </div>
         </div>
 
@@ -192,8 +192,8 @@
           <div class="w-10 h-10 bg-red-50 rounded-2xl flex items-center justify-center text-red-600"><span class="material-symbols-outlined text-lg">assignment_late</span></div>
           <div>
             <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Pendientes</p>
-            <p class="font-extrabold text-xl text-primary mt-0.5" id="st-pendientes">—</p>
-            <p class="text-[10px] text-on-surface-variant" id="st-pendientes-sub">procesos sin completar</p>
+            <p class="font-extrabold text-2xl text-primary mt-0.5 tabular-nums" id="st-pendientes">—</p>
+            <p class="text-xs text-on-surface-variant" id="st-pendientes-sub">procesos sin completar</p>
           </div>
         </div>
 

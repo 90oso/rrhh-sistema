@@ -14,11 +14,31 @@ let modoDemo = false;
 const COLORES = ['#131b2e','#00668a','#7bd0ff','#7073ff','#22c55e','#f59e0b','#a855f7','#14b8a6','#ef4444','#f97316'];
 const charts = {};
 
-if (window.Chart) {
-  Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-  Chart.defaults.color = '#76777d';
-  Chart.defaults.borderColor = '#eceef0';
+// Color de texto de los gráficos según el tema: gris en claro, blanco en oscuro.
+function colorTextoTema() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? '#F1F1F6' : '#76777d';
 }
+// Opciones de leyenda comunes a las gráficas de dona/pastel, con el color del tema.
+function leyendaTema() {
+  return { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 }, color: colorTextoTema() } };
+}
+function aplicarTemaCharts() {
+  if (!window.Chart) return;
+  const oscuro = document.documentElement.getAttribute('data-theme') === 'dark';
+  Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+  Chart.defaults.color = colorTextoTema();
+  Chart.defaults.borderColor = oscuro ? 'rgba(255,255,255,0.12)' : '#eceef0';
+  const p = Chart.defaults.plugins || {};
+  if (p.legend && p.legend.labels) p.legend.labels.color = colorTextoTema();
+  if (p.title) p.title.color = colorTextoTema();
+}
+aplicarTemaCharts();
+
+// Al pulsar el botón de tema, recolorea los gráficos en vivo (sin recargar).
+new MutationObserver(() => {
+  aplicarTemaCharts();
+  renderizarTodo();
+}).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
 // ── HELPERS ──
 function diasEntre(iso1, iso2) {
@@ -148,7 +168,7 @@ function renderCapacitaciones() {
       labels: ['Completadas', 'Inscrito / En curso', 'No completadas'],
       datasets: [{ data: [completadas, enCurso, noCompletadas], backgroundColor: ['#16A34A', '#F59E0B', '#DC2626'] }]
     },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: leyendaTema() } }
   });
 }
 
@@ -170,7 +190,7 @@ function renderAusentismo() {
   charts['chart-ausentismo'] = new Chart(document.getElementById('chart-ausentismo'), {
     type: 'doughnut',
     data: { labels: Object.keys(grupos), datasets: [{ data: Object.values(grupos), backgroundColor: COLORES }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: leyendaTema() } }
   });
 }
 
@@ -229,12 +249,13 @@ function renderSalidas() {
   charts['chart-salidas'] = new Chart(document.getElementById('chart-salidas'), {
     type: 'pie',
     data: { labels: Object.keys(grupos), datasets: [{ data: Object.values(grupos), backgroundColor: COLORES }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: leyendaTema() } }
   });
 }
 
 // ── RENDER GLOBAL ──
 function renderizarTodo() {
+  aplicarTemaCharts();
   renderStats();
   renderHeadcount();
   renderDesempeno();

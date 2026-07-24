@@ -32,6 +32,36 @@ const fmtHora = iso => iso ? new Date(iso).toLocaleTimeString('es', { hour: '2-d
 const fmtFecha = iso => { if (!iso) return '—'; const d = new Date(iso + 'T12:00:00'); return d.toLocaleDateString('es', { day: '2-digit', month: 'short' }); };
 const rangoActivo = (ini, fin) => ini && fin && HOY >= ini && HOY <= fin;
 
+// ── VISIBILIDAD POR ROL ──
+// RRHH y Admin ven a todo el personal. Cualquier otro rol (p. ej. Empleado)
+// solo se ve a sí mismo, identificado por su correo (o su nombre) de sesión.
+const ROLES_TOTAL = ['RRHH', 'Admin'];
+const rolSesion = () => (window.SESSION && window.SESSION.rol) || sessionStorage.getItem('rol') || '';
+const esRRHH = () => ROLES_TOTAL.includes(rolSesion());
+
+function miEmpleado() {
+  const email = (((window.SESSION && window.SESSION.email) || sessionStorage.getItem('email') || '')).toLowerCase();
+  const nombre = (((window.SESSION && window.SESSION.nombre) || sessionStorage.getItem('nombre') || '')).toLowerCase();
+  return empleados.find(e =>
+    (email && (e.email || '').toLowerCase() === email) ||
+    (nombre && (e.nombre || '').toLowerCase() === nombre)
+  ) || null;
+}
+
+// Empleados que el usuario actual tiene permitido ver.
+function empleadosVisibles() {
+  if (esRRHH()) return empleados;
+  const yo = miEmpleado();
+  if (yo) return [yo];
+  // Sin coincidencia en el roster (p. ej. cuenta demo): se muestra al propio
+  // usuario a partir de los datos de su sesión, para que solo vea su nombre.
+  const nombre = (window.SESSION && window.SESSION.nombre) || sessionStorage.getItem('nombre');
+  if (nombre) return [{ id: -1, nombre, cargo: rolSesion(), estado: 'Activo', email: (window.SESSION && window.SESSION.email) || '' }];
+  return [];
+}
+// Ids visibles, para filtrar marcaciones / ausencias / vacaciones.
+const idsVisibles = () => new Set(empleadosVisibles().map(e => e.id));
+
 // Haversine: distancia en metros entre dos coordenadas GPS
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371e3, rad = Math.PI / 180;
@@ -78,14 +108,15 @@ function estadoEmpleado(emp) {
 
 // ── KPIs ──
 function actualizarStats() {
-  const activos = empleados.filter(e => (e.estado || 'Activo') === 'Activo');
+  const ids = idsVisibles();
+  const activos = empleadosVisibles().filter(e => (e.estado || 'Activo') === 'Activo');
   const estados = activos.map(e => estadoEmpleado(e));
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   set('k-presentes', estados.filter(s => s.tipo === 'Presente').length);
   set('k-ausentes', estados.filter(s => s.tipo === 'Ausente').length);
   set('k-vacaciones', estados.filter(s => s.tipo === 'Vacaciones').length);
-  set('k-fuera', asistencia.filter(m => m.aprobado === false).length);
-  set('badge-hoy', asistencia.length);
+  set('k-fuera', asistencia.filter(m => ids.has(m.empleado_id) && m.aprobado === false).length);
+  set('badge-hoy', asistencia.filter(m => ids.has(m.empleado_id)).length);
   const sr = document.getElementById('sede-radio');
   if (sr) sr.textContent = getSede().radio + ' m';
 }
@@ -107,9 +138,11 @@ function renderChips() {
   const row = document.getElementById('filter-row');
   if (!row) return;
   if (vista !== 'marcaciones') { row.innerHTML = ''; return; }
-  const n = f => f === 'todos' ? asistencia.length
-    : f === 'fuera' ? asistencia.filter(m => m.aprobado === false).length
-    : asistencia.filter(m => m.tipo === f).length;
+  const ids = idsVisibles();
+  const visibles = asistencia.filter(m => ids.has(m.empleado_id));
+  const n = f => f === 'todos' ? visibles.length
+    : f === 'fuera' ? visibles.filter(m => m.aprobado === false).length
+    : visibles.filter(m => m.tipo === f).length;
   const activeClass = 'bg-primary text-white shadow-sm';
   const idleClass = 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest';
   const chip = (f, lbl) => `<button class="chip px-3 py-1 text-xs font-semibold rounded-full transition-all flex items-center gap-1.5 ${filtroMarc === f ? activeClass : idleClass}" onclick="filtrarMarc('${f}')">${lbl}<span class="text-[10px] font-extrabold rounded-full px-1.5 min-w-[16px] text-center ${filtroMarc === f ? 'bg-white/25 text-white' : 'bg-surface-container-highest text-on-surface-variant'}">${n(f)}</span></button>`;
@@ -131,7 +164,9 @@ function renderTabla() {
   if (vista === 'marcaciones') {
     thead.innerHTML = `<tr class="border-b border-outline-variant/20"><th class="${thCls} pl-2">Empleado</th><th class="${thCls}">Tipo</th><th class="${thCls}">Hora</th><th class="${thCls}">Distancia</th><th class="${thCls} pr-2">Validación GPS</th></tr>`;
     if (cargando) { tbody.innerHTML = filaCargando(5); return; }
+    const ids = idsVisibles();
     let lista = asistencia.filter(m => {
+      if (!ids.has(m.empleado_id)) return false;
       const matchF = filtroMarc === 'todos' || (filtroMarc === 'fuera' ? m.aprobado === false : m.tipo === filtroMarc);
       const matchB = !busq || nombreDe(m.empleado_id).toLowerCase().includes(busq);
       return matchF && matchB;
@@ -162,7 +197,7 @@ function renderTabla() {
   // vista: estado del personal
   thead.innerHTML = `<tr class="border-b border-outline-variant/20"><th class="${thCls} pl-2">Empleado</th><th class="${thCls}">Estado hoy</th><th class="${thCls} pr-2">Detalle</th></tr>`;
   if (cargando) { tbody.innerHTML = filaCargando(3); return; }
-  let lista = empleados.filter(e => (e.estado || 'Activo') === 'Activo' && (!busq || e.nombre.toLowerCase().includes(busq)));
+  let lista = empleadosVisibles().filter(e => (e.estado || 'Activo') === 'Activo' && (!busq || e.nombre.toLowerCase().includes(busq)));
   const pill = document.getElementById('tbl-count'); if (pill) pill.textContent = lista.length;
   if (!lista.length) {
     tbody.innerHTML = `<tr><td colspan="3" class="py-12 text-center text-on-surface-variant text-sm">Sin empleados activos</td></tr>`;
@@ -199,9 +234,11 @@ function cambiarSideTab(t) {
 function renderSide() {
   const box = document.getElementById('side-list');
   if (!box) return;
+  const ids = idsVisibles();
   if (sideTab === 'ausencias') {
-    if (!ausencias.length) { box.innerHTML = `<div class="text-center py-6 text-on-surface-variant"><span class="material-symbols-outlined text-2xl block mb-2 opacity-40">event_busy</span><p class="text-xs">Sin ausencias registradas</p></div>`; return; }
-    box.innerHTML = [...ausencias].sort((a, b) => (b.fecha_inicio || '').localeCompare(a.fecha_inicio || '')).map(a => `
+    const lista = ausencias.filter(a => ids.has(a.empleado_id));
+    if (!lista.length) { box.innerHTML = `<div class="text-center py-6 text-on-surface-variant"><span class="material-symbols-outlined text-2xl block mb-2 opacity-40">event_busy</span><p class="text-xs">Sin ausencias registradas</p></div>`; return; }
+    box.innerHTML = [...lista].sort((a, b) => (b.fecha_inicio || '').localeCompare(a.fecha_inicio || '')).map(a => `
       <div class="border border-outline-variant/20 rounded-2xl p-3 hover:shadow-sm transition-all">
         <div class="flex items-center gap-2 mb-1">
           <div class="w-6 h-6 rounded-full flex items-center justify-center font-bold text-white text-[9px] flex-shrink-0" style="background:${avColor(a.empleado_id)}">${iniciales(nombreDe(a.empleado_id))}</div>
@@ -217,8 +254,9 @@ function renderSide() {
       </div>`).join('');
     return;
   }
-  if (!vacaciones.length) { box.innerHTML = `<div class="text-center py-6 text-on-surface-variant"><span class="material-symbols-outlined text-2xl block mb-2 opacity-40">beach_access</span><p class="text-xs">Sin solicitudes de vacaciones</p></div>`; return; }
-  box.innerHTML = [...vacaciones].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')).map(v => `
+  const listaVac = vacaciones.filter(v => ids.has(v.empleado_id));
+  if (!listaVac.length) { box.innerHTML = `<div class="text-center py-6 text-on-surface-variant"><span class="material-symbols-outlined text-2xl block mb-2 opacity-40">beach_access</span><p class="text-xs">Sin solicitudes de vacaciones</p></div>`; return; }
+  box.innerHTML = [...listaVac].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')).map(v => `
     <div class="border border-outline-variant/20 rounded-2xl p-3 hover:shadow-sm transition-all">
       <div class="flex items-center gap-2 mb-1">
         <div class="w-6 h-6 rounded-full flex items-center justify-center font-bold text-white text-[9px] flex-shrink-0" style="background:${avColor(v.empleado_id)}">${iniciales(nombreDe(v.empleado_id))}</div>
@@ -464,7 +502,7 @@ function usarMiUbicacion() {
 function llenarSelect(id) {
   const sel = document.getElementById(id);
   if (!sel) return;
-  const activos = empleados.filter(e => (e.estado || 'Activo') === 'Activo');
+  const activos = empleadosVisibles().filter(e => (e.estado || 'Activo') === 'Activo');
   sel.innerHTML = activos.length
     ? activos.map(e => `<option value="${e.id}">${e.nombre} — ${e.cargo || ''}</option>`).join('')
     : '<option value="">Sin empleados activos</option>';
@@ -544,14 +582,14 @@ function suscribirRealtime() {
 // ── DATOS DEMO ──
 function cargarDatosDemo() {
   empleados = [
-    { id: 1, nombre: 'Ana García', cargo: 'Gerente RRHH', departamento: 'RRHH', estado: 'Activo' },
-    { id: 2, nombre: 'Carlos Mora', cargo: 'Analista TI', departamento: 'TI', estado: 'Activo' },
-    { id: 3, nombre: 'Lucía Pérez', cargo: 'Diseñadora', departamento: 'Marketing', estado: 'Activo' },
-    { id: 4, nombre: 'Roberto Sánchez', cargo: 'Dev Backend', departamento: 'TI', estado: 'Activo' },
-    { id: 5, nombre: 'María Jiménez', cargo: 'Contadora', departamento: 'Finanzas', estado: 'Activo' },
-    { id: 6, nombre: 'Diego Vargas', cargo: 'Vendedor', departamento: 'Comercial', estado: 'Activo' },
-    { id: 7, nombre: 'Patricia López', cargo: 'Asistente RRHH', departamento: 'RRHH', estado: 'Activo' },
-    { id: 8, nombre: 'Fernando Ruiz', cargo: 'Supervisor', departamento: 'Operaciones', estado: 'Activo' },
+    { id: 1, nombre: 'Ana García', email: 'ana@empresa.com', cargo: 'Gerente RRHH', departamento: 'RRHH', estado: 'Activo' },
+    { id: 2, nombre: 'Carlos Mora', email: 'carlos@empresa.com', cargo: 'Analista TI', departamento: 'TI', estado: 'Activo' },
+    { id: 3, nombre: 'Lucía Pérez', email: 'lucia@empresa.com', cargo: 'Diseñadora', departamento: 'Marketing', estado: 'Activo' },
+    { id: 4, nombre: 'Roberto Sánchez', email: 'roberto@empresa.com', cargo: 'Dev Backend', departamento: 'TI', estado: 'Activo' },
+    { id: 5, nombre: 'María Jiménez', email: 'maria@empresa.com', cargo: 'Contadora', departamento: 'Finanzas', estado: 'Activo' },
+    { id: 6, nombre: 'Diego Vargas', email: 'diego@empresa.com', cargo: 'Vendedor', departamento: 'Comercial', estado: 'Activo' },
+    { id: 7, nombre: 'Patricia López', email: 'patricia@empresa.com', cargo: 'Asistente RRHH', departamento: 'RRHH', estado: 'Activo' },
+    { id: 8, nombre: 'Fernando Ruiz', email: 'fernando@empresa.com', cargo: 'Supervisor', departamento: 'Operaciones', estado: 'Activo' },
   ];
   const h = (hh, mm) => { const d = new Date(); d.setHours(hh, mm, 0, 0); return d.toISOString(); };
   asistencia = [

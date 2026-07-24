@@ -6,6 +6,7 @@
 <title>Control Diario · TalentHub B2B</title>
 <script>window.CURRENT_MODULE = 'modulo3-control';</script>
 <script src="../shared/auth-guard.js"></script>
+<script src="../shared/user-prefs.js"></script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -131,12 +132,12 @@
       </div>
       <div class="flex items-center gap-4">
         <button onclick="abrirSede()" title="Configurar sede / geocerca" class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all text-on-surface-variant">edit_location_alt</button>
-        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4">
+        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4 cursor-pointer group" onclick="abrirConfig()" title="Personalizar perfil">
           <div class="text-right">
-            <p class="font-bold text-xs">Admin HR</p>
-            <p class="text-[10px] text-on-surface-variant">Superuser</p>
+            <p class="font-bold text-xs" id="hdr-user-name">Admin HR</p>
+            <p class="text-[10px] text-on-surface-variant" id="hdr-user-role">Superuser</p>
           </div>
-          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">HR</div>
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm transition-all group-hover:ring-4 group-hover:ring-primary/15" id="hdr-user-av">HR</div>
         </div>
       </div>
     </header>
@@ -183,35 +184,36 @@
         </div>
 
         <!-- KPIs -->
-        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-primary text-white rounded-3xl p-5 shadow-xl shadow-primary/10 relative overflow-hidden flex flex-col justify-between">
-          <div class="relative z-10">
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-primary text-white rounded-3xl p-5 shadow-xl shadow-primary/10 flex flex-col justify-center gap-3">
+          <div class="w-10 h-10 bg-white/15 rounded-2xl flex items-center justify-center text-white"><span class="material-symbols-outlined text-lg">how_to_reg</span></div>
+          <div>
             <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Presentes</p>
-            <h3 class="text-3xl font-extrabold mt-1 tracking-tight" id="k-presentes">—</h3>
-          </div>
-          <p class="text-[10px] opacity-70 relative z-10 mt-2">en la empresa ahora</p>
-          <div class="absolute right-[-10px] bottom-[-15px] opacity-10">
-            <span class="material-symbols-outlined !text-[80px]">how_to_reg</span>
+            <p class="font-extrabold text-2xl mt-0.5 tabular-nums" id="k-presentes">—</p>
+            <p class="text-xs opacity-70">en la empresa ahora</p>
           </div>
         </div>
-        <div class="col-span-12 md:col-span-6 lg:col-span-2 glass-card rounded-3xl p-5 shadow-sm flex flex-col justify-center gap-1">
-          <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Ausencias</p>
-          <p class="font-extrabold text-2xl text-primary" id="k-ausentes">—</p>
-          <p class="text-[10px] text-on-surface-variant">activas hoy</p>
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 glass-card rounded-3xl p-5 shadow-sm flex flex-col justify-center gap-3">
+          <div class="w-10 h-10 bg-red-50 rounded-2xl flex items-center justify-center text-red-600"><span class="material-symbols-outlined text-lg">event_busy</span></div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Ausencias</p>
+            <p class="font-extrabold text-2xl text-primary mt-0.5 tabular-nums" id="k-ausentes">—</p>
+            <p class="text-xs text-on-surface-variant">activas hoy</p>
+          </div>
         </div>
         <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
           <div class="w-10 h-10 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600"><span class="material-symbols-outlined text-lg">beach_access</span></div>
           <div>
             <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Vacaciones</p>
-            <p class="font-extrabold text-xl text-primary mt-0.5" id="k-vacaciones">—</p>
-            <p class="text-[10px] text-on-surface-variant">de vacaciones hoy</p>
+            <p class="font-extrabold text-2xl text-primary mt-0.5 tabular-nums" id="k-vacaciones">—</p>
+            <p class="text-xs text-on-surface-variant">de vacaciones hoy</p>
           </div>
         </div>
         <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
           <div class="w-10 h-10 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600"><span class="material-symbols-outlined text-lg">location_off</span></div>
           <div>
             <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Fuera de zona</p>
-            <p class="font-extrabold text-xl text-primary mt-0.5" id="k-fuera">—</p>
-            <p class="text-[10px] text-on-surface-variant">marcaciones a revisar</p>
+            <p class="font-extrabold text-2xl text-primary mt-0.5 tabular-nums" id="k-fuera">—</p>
+            <p class="text-xs text-on-surface-variant">marcaciones a revisar</p>
           </div>
         </div>
 

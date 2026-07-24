@@ -6,6 +6,7 @@
 <title>Desarrollo · TalentHub B2B</title>
 <script>window.CURRENT_MODULE = 'modulo4-desarrollo';</script>
 <script src="../shared/auth-guard.js"></script>
+<script src="../shared/user-prefs.js"></script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -131,13 +132,12 @@ input[type=range].accent-primary { accent-color: #000; }
         </div>
       </div>
       <div class="flex items-center gap-4">
-        <span class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all">notifications</span>
-        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4">
+        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4 cursor-pointer group" onclick="abrirConfig()" title="Personalizar perfil">
           <div class="text-right">
-            <p class="font-bold text-xs">Admin HR</p>
-            <p class="text-[10px] text-on-surface-variant">Superuser</p>
+            <p class="font-bold text-xs" id="hdr-user-name">Admin HR</p>
+            <p class="text-[10px] text-on-surface-variant" id="hdr-user-role">Superuser</p>
           </div>
-          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">HR</div>
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm transition-all group-hover:ring-4 group-hover:ring-primary/15" id="hdr-user-av">HR</div>
         </div>
       </div>
     </header>
@@ -152,7 +152,7 @@ input[type=range].accent-primary { accent-color: #000; }
 
       <!-- ══ BENTO GRID: STATS ══ -->
       <div class="bento-grid">
-        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-primary text-white rounded-3xl p-6 shadow-xl shadow-primary/10 relative overflow-hidden h-40 flex flex-col justify-between">
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-primary text-white rounded-3xl p-6 shadow-xl shadow-primary/10 relative overflow-hidden min-h-[10rem] flex flex-col justify-between">
           <div class="relative z-10">
             <p class="text-[10px] font-bold uppercase tracking-widest opacity-70">Promedio de desempeño</p>
             <h3 class="text-4xl font-extrabold mt-2 tracking-tight" id="st-promedio">—</h3>
@@ -163,7 +163,7 @@ input[type=range].accent-primary { accent-color: #000; }
           </div>
         </div>
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 shadow-sm h-40 flex flex-col justify-between">
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 glass-card rounded-3xl p-6 shadow-sm min-h-[10rem] flex flex-col justify-between">
           <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Capacitaciones</p>
           <div class="space-y-2.5">
             <div>
@@ -179,23 +179,23 @@ input[type=range].accent-primary { accent-color: #000; }
           </div>
         </div>
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 h-40 flex flex-col justify-center gap-3">
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 min-h-[10rem] flex flex-col justify-center gap-3">
           <div class="w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center text-primary">
             <span class="material-symbols-outlined">pending_actions</span>
           </div>
           <div>
             <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Capacitaciones pendientes</p>
-            <p class="font-extrabold text-xl text-primary mt-0.5"><span id="st-cap-pend">—</span> <span class="text-xs font-normal text-on-surface-variant">inscritas / en curso</span></p>
+            <p class="font-extrabold text-2xl text-primary mt-0.5 tabular-nums"><span id="st-cap-pend">—</span> <span class="text-xs font-normal text-on-surface-variant">inscritas / en curso</span></p>
           </div>
         </div>
 
-        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 h-40 flex flex-col justify-center gap-3">
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 min-h-[10rem] flex flex-col justify-center gap-3">
           <div class="w-12 h-12 bg-surface-container rounded-2xl flex items-center justify-center text-secondary">
             <span class="material-symbols-outlined">fact_check</span>
           </div>
           <div>
             <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Evaluaciones registradas</p>
-            <p class="font-extrabold text-xl text-primary mt-0.5" id="st-eval-total">—</p>
+            <p class="font-extrabold text-2xl text-primary mt-0.5 tabular-nums" id="st-eval-total">—</p>
             <p class="text-[11px] text-green-600 font-semibold mt-0.5" id="st-eval-mes">—</p>
           </div>
         </div>
