@@ -12,9 +12,13 @@ function setSede(s) { localStorage.setItem('geofence_m3_utp', JSON.stringify(s))
 
 // ── ESTADO ──
 let empleados = [];
-let asistencia = [];   // marcaciones de HOY
+let asistencia = [];    // marcaciones de HOY
+let asistenciaMes = []; // marcaciones del mes en curso (para KPIs personales del empleado)
 let ausencias = [];
 let vacaciones = [];
+
+// Después de esta hora (08:05) una entrada cuenta como tardanza.
+const HORA_ENTRADA_LIMITE = 8 * 60 + 5;
 let vista = 'marcaciones';
 let sideTab = 'ausencias';
 let filtroMarc = 'todos';
@@ -108,16 +112,57 @@ function estadoEmpleado(emp) {
 }
 
 // ── KPIs ──
+const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+// Reconfigura una de las 3 primeras tarjetas KPI (ícono, etiqueta, valor, subtítulo).
+function setKPI(n, icon, label, valor, sub) {
+  const valorIds = { 1: 'k-presentes', 2: 'k-ausentes', 3: 'k-vacaciones' };
+  setTxt('kpi' + n + '-icon', icon);
+  setTxt('kpi' + n + '-label', label);
+  setTxt('kpi' + n + '-sub', sub);
+  setTxt(valorIds[n], valor);
+}
+
+// Métricas personales del empleado a partir de las marcaciones del mes.
+function statsEmpleadoMes(empId) {
+  const mes = HOY.slice(0, 7);
+  const mias = asistenciaMes.filter(m => m.empleado_id === empId && (m.fecha_hora || '').slice(0, 7) === mes);
+  const porDia = {};
+  mias.forEach(m => { const d = (m.fecha_hora || '').slice(0, 10); if (d) (porDia[d] = porDia[d] || []).push(m); });
+  let tardanzas = 0, horas = 0, diasLaborados = 0;
+  Object.keys(porDia).forEach(d => {
+    const marcas = porDia[d].slice().sort((a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora));
+    const entrada = marcas.find(m => m.tipo === 'Entrada');
+    const salida = [...marcas].reverse().find(m => m.tipo === 'Salida');
+    if (entrada) {
+      diasLaborados++;
+      const f = new Date(entrada.fecha_hora);
+      if (f.getHours() * 60 + f.getMinutes() > HORA_ENTRADA_LIMITE) tardanzas++;
+      if (salida) horas += Math.max(0, (new Date(salida.fecha_hora) - f) / 3600000);
+    }
+  });
+  return { tardanzas, diasLaborados, horas: Math.round(horas) };
+}
+
 function actualizarStats() {
   const ids = idsVisibles();
-  const activos = empleadosVisibles().filter(e => (e.estado || 'Activo') === 'Activo');
-  const estados = activos.map(e => estadoEmpleado(e));
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('k-presentes', estados.filter(s => s.tipo === 'Presente').length);
-  set('k-ausentes', estados.filter(s => s.tipo === 'Ausente').length);
-  set('k-vacaciones', estados.filter(s => s.tipo === 'Vacaciones').length);
-  set('k-fuera', asistencia.filter(m => ids.has(m.empleado_id) && m.aprobado === false).length);
-  set('badge-hoy', asistencia.filter(m => ids.has(m.empleado_id)).length);
+  if (esRRHH()) {
+    // Vista RRHH/Admin: indicadores de toda la empresa.
+    const activos = empleadosVisibles().filter(e => (e.estado || 'Activo') === 'Activo');
+    const estados = activos.map(e => estadoEmpleado(e));
+    setKPI(1, 'how_to_reg', 'Presentes', estados.filter(s => s.tipo === 'Presente').length, 'en la empresa ahora');
+    setKPI(2, 'event_busy', 'Ausencias', estados.filter(s => s.tipo === 'Ausente').length, 'activas hoy');
+    setKPI(3, 'beach_access', 'Vacaciones', estados.filter(s => s.tipo === 'Vacaciones').length, 'de vacaciones hoy');
+  } else {
+    // Vista empleado: métricas personales del mes.
+    const yo = empleadosVisibles()[0];
+    const st = yo ? statsEmpleadoMes(yo.id) : { tardanzas: 0, diasLaborados: 0, horas: 0 };
+    setKPI(1, 'running_with_errors', 'Tardanzas', st.tardanzas, 'este mes');
+    setKPI(2, 'event_available', 'Días laborados', st.diasLaborados, 'este mes');
+    setKPI(3, 'timer', 'Horas trabajadas', st.horas, 'horas este mes');
+  }
+  setTxt('k-fuera', asistencia.filter(m => ids.has(m.empleado_id) && m.aprobado === false).length);
+  setTxt('badge-hoy', asistencia.filter(m => ids.has(m.empleado_id)).length);
   const sr = document.getElementById('sede-radio');
   if (sr) sr.textContent = getSede().radio + ' m';
 }
@@ -555,16 +600,19 @@ async function iniciar() {
 async function cargar() {
   try {
     const inicioHoy = HOY + 'T00:00:00';
-    const [e, a, au, va] = await Promise.all([
+    const inicioMes = HOY.slice(0, 7) + '-01T00:00:00';
+    const [e, a, au, va, am] = await Promise.all([
       db.from('empleados').select('*'),
       db.from('asistencia').select('*').gte('fecha_hora', inicioHoy).order('fecha_hora', { ascending: false }),
       db.from('ausencias').select('*').order('fecha_inicio', { ascending: false }),
       db.from('vacaciones').select('*').order('created_at', { ascending: false }),
+      db.from('asistencia').select('empleado_id,tipo,fecha_hora').gte('fecha_hora', inicioMes),
     ]);
     empleados = e.data || [];
     asistencia = a.data || [];
     ausencias = au.data || [];
     vacaciones = va.data || [];
+    asistenciaMes = am.data || [];
     if (empleados.length === 0) cargarDatosDemo();
     cargando = false;
     renderizarTodo();
@@ -604,6 +652,15 @@ function cargarDatosDemo() {
     { id: 4, empleado_id: 5, tipo: 'Entrada', fecha_hora: h(7, 48), lat: null, lng: null, distancia_m: null, aprobado: true },
     { id: 5, empleado_id: 2, tipo: 'Salida', fecha_hora: h(12, 5), lat: 9.0240, lng: -79.5300, distancia_m: 22.1, aprobado: true },
   ];
+  // Marcaciones del mes (para los KPIs personales del empleado en modo demo)
+  const diaMes = (back, hh, mm) => { const d = new Date(); d.setDate(d.getDate() - back); d.setHours(hh, mm, 0, 0); return d.toISOString(); };
+  asistenciaMes = [];
+  [[2, [[0, 8, 2], [1, 8, 0], [2, 8, 20], [3, 7, 58], [6, 8, 12]]], [4, [[0, 8, 10], [1, 8, 35], [4, 9, 2]]]].forEach(([id, dias]) => {
+    dias.forEach(([back, hh, mm]) => {
+      asistenciaMes.push({ empleado_id: id, tipo: 'Entrada', fecha_hora: diaMes(back, hh, mm) });
+      asistenciaMes.push({ empleado_id: id, tipo: 'Salida', fecha_hora: diaMes(back, 17, 0) });
+    });
+  });
   const addDias = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().split('T')[0]; };
   ausencias = [
     { id: 1, empleado_id: 6, tipo: 'Incapacidad', fecha_inicio: addDias(-1), fecha_fin: addDias(2), observaciones: 'Certificado médico CSS por 4 días.' },
