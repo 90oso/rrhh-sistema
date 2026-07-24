@@ -477,6 +477,10 @@ function abrirSede() {
   document.getElementById('sede-lat').value = s.lat;
   document.getElementById('sede-lng').value = s.lng;
   document.getElementById('sede-radio-inp').value = s.radio;
+  // Solo RRHH/Admin puede ver y editar latitud, longitud y radio.
+  // El resto solo dispone del botón "Usar mi ubicación actual como sede".
+  const campos = document.getElementById('sede-admin-fields');
+  if (campos) campos.style.display = esRRHH() ? '' : 'none';
   abrirModal('modal-sede');
 }
 function guardarSede() {
