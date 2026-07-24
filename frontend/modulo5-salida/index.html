@@ -1,1542 +1,384 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TalentHub B2B - Salida / Offboarding</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.2.0/dist/tabler-icons.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-/* ═══════════════════════════════════════════════
-   MODERN FLAT + GLASSMORPHISM · BENTO UI
-   Glass SOLO en: topbar flotante, modales y
-   tarjetas de métricas sobre mesh gradient.
-   ═══════════════════════════════════════════════ */
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F4F6FB;
-  --surface:#FFFFFF;
-  --border:#E6EAF2;
-  --glass-bg:rgba(255,255,255,.58);
-  --glass-border:rgba(255,255,255,.72);
-  --glass-blur:blur(18px) saturate(1.4);
-  --text:#141B2E;--text2:#3D4759;--text3:#6B7690;--text4:#9AA4BB;
-  --sidebar:#0E1526;
-  --blue:#2563EB;--blue-h:#1D4ED8;--blue-soft:#EDF3FE;
-  --green:#16A34A;--red:#DC2626;--red-h:#B91C1C;
-  --orange:#EA580C;--purple:#7C3AED;--amber:#F59E0B;
-  --radius:20px;--radius-sm:12px;
-  /* sombras amplias, difusas, con tinte del color primario — nunca negras duras */
-  --shadow:0 6px 24px -6px rgba(37,99,235,.08),0 2px 8px -2px rgba(37,99,235,.05);
-  --shadow-md:0 14px 40px -8px rgba(37,99,235,.14),0 4px 12px -4px rgba(37,99,235,.07);
-  --shadow-lg:0 32px 80px -12px rgba(37,99,235,.22),0 12px 28px -8px rgba(30,58,138,.10);
-  --ease:cubic-bezier(.22,.68,0,1);
-}
-html{scroll-behavior:smooth}
-body{
-  font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;
-}
-::selection{background:#BFDBFE}
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
-}
-
-/* scrollbars sutiles */
-.content::-webkit-scrollbar,.modal::-webkit-scrollbar,.sidebar::-webkit-scrollbar{width:8px}
-.content::-webkit-scrollbar-thumb,.modal::-webkit-scrollbar-thumb{background:#D4DBE8;border-radius:99px}
-.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:99px}
-
-/* ═══ LAYOUT ═══ */
-.app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:280px;background:rgba(255,255,255,.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid rgba(198,198,205,.3);box-shadow:0 1px 2px rgba(15,23,42,.04);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto;padding:24px 0;z-index:15}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
-/* mesh gradient corporativo muy sutil bajo el contenido */
-.main::before{
-  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(600px 420px at 12% -5%, rgba(59,130,246,.13), transparent 60%),
-    radial-gradient(520px 380px at 88% 8%, rgba(139,92,246,.10), transparent 60%),
-    radial-gradient(700px 460px at 55% 108%, rgba(14,165,233,.09), transparent 62%);
-}
-.content{flex:1;overflow-y:auto;padding:18px 26px 26px;position:relative;z-index:1}
-
-/* ═══ SIDEBAR (claro glass, estilo Módulo 1) ═══ */
-.nav-svg{width:22px;height:22px;fill:currentColor;flex-shrink:0}
-.logo{padding:0 24px;margin-bottom:32px}
-.logo-mark{display:flex;align-items:center;gap:12px}
-.logo-ico{width:40px;height:40px;background:#000;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-ico .nav-svg{fill:#fff;width:20px;height:20px}
-.logo-title{font-size:18px;font-weight:700;color:#000;letter-spacing:-.02em;line-height:1.2}
-.logo-sub{font-size:12px;color:#45464D;opacity:.7;font-weight:500;margin-top:1px}
-.nav-section{flex:1;display:flex;flex-direction:column;gap:4px}
-.nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;cursor:pointer;color:#45464D;font-size:14px;font-weight:500;transition:all .2s var(--ease);text-decoration:none;border-left:4px solid transparent}
-.nav-item:hover{color:#000;background:rgba(230,232,234,.5)}
-.nav-item.active{color:#000;font-weight:700;border-left-color:#000;background:rgba(19,27,46,.08)}
-.nav-badge{margin-left:auto;background:#000;color:#fff;font-size:10px;padding:2px 8px;border-radius:99px;font-weight:700;transition:transform .3s var(--ease)}
-.nav-badge.bump{transform:scale(1.35)}
-.sb-footer{margin-top:auto;padding:24px 24px 0;border-top:1px solid rgba(198,198,205,.2)}
-.sb-config{display:flex;align-items:center;gap:12px;padding:8px;color:#45464D;font-size:14px;font-weight:500;text-decoration:none;cursor:pointer;transition:color .2s;border-radius:10px}
-.sb-config:hover{color:#000}
-.sb-user{display:flex;align-items:center;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(198,198,205,.14)}
-.user-av{width:32px;height:32px;border-radius:50%;background:#4F46E5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
-.user-name{font-size:12px;color:#141B2E;font-weight:700}
-.user-role{font-size:10px;color:#45464D;font-weight:500}
-
-/* ═══ TOPBAR — barra flotante con GLASS ═══ */
-.topbar{
-  margin:14px 26px 0;position:relative;z-index:10;
-  background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-  border:1px solid var(--glass-border);border-radius:16px;
-  padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;flex-shrink:0;
-  box-shadow:var(--shadow);
-}
-.topbar-l{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text3);font-weight:500}
-.page-title{color:var(--text);font-weight:700;font-size:15px;letter-spacing:-.01em}
-.topbar-r{display:flex;align-items:center;gap:10px}
-.search-wrap{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid transparent;border-radius:12px;background:rgba(255,255,255,.65);transition:all .2s var(--ease)}
-.search-wrap:focus-within{background:#fff;border-color:#BFDBFE;box-shadow:0 4px 16px -4px rgba(37,99,235,.18)}
-.search-wrap input{border:none;outline:none;font-size:13px;color:var(--text2);width:190px;background:transparent;font-family:inherit;font-weight:500}
-.search-wrap input::placeholder{color:var(--text4);font-weight:400}
-.search-kbd{font-size:10px;color:var(--text4);border:1px solid var(--border);border-radius:5px;padding:1px 5px;background:rgba(255,255,255,.7);font-weight:600}
-.search-clear{display:none;border:none;background:transparent;cursor:pointer;color:var(--text4);font-size:13px;padding:0;line-height:1}
-.search-clear:hover{color:var(--red)}
-.icon-btn{width:36px;height:36px;border-radius:12px;border:none;background:rgba(255,255,255,.65);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:16px;position:relative;transition:all .18s var(--ease)}
-.icon-btn:hover{background:#fff;transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(37,99,235,.2)}
-.notif-dot{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff;animation:pulse-dot 2.4s infinite}
-@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.4)}50%{box-shadow:0 0 0 4px rgba(220,38,38,0)}}
-.av-top{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
-
-/* ═══════════ BENTO GRID ═══════════ */
-.bento{
-  display:grid;gap:16px;
-  grid-template-columns:repeat(6,1fr);
-  grid-template-areas:
-    "hero hero mes  mes  ent  pend"
-    "tbl  tbl  tbl  tbl  perf perf"
-    "hist hist hist motv motv motv";
-  align-items:start;
-}
-.b-hero{grid-area:hero}
-.b-mes{grid-area:mes}
-.b-ent{grid-area:ent}
-.b-pend{grid-area:pend}
-.b-tbl{grid-area:tbl}
-.b-perf{grid-area:perf}
-.b-hist{grid-area:hist}
-.b-motv{grid-area:motv}
-
-/* contenedor bento base (flat) */
-.bcard{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:20px;box-shadow:var(--shadow);
-  transition:transform .25s var(--ease),box-shadow .25s var(--ease);
-  animation:rise .5s var(--ease) both;
-}
-@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.bento>.bcard:nth-child(2){animation-delay:.05s}
-.bento>.bcard:nth-child(3){animation-delay:.1s}
-.bento>.bcard:nth-child(4){animation-delay:.15s}
-.bento>.bcard:nth-child(5){animation-delay:.2s}
-.bento>.bcard:nth-child(6){animation-delay:.25s}
-
-/* tarjetas de métricas → GLASS sobre el mesh gradient */
-.stat-glass{
-  background:var(--glass-bg);
-  backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);
-  border:1px solid var(--glass-border);
-}
-.stat-glass:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
-
-/* hero 2x1 */
-.b-hero{display:flex;gap:18px;align-items:stretch}
-.hero-info{flex:1;display:flex;flex-direction:column}
-.stat-ico{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;margin-bottom:12px}
-.ico-blue{background:linear-gradient(135deg,#DBEAFE,#EDF3FE);color:var(--blue)}
-.ico-orange{background:linear-gradient(135deg,#FFEDD5,#FFF7ED);color:var(--orange)}
-.ico-green{background:linear-gradient(135deg,#DCFCE7,#F0FDF4);color:var(--green)}
-.ico-red{background:linear-gradient(135deg,#FEE2E2,#FEF2F2);color:var(--red)}
-.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
-.stat-val{font-size:32px;font-weight:800;color:var(--text);line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.stat-sub{font-size:11.5px;color:var(--text4);margin-top:4px;font-weight:500}
-.trend-warn{font-size:11.5px;color:var(--orange);margin-top:4px;font-weight:600}
-.trend-mes{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;margin-top:6px;padding:3px 9px;border-radius:99px}
-.trend-mes i{font-size:13px}
-.trend-up{background:#FFF4EA;color:#C2410C}
-.trend-down{background:#EEFBF2;color:#15803D}
-.trend-flat{background:#F1F4F9;color:#5A6478}
-
-/* mini gráfico de barras del hero */
-.mini-chart{display:flex;align-items:flex-end;gap:8px;width:170px;padding:6px 0 0}
-.mc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
-.mc-bar{width:100%;max-width:20px;border-radius:6px 6px 3px 3px;background:linear-gradient(180deg,#3B82F6,#93C5FD);min-height:5px;transition:height .7s var(--ease);transform-origin:bottom}
-.mc-col:hover .mc-bar{background:linear-gradient(180deg,#1D4ED8,#60A5FA);transform:scaleY(1.04)}
-.mc-col span{font-size:9.5px;color:var(--text4);font-weight:600;text-transform:uppercase}
-
-/* ═══ HISTÓRICO DE BAJAS (bento grande, 12 meses) ═══ */
-.hist-chart{display:flex;align-items:flex-end;gap:8px;height:170px;padding:6px 4px 0}
-.hist-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;min-width:0}
-.hist-bar{width:100%;max-width:28px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#3B82F6,#93C5FD);min-height:4px;transition:height .7s var(--ease);transform-origin:bottom}
-.hist-col:hover .hist-bar{background:linear-gradient(180deg,#1D4ED8,#60A5FA);transform:scaleY(1.03)}
-.hist-col span{font-size:9.5px;color:var(--text4);font-weight:600;text-transform:uppercase;white-space:nowrap}
-.hist-foot{display:flex;gap:28px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
-.hist-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--text4);font-weight:700;margin-bottom:2px}
-.hist-stat-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-
-/* ═══ MOTIVOS DE SALIDA (desglose por tipo) ═══ */
-.motivo-row{display:flex;align-items:center;gap:10px;padding:8px 0}
-.motivo-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.motivo-lbl{font-size:12.5px;color:var(--text2);font-weight:600;width:112px;flex-shrink:0}
-.motivo-track{flex:1;height:8px;background:#EDF1F8;border-radius:99px;overflow:hidden}
-.motivo-fill{height:100%;border-radius:99px;width:0;transition:width .7s var(--ease)}
-.motivo-pct{font-size:12px;font-weight:700;color:var(--text);width:56px;text-align:right;font-variant-numeric:tabular-nums}
-.motivo-foot{margin-top:14px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
-.motivo-foot-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text4);font-weight:700}
-.motivo-foot-sub{font-size:11px;color:var(--text4);font-weight:500;margin-top:2px}
-.motivo-foot-val{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-
-/* stats compactas 1x1 */
-.stat-sm .stat-ico{width:38px;height:38px;font-size:18px;border-radius:12px;margin-bottom:10px}
-.stat-sm .stat-val{font-size:26px}
-
-/* ═══ CARD HEADERS ═══ */
-.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap}
-.card-title{font-size:14.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
-.count-pill{background:var(--blue-soft);color:var(--blue);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px}
-
-/* ═══ TABLE (jerarquía por peso y tono, sin líneas duras) ═══ */
-.tbl-wrap{overflow-x:auto;margin:0 -8px}
-table{width:100%;border-collapse:separate;border-spacing:0 2px}
-th{text-align:left;padding:8px 12px;font-size:10.5px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
-td{padding:10px 12px;color:var(--text2);vertical-align:middle;font-size:13px}
-tbody tr{cursor:pointer;transition:all .18s var(--ease);animation:rowIn .3s var(--ease) both}
-tbody tr td:first-child{border-radius:12px 0 0 12px}
-tbody tr td:last-child{border-radius:0 12px 12px 0}
-tbody tr:nth-child(1){animation-delay:.02s}tbody tr:nth-child(2){animation-delay:.05s}
-tbody tr:nth-child(3){animation-delay:.08s}tbody tr:nth-child(4){animation-delay:.11s}
-tbody tr:nth-child(5){animation-delay:.14s}tbody tr:nth-child(6){animation-delay:.17s}
-@keyframes rowIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
-tbody tr:hover td{background:#F6F8FC}
-tbody tr.selected td{background:var(--blue-soft)}
-tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--blue)}
-.empty-row td{text-align:center;padding:28px;color:var(--text4);font-size:13px;cursor:default}
-
-/* skeleton */
-.sk{background:linear-gradient(90deg,#EDF1F8 25%,#F8FAFD 50%,#EDF1F8 75%);background-size:200% 100%;animation:shimmer 1.3s infinite;border-radius:6px;display:inline-block}
-@keyframes shimmer{to{background-position:-200% 0}}
-.sk-circle{width:32px;height:32px;border-radius:50%}
-.sk-line{height:11px}
-
-/* ═══ AVATAR ═══ */
-.av{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
-.av-xl{width:54px;height:54px;font-size:17px;border-radius:18px}
-
-/* ═══ BADGES ═══ */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:2.5px 9px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
-.badge i{font-size:11px}
-.b-gray{background:#F1F4F9;color:#5A6478}
-.b-blue{background:#EDF3FE;color:#1D4ED8}
-.b-yellow{background:#FEF9E7;color:#92400E}
-.b-purple{background:#F5F3FF;color:#5B21B6}
-.b-green{background:#EEFBF2;color:#15803D}
-.b-red{background:#FEF1F1;color:#B91C1C}
-.b-orange{background:#FFF4EA;color:#C2410C}
-
-/* ═══ BUTTONS ═══ */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:11px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;cursor:pointer;font-weight:600;transition:all .18s var(--ease);white-space:nowrap;font-family:inherit}
-.btn:hover{background:#F6F8FC;border-color:#CBD8EE;transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(37,99,235,.15)}
-.btn:active{transform:translateY(0);box-shadow:none}
-.btn-sm{padding:5px 11px;font-size:12px;border-radius:9px}
-.btn-primary{background:linear-gradient(135deg,var(--blue),#3B82F6);color:#fff;border-color:transparent;box-shadow:0 8px 20px -6px rgba(37,99,235,.45)}
-.btn-primary:hover{background:linear-gradient(135deg,var(--blue-h),var(--blue));box-shadow:0 12px 28px -6px rgba(37,99,235,.5)}
-.btn-blue-o{color:var(--blue);border-color:#C7DBFC;background:#fff}
-.btn-blue-o:hover{background:var(--blue-soft)}
-.btn-danger{color:var(--red);border-color:#F8D3D3;background:#fff}
-.btn-danger:hover{background:#FEF1F1;box-shadow:0 8px 20px -6px rgba(220,38,38,.18)}
-.btn-danger-solid{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 8px 20px -6px rgba(220,38,38,.4)}
-.btn-danger-solid:hover{background:var(--red-h);border-color:var(--red-h)}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
-
-/* select de orden */
-.sort-select{border:1px solid var(--border);border-radius:10px;background:#fff;font-size:12px;color:var(--text3);font-weight:600;padding:6px 26px 6px 10px;cursor:pointer;font-family:inherit;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239AA4BB'%3E%3Cpath stroke-linecap='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;background-size:14px;transition:all .18s var(--ease)}
-.sort-select:hover{border-color:#BFDBFE;box-shadow:0 4px 14px -4px rgba(37,99,235,.15)}
-
-/* ═══ MODALS — GLASS ═══ */
-.overlay{position:fixed;inset:0;background:rgba(20,27,46,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:100;align-items:center;justify-content:center;display:flex;opacity:0;pointer-events:none;transition:opacity .22s var(--ease)}
-.overlay.open{opacity:1;pointer-events:auto}
-.modal{
-  background:rgba(255,255,255,.78);
-  backdrop-filter:blur(24px) saturate(1.5);-webkit-backdrop-filter:blur(24px) saturate(1.5);
-  border:1px solid rgba(255,255,255,.75);
-  border-radius:24px;padding:26px;width:560px;max-height:90vh;overflow-y:auto;position:relative;
-  box-shadow:var(--shadow-lg);
-  transform:translateY(16px) scale(.97);opacity:0;transition:all .28s var(--ease);
-}
-.overlay.open .modal{transform:translateY(0) scale(1);opacity:1}
-.modal-wide{width:700px}
-.modal-sm{width:400px}
-.modal-title{font-size:17px;font-weight:800;color:var(--text);margin-bottom:4px;letter-spacing:-.01em}
-.modal-desc{font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:500}
-.modal-close{position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:10px;border:none;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px;transition:all .18s var(--ease)}
-.modal-close:hover{background:#FEF1F1;color:var(--red);transform:rotate(90deg)}
-.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px}
-
-/* ═══ FORMS ═══ */
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-group{margin-bottom:13px}
-.form-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
-.req{color:var(--red)}
-.form-control{width:100%;padding:9px 12px;border:1px solid rgba(230,234,242,.9);border-radius:11px;font-size:13px;color:var(--text);background:rgba(255,255,255,.85);outline:none;transition:all .18s var(--ease);font-family:inherit;font-weight:500}
-.form-control::placeholder{font-weight:400;color:var(--text4)}
-.form-control:focus{border-color:#93C5FD;background:#fff;box-shadow:0 0 0 4px rgba(147,197,253,.22)}
-select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239AA4BB'%3E%3Cpath stroke-linecap='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px;padding-right:30px}
-textarea.form-control{resize:vertical;min-height:64px}
-.form-hint{font-size:11px;color:var(--text4);margin-top:3px;display:flex;align-items:center;gap:5px;font-weight:500}
-.section-hd{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin:16px 0 8px}
-
-/* ═══ SEGMENTED TIPO DE BAJA ═══ */
-.tipo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.tipo-opt{border:1.5px solid rgba(230,234,242,.9);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;transition:all .2s var(--ease);background:rgba(255,255,255,.7)}
-.tipo-opt i{font-size:20px;display:block;margin-bottom:5px;color:var(--text4);transition:color .2s}
-.tipo-opt span{font-size:11px;font-weight:600;color:var(--text3);display:block;line-height:1.25}
-.tipo-opt:hover{border-color:#BFDBFE;transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(37,99,235,.18)}
-.tipo-opt.sel{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 0 0 4px rgba(147,197,253,.2)}
-.tipo-opt.sel i,.tipo-opt.sel span{color:var(--blue)}
-
-/* ═══ STAR RATING (input) ═══ */
-.rating-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0}
-.rating-lbl{font-size:13px;color:var(--text2);font-weight:600}
-.stars{display:flex;gap:3px}
-.star{font-size:21px;color:#DFE5F0;cursor:pointer;transition:all .14s var(--ease);line-height:1}
-.star:hover{transform:scale(1.25)}
-.star.on{color:var(--amber);text-shadow:0 2px 8px rgba(245,158,11,.45)}
-.star-num{font-size:12px;font-weight:700;color:var(--text3);width:30px;text-align:right}
-
-/* ═══ RATING DISPLAY (perfil) ═══ */
-.rating-bar{display:flex;align-items:center;gap:8px;padding:6px 0}
-.rating-label{font-size:12px;color:var(--text2);font-weight:600;width:140px;flex-shrink:0}
-.rating-track{flex:1;height:7px;background:#EDF1F8;border-radius:99px;overflow:hidden}
-.rating-fill{height:100%;border-radius:99px;width:0;transition:width .7s var(--ease)}
-.rating-val{font-size:12px;font-weight:700;width:30px;text-align:right}
-
-/* ═══ TABS ═══ */
-.tabs{display:flex;gap:2px;background:#EFF2F9;padding:3px;border-radius:12px;margin-bottom:14px}
-.tab{flex:1;text-align:center;padding:7px 10px;font-size:12.5px;color:var(--text3);cursor:pointer;border-radius:9px;font-weight:600;transition:all .2s var(--ease);white-space:nowrap}
-.tab:hover{color:var(--text)}
-.tab.active{color:var(--blue);background:#fff;box-shadow:0 4px 14px -4px rgba(37,99,235,.18);font-weight:700}
-#tab-content{animation:fadeIn .25s var(--ease)}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-
-/* ═══ CHECKLIST ═══ */
-.check-item{display:flex;align-items:center;gap:10px;padding:9px 10px;transition:all .2s var(--ease);border-radius:11px}
-.check-item:hover{background:#F6F8FC}
-.check-item.done{opacity:.55}
-.check-item.done .check-text{text-decoration:line-through}
-.check-box{width:21px;height:21px;border-radius:8px;border:2px solid #CBD5E4;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s var(--ease);flex-shrink:0}
-.check-box:hover{border-color:var(--blue);transform:scale(1.15)}
-.check-box.checked{background:var(--green);border-color:var(--green);animation:pop .25s var(--ease)}
-@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
-.check-box.checked i{color:#fff;font-size:12px}
-.check-text{font-size:13px;color:var(--text2);flex:1;font-weight:500;transition:all .2s}
-.check-resp{font-size:11px;color:var(--text4);white-space:nowrap;font-weight:500}
-.check-date{font-size:11px;color:var(--text4);white-space:nowrap;width:78px;text-align:right;font-weight:500}
-
-/* ═══ PROGRESS ═══ */
-.prog-wrap{width:100%;height:7px;background:#EDF1F8;border-radius:99px;overflow:hidden}
-.prog-bar{height:100%;border-radius:99px;width:0;transition:width .6s var(--ease)}
-
-/* anillo SVG */
-.ring-wrap{position:relative;width:58px;height:58px;flex-shrink:0}
-.ring-wrap svg{transform:rotate(-90deg)}
-.ring-bg{fill:none;stroke:#EDF1F8;stroke-width:5}
-.ring-fg{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .8s var(--ease),stroke .4s}
-.ring-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--text)}
-.ring-wrap.complete{animation:ringPulse .6s var(--ease)}
-@keyframes ringPulse{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
-
-/* ═══ PROFILE (jerarquía por tono, sin divisores) ═══ */
-.profile-field{display:flex;justify-content:space-between;padding:7.5px 0;font-size:13px;gap:12px}
-.pf-lbl{color:var(--text4);flex-shrink:0;font-weight:500}
-.pf-val{color:var(--text);font-weight:600;text-align:right}
-#perfil-content{animation:fadeIn .3s var(--ease)}
-
-/* ═══ FILTER CHIPS ═══ */
-.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-.chip{padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;color:var(--text3);font-weight:600;transition:all .2s var(--ease);display:inline-flex;align-items:center;gap:6px}
-.chip .chip-n{font-size:10px;font-weight:800;background:#EFF2F9;color:var(--text3);border-radius:99px;padding:0 6px;min-width:18px;text-align:center;transition:all .2s}
-.chip:hover{border-color:#BFDBFE;color:var(--blue);transform:translateY(-2px);box-shadow:0 6px 16px -5px rgba(37,99,235,.18)}
-.chip.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 8px 20px -6px rgba(37,99,235,.45)}
-.chip.active .chip-n{background:rgba(255,255,255,.25);color:#fff}
-
-/* ═══ TOAST ═══ */
-#toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{background:rgba(20,27,46,.92);backdrop-filter:blur(10px);color:#fff;padding:11px 16px;border-radius:14px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;opacity:0;transform:translateX(24px);transition:all .3s var(--ease);max-width:340px;box-shadow:var(--shadow-lg)}
-.toast i{font-size:16px}
-.toast.show{opacity:1;transform:translateX(0)}
-.toast.ok{background:linear-gradient(135deg,rgba(21,128,61,.95),rgba(22,163,74,.92))}
-.toast.err{background:linear-gradient(135deg,rgba(185,28,28,.95),rgba(220,38,38,.92))}
-
-/* ═══ STATUS ═══ */
-#db-status{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow-md);z-index:50;transition:all .5s var(--ease)}
-#db-status.hidden{opacity:0;transform:translate(-50%,-16px);pointer-events:none}
-.sdot{width:7px;height:7px;border-radius:50%}
-
-/* ═══ EMPTY STATE ═══ */
-.empty-state{text-align:center;padding:36px 16px;color:var(--text4)}
-.empty-state .es-ico{width:64px;height:64px;border-radius:22px;background:#F6F8FC;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
-.empty-state .es-ico i{font-size:28px;color:#C6CFDF}
-.empty-state p{font-size:13px;margin-top:4px;font-weight:500}
-
-/* ═══ CONFETTI ═══ */
-.confetti{position:fixed;width:8px;height:8px;top:-10px;z-index:400;pointer-events:none;border-radius:2px;animation:confetti-fall linear forwards}
-@keyframes confetti-fall{to{transform:translateY(105vh) rotate(720deg);opacity:.7}}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:1200px){
-  .bento{
-    grid-template-columns:repeat(2,1fr);
-    grid-template-areas:
-      "hero hero"
-      "mes  ent"
-      "pend pend"
-      "tbl  tbl"
-      "perf perf"
-      "hist hist"
-      "motv motv";
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Salida / Offboarding · TalentHub B2B</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "tertiary-fixed-dim": "#c0c1ff", "on-tertiary-container": "#7073ff", "on-tertiary": "#ffffff",
+          "secondary-container": "#40c2fd", "surface-container": "#eceef0", "inverse-on-surface": "#eff1f3",
+          "on-background": "#191c1e", "on-secondary-fixed-variant": "#004c69", "surface-variant": "#e0e3e5",
+          "on-primary-fixed": "#131b2e", "inverse-surface": "#2d3133", "error": "#ba1a1a",
+          "on-tertiary-fixed-variant": "#2f2ebe", "surface-container-highest": "#e0e3e5", "primary-fixed": "#dae2fd",
+          "tertiary-container": "#07006c", "surface-bright": "#f7f9fb", "tertiary": "#000000",
+          "on-error": "#ffffff", "error-container": "#ffdad6", "outline": "#76777d",
+          "surface-container-lowest": "#ffffff", "inverse-primary": "#bec6e0", "tertiary-fixed": "#e1e0ff",
+          "on-secondary": "#ffffff", "on-tertiary-fixed": "#07006c", "surface-dim": "#d8dadc",
+          "primary-container": "#131b2e", "primary": "#000000", "on-secondary-container": "#004d6a",
+          "on-error-container": "#93000a", "on-primary": "#ffffff", "on-primary-fixed-variant": "#3f465c",
+          "secondary-fixed-dim": "#7bd0ff", "primary-fixed-dim": "#bec6e0", "secondary": "#00668a",
+          "on-surface-variant": "#45464d", "surface-container-high": "#e6e8ea", "outline-variant": "#c6c6cd",
+          "secondary-fixed": "#c4e7ff", "on-secondary-fixed": "#001e2c", "surface-container-low": "#f2f4f6",
+          "background": "#f7f9fb", "on-primary-container": "#7c839b", "surface-tint": "#565e74",
+          "surface": "#f7f9fb", "on-surface": "#191c1e"
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        spacing: { "table-row-height": "48px", "sidebar-width": "280px", "base": "8px", "container-padding": "24px", "bento-gap": "16px" },
+        fontFamily: { sans: ["Plus Jakarta Sans", "sans-serif"] }
+      }
+    }
   }
-  .b-pend{display:flex;gap:16px;align-items:center}
-  .b-pend .stat-ico{margin-bottom:0}
-}
-@media(max-width:900px){
-  .sidebar{width:64px;padding:16px 0}
-  .logo{padding:0 12px;margin-bottom:20px}
-  .logo-mark{justify-content:center}
-  .logo-title,.logo-sub,.user-info,.nav-badge,.sb-config span{display:none}
-  .nav-item span{display:none}
-  .nav-item{justify-content:center;padding:12px 0;border-left-width:3px}
-  .sb-footer{padding:14px 12px 0}
-  .sb-config{justify-content:center}
-  .sb-user{justify-content:center}
-  .search-wrap input{width:100px}
-  .topbar{margin:12px 14px 0}
-  .content{padding:14px}
-  .tipo-grid{grid-template-columns:1fr 1fr}
-  .bento{grid-template-columns:1fr;grid-template-areas:"hero" "mes" "ent" "pend" "tbl" "perf" "hist" "motv"}
-  .mini-chart{width:130px}
-  .hist-chart{gap:4px}
-  .hist-bar{max-width:18px}
-}
+</script>
+<style>
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+.glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.5); }
+.bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+.modal-overlay { background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(8px); transition: all 0.2s ease-out; }
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal-overlay:not(.open) { opacity: 0; pointer-events: none; }
+.modal-overlay.open > div { scale: 1; }
+.modal-overlay > div { scale: 0.95; }
+.confetti-piece { position: fixed; width: 8px; height: 8px; top: -10px; z-index: 400; pointer-events: none; border-radius: 2px; animation: confetti-fall linear forwards; }
+@keyframes confetti-fall { to { transform: translateY(105vh) rotate(720deg); opacity: .7; } }
 </style>
 </head>
-<body>
+<body class="bg-surface font-sans text-on-surface antialiased">
 
-<div id="db-status">
-  <div class="sdot" id="sdot" style="background:#F59E0B"></div>
-  <span id="stxt">Conectando...</span>
+<!-- INDICADOR DE ESTADO BASE DE DATOS -->
+<div id="db-status" class="fixed top-4 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg z-[100] transition-opacity duration-500">
+  <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="status-dot"></div>
+  <span id="status-text" class="text-primary">Sincronizando ecosistema...</span>
 </div>
 
-<div class="app">
-
-  <!-- SIDEBAR (estilo Módulo 1) -->
-  <div class="sidebar">
-    <div class="logo">
-      <div class="logo-mark">
-        <div class="logo-ico"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M153-73q-33-33-33-81t33-81q33-33 81-33 14 0 24.5 2.5T280-258l85-106q-19-23-29-52.5t-5-61.5l-121-41q-15 25-39.5 39T114-466q-48 0-81-33T0-580q0-48 33-81t81-33q48 0 81 33t33 81v4l122 42q18-32 43.5-49t56.5-24v-129q-39-11-61.5-43T366-846q0-48 33-81t81-33q48 0 81 33t33 81q0 35-23 67t-61 43v129q31 7 57 24t44 49l121-42v-4q0-48 33-81t81-33q48 0 81 33t33 81q0 48-33 81t-81 33q-32 0-57-14t-39-39l-121 41q5 32-4.5 61.5T595-364l85 106q11-5 21.5-7.5T726-268q48 0 81 33t33 81q0 48-33 81t-81 33q-48 0-81-33t-33-81q0-20 5.5-36t15.5-31l-85-106q-32 17-68.5 17T411-327l-84 107q10 15 15.5 30.5T348-154q0 48-33 81t-81 33q-48 0-81-33Z"/></svg></div>
+<div class="flex min-h-screen">
+  <!-- ── SIDEBAR NAVIGATION ── -->
+  <aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-white/70 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50">
+    <div class="px-6 mb-8">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl">
+          <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">hub</span>
+        </div>
         <div>
-          <div class="logo-title">TalentHub B2B</div>
-          <div class="logo-sub">HR Intelligence</div>
+          <h1 class="font-bold text-lg text-primary tracking-tight">TalentHub B2B</h1>
+          <p class="text-xs font-medium text-on-surface-variant opacity-70">HR Intelligence</p>
         </div>
       </div>
     </div>
-    <div class="nav-section">
-      <a class="nav-item" href="../modulo1-reclutamiento/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M440.5-500Q378-500 334-544.06 290-588.13 290-650q0-63 44.06-106.5Q378.13-800 440-800q63 0 106.5 43.5t43.5 106q0 62.5-43.5 106.5t-106 44Zm-.5-60q38 0 64-26.44T530-650q0-38-26-64t-63.5-26q-37.5 0-64 26T350-650.5q0 37.5 26.44 64T440-560ZM898-20 758-160q-23 17-47.5 23.5t-50.07 6.5q-71.01 0-120.72-49.62Q490-229.24 490-300.12t49.62-120.38q49.62-49.5 120.5-49.5t120.38 49.71Q830-370.58 830-299.57q0 25.57-6.5 50.07T800-202L940-62l-42 42ZM738.5-221.5Q770-253 770-300t-31.5-78.5Q707-410 660-410t-78.5 31.5Q550-347 550-300t31.5 78.5Q613-190 660-190t78.5-31.5ZM120-160v-94q0-37 17.5-63t50.5-43q47-23 122.5-43.5T464-419q-8 13-15 28.5T438-360q-78-1-136 18.5T212-306q-14 8-23 21.5t-9 30.5v34h258q11 17 20 31.5t20 28.5H120Zm320-490Zm-2 430Z"/></svg><span>Reclutamiento</span></a>
-      <a class="nav-item" href="../modulo2-personal/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M0-240v-53q0-38.57 41.5-62.78Q83-380 150.38-380q12.16 0 23.39.5t22.23 2.15q-8 17.35-12 35.17-4 17.81-4 37.18v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 49 46.5t17 58.5v65H240Zm540 0v-65q0-19.86-3.5-37.43T765-377.27q11-1.73 22.17-2.23 11.17-.5 22.83-.5 67.5 0 108.75 23.77T960-293v53H780Zm-480-60h360v-6q0-37-50.5-60.5T480-390q-79 0-129.5 23.5T300-305v5ZM149.57-410q-28.57 0-49.07-20.56Q80-451.13 80-480q0-29 20.56-49.5Q121.13-550 150-550q29 0 49.5 20.5t20.5 49.93q0 28.57-20.5 49.07T149.57-410Zm660 0q-28.57 0-49.07-20.56Q740-451.13 740-480q0-29 20.56-49.5Q781.13-550 810-550q29 0 49.5 20.5t20.5 49.93q0 28.57-20.5 49.07T809.57-410ZM480-480q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Zm.35-60Q506-540 523-557.35t17-43Q540-626 522.85-643t-42.5-17q-25.35 0-42.85 17.15t-17.5 42.5q0 25.35 17.35 42.85t43 17.5ZM480-300Zm0-300Z"/></svg><span>Personal</span></a>
-      <a class="nav-item" href="../modulo3-control/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M433-228 295-365l42-42 96 94 184-184 42 43-226 226ZM180-80q-24 0-42-18t-18-42v-620q0-24 18-42t42-18h65v-60h65v60h340v-60h65v60h65q24 0 42 18t18 42v620q0 24-18 42t-42 18H180Zm0-60h600v-430H180v430Zm0-490h600v-130H180v130Zm0 0v-130 130Z"/></svg><span>Control diario</span></a>
-      <a class="nav-item" href="../modulo4-desarrollo/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m123-240-43-43 292-291 167 167 241-241H653v-60h227v227h-59v-123L538-321 371-488 123-240Z"/></svg><span>Desarrollo</span></a>
-      <div class="nav-item active"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M180-120q-24 0-42-18t-18-42v-210h60v210h600v-600H180v210h-60v-210q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Zm233-167-45-45 118-118H120v-60h366L368-628l45-45 193 193-193 193Z"/></svg><span>Salida</span><span class="nav-badge" id="badge-bajas">0</span></div>
-      <a class="nav-item" href="../modulo6-reportes/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M284-277h60v-205h-60v205Zm332 0h60v-420h-60v420Zm-166 0h60v-118h-60v118Zm0-205h60v-60h-60v60ZM180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Zm0-60h600v-600H180v600Zm0-600v600-600Z"/></svg><span>Reportes</span></a>
-    </div>
-    <div class="sb-footer">
-      <a class="sb-config" href="#"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m388-80-20-126q-19-7-40-19t-37-25l-118 54-93-164 108-79q-2-9-2.5-20.5T185-480q0-9 .5-20.5T188-521L80-600l93-164 118 54q16-13 37-25t40-18l20-127h184l20 126q19 7 40.5 18.5T669-710l118-54 93 164-108 77q2 10 2.5 21.5t.5 21.5q0 10-.5 21t-2.5 21l108 78-93 164-118-54q-16 13-36.5 25.5T592-206L572-80H388Zm48-60h88l14-112q33-8 62.5-25t53.5-41l106 46 40-72-94-69q4-17 6.5-33.5T715-480q0-17-2-33.5t-7-33.5l94-69-40-72-106 46q-23-26-52-43.5T538-708l-14-112h-88l-14 112q-34 7-63.5 24T306-642l-106-46-40 72 94 69q-4 17-6.5 33.5T245-480q0 17 2.5 33.5T254-413l-94 69 40 72 106-46q24 24 53.5 41t62.5 25l14 112Zm44-210q54 0 92-38t38-92q0-54-38-92t-92-38q-54 0-92 38t-38 92q0 54 38 92t92 38Zm0-130Z"/></svg><span>Configuración</span></a>
-      <div class="sb-user">
-        <div class="user-av">AG</div>
-        <div class="user-info">
-          <div class="user-name">Ana García</div>
-          <div class="user-role">Gerente RRHH</div>
+
+    <nav class="flex-1 space-y-1">
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo1-reclutamiento/index.html">
+        <span class="material-symbols-outlined">person_search</span>
+        <span class="text-sm">Reclutamiento</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html">
+        <span class="material-symbols-outlined">groups</span>
+        <span class="text-sm">Personal</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo3-control/index.html">
+        <span class="material-symbols-outlined">event_available</span>
+        <span class="text-sm">Control diario</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo4-desarrollo/index.html">
+        <span class="material-symbols-outlined">trending_up</span>
+        <span class="text-sm">Desarrollo</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
+        <span class="material-symbols-outlined">exit_to_app</span>
+        <span class="text-sm">Salida</span>
+        <span class="ml-auto bg-primary text-white text-[10px] px-2 py-0.5 rounded-full" id="badge-bajas">0</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo6-reportes/index.html">
+        <span class="material-symbols-outlined">analytics</span>
+        <span class="text-sm">Reportes</span>
+      </a>
+    </nav>
+
+    <div class="px-6 mt-auto pt-6 border-t border-outline-variant/20">
+      <div class="space-y-1">
+        <a class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" href="#">
+          <span class="material-symbols-outlined text-xl">settings</span>
+          <span>Configuración</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
+        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">AG</div>
+        <div>
+          <p class="font-bold text-xs">Ana García</p>
+          <p class="text-[10px] text-on-surface-variant">Gerente RRHH</p>
         </div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <!-- MAIN -->
-  <div class="main">
-    <!-- Topbar flotante glass -->
-    <div class="topbar">
-      <div class="topbar-l">
-        <i class="ti ti-home" style="font-size:14px"></i>
-        <span style="color:#C6CFDF">/</span>
-        <span class="page-title">Salida / Offboarding</span>
-      </div>
-      <div class="topbar-r">
-        <div class="search-wrap">
-          <i class="ti ti-search" style="font-size:14px;color:var(--text4)"></i>
-          <input id="search-input" placeholder="Buscar empleado o motivo..." oninput="onBuscar()">
-          <button class="search-clear" id="search-clear" onclick="limpiarBusqueda()" title="Limpiar"><i class="ti ti-x"></i></button>
-          <span class="search-kbd">/</span>
+  <!-- ── MAIN CONTENT CANVAS ── -->
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col">
+    <header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-6 z-40">
+      <div class="flex items-center gap-4 flex-1">
+        <div class="relative w-full max-w-md">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
+          <input id="search-input" class="w-full pl-10 pr-4 py-1.5 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Buscar empleado o motivo..." oninput="onBuscar()">
         </div>
-        <div class="icon-btn" title="Notificaciones"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
-        <div class="av-top">AG</div>
       </div>
-    </div>
-
-    <div class="content">
-
-      <!-- ══════════ BENTO GRID ══════════ -->
-      <div class="bento">
-
-        <!-- HERO 2x1 · glass -->
-        <div class="bcard stat-glass b-hero">
-          <div class="hero-info">
-            <div class="stat-ico ico-blue"><i class="ti ti-users-minus"></i></div>
-            <div class="stat-label">Total de bajas</div>
-            <div class="stat-val" id="st-total">—</div>
-            <div class="stat-sub" id="st-total-sub">registradas en el sistema</div>
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all">notifications</span>
+        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4">
+          <div class="text-right">
+            <p class="font-bold text-xs">Admin HR</p>
+            <p class="text-[10px] text-on-surface-variant">Superuser</p>
           </div>
-          <div class="mini-chart" id="mini-chart" title="Bajas últimos 6 meses"></div>
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">HR</div>
         </div>
+      </div>
+    </header>
 
-        <!-- MES 2x1 · glass -->
-        <div class="bcard stat-glass b-mes">
-          <div class="stat-ico ico-orange"><i class="ti ti-calendar-event"></i></div>
-          <div class="stat-label">Bajas este mes</div>
-          <div class="stat-val" id="st-mes">—</div>
-          <div id="st-mes-sub" class="stat-sub">—</div>
-          <div><span class="trend-mes trend-flat" id="st-mes-trend" style="visibility:hidden">—</span></div>
+    <div class="pt-24 pb-12 px-6 max-w-[1600px] w-full mx-auto space-y-8 flex-1">
+      <div class="flex justify-between items-end">
+        <div>
+          <h2 class="font-bold text-2xl text-primary tracking-tight">Módulo de Salida</h2>
+          <p class="text-sm text-on-surface-variant mt-1">Registro de bajas, entrevistas de salida y checklist de offboarding.</p>
         </div>
+      </div>
 
-        <!-- ENTREVISTAS 1x1 · glass -->
-        <div class="bcard stat-glass stat-sm b-ent">
-          <div class="stat-ico ico-green"><i class="ti ti-message-circle-check"></i></div>
-          <div class="stat-label">Entrevistas</div>
-          <div class="stat-val" id="st-entrevistas">—</div>
-          <div class="stat-sub" id="st-entrevistas-sub">de salida realizadas</div>
-        </div>
+      <!-- ══ BENTO GRID ══ -->
+      <div class="bento-grid">
 
-        <!-- PENDIENTES 1x1 · glass -->
-        <div class="bcard stat-glass stat-sm b-pend">
-          <div class="stat-ico ico-red"><i class="ti ti-clipboard-x"></i></div>
+        <!-- HERO -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col justify-between">
           <div>
-            <div class="stat-label">Pendientes</div>
-            <div class="stat-val" id="st-pendientes">—</div>
-            <div class="stat-sub" id="st-pendientes-sub">procesos sin completar</div>
+            <div class="w-11 h-11 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-600 mb-3">
+              <span class="material-symbols-outlined text-xl">group_remove</span>
+            </div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Total de bajas</p>
+            <h3 class="text-3xl font-extrabold mt-1 tracking-tight text-primary tabular-nums" id="st-total">—</h3>
+            <p class="text-[11px] text-on-surface-variant mt-1" id="st-total-sub">registradas en el sistema</p>
+          </div>
+          <div class="flex items-end gap-2 h-16 mt-4" id="mini-chart" title="Bajas últimos 6 meses"></div>
+        </div>
+
+        <!-- MES -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col justify-between">
+          <div>
+            <div class="w-11 h-11 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-3">
+              <span class="material-symbols-outlined text-xl">calendar_month</span>
+            </div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Bajas este mes</p>
+            <h3 class="text-3xl font-extrabold mt-1 tracking-tight text-primary tabular-nums" id="st-mes">—</h3>
+            <p class="text-[11px] text-on-surface-variant mt-1" id="st-mes-sub">—</p>
+          </div>
+          <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-gray-50 text-gray-600 w-fit" id="st-mes-trend" style="visibility:hidden">—</span>
+        </div>
+
+        <!-- ENTREVISTAS -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
+          <div class="w-10 h-10 bg-green-50 rounded-2xl flex items-center justify-center text-green-600"><span class="material-symbols-outlined text-lg">forum</span></div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Entrevistas</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5" id="st-entrevistas">—</p>
+            <p class="text-[10px] text-on-surface-variant" id="st-entrevistas-sub">de salida realizadas</p>
           </div>
         </div>
 
-        <!-- TABLA 4x2 · flat -->
-        <div class="bcard b-tbl" style="display:flex;flex-direction:column">
-          <div class="card-hd">
-            <div class="card-title">Registro de Bajas <span class="count-pill" id="tbl-count">0</span></div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <select class="sort-select" id="sort-select" onchange="cambiarOrden(this.value)">
+        <!-- PENDIENTES -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
+          <div class="w-10 h-10 bg-red-50 rounded-2xl flex items-center justify-center text-red-600"><span class="material-symbols-outlined text-lg">assignment_late</span></div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Pendientes</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5" id="st-pendientes">—</p>
+            <p class="text-[10px] text-on-surface-variant" id="st-pendientes-sub">procesos sin completar</p>
+          </div>
+        </div>
+
+        <!-- TABLA -->
+        <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col">
+          <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
+            <div>
+              <h3 class="font-bold text-base text-primary">Registro de bajas <span class="bg-primary/10 text-primary text-[11px] font-bold px-2.5 py-1 rounded-full ml-1" id="tbl-count">0</span></h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="sort-select" onchange="cambiarOrden(this.value)" class="rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white py-1.5">
                 <option value="fecha-desc">Más recientes</option>
                 <option value="fecha-asc">Más antiguas</option>
                 <option value="nombre">Nombre A–Z</option>
                 <option value="progreso">Menor progreso</option>
               </select>
-              <button class="btn btn-primary btn-sm" onclick="abrirModalBaja()"><i class="ti ti-user-minus"></i>Registrar Baja</button>
+              <button onclick="abrirModalBaja()" class="flex items-center gap-1.5 bg-primary hover:bg-black text-white text-[11px] font-bold px-3 py-2 rounded-xl transition-all active:scale-95">
+                <span class="material-symbols-outlined text-sm">person_remove</span>Registrar baja
+              </button>
             </div>
           </div>
-          <div class="filter-row" id="filter-row"></div>
-          <div class="tbl-wrap" style="flex:1">
-            <table>
+          <div class="flex items-center gap-1.5 flex-wrap mb-4" id="filter-row"></div>
+          <div class="overflow-x-auto custom-scrollbar flex-1">
+            <table class="w-full text-left border-collapse">
               <thead>
-                <tr>
-                  <th>Empleado</th>
-                  <th>Tipo baja</th>
-                  <th>Salida</th>
-                  <th>Offboarding</th>
-                  <th></th>
+                <tr class="border-b border-outline-variant/20 text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
+                  <th class="pb-3 pl-2">Empleado</th>
+                  <th class="pb-3">Tipo baja</th>
+                  <th class="pb-3">Salida</th>
+                  <th class="pb-3">Offboarding</th>
+                  <th class="pb-3 pr-2"></th>
                 </tr>
               </thead>
-              <tbody id="tbody"></tbody>
+              <tbody id="tbody" class="divide-y divide-outline-variant/10"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- PERFIL 2x2 · flat -->
-        <div class="bcard b-perf" id="perfil-card">
+        <!-- PERFIL -->
+        <div class="col-span-12 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20" id="perfil-card">
           <div id="perfil-content">
-            <div class="empty-state">
-              <div class="es-ico"><i class="ti ti-door-exit"></i></div>
-              <p><strong style="color:var(--text3)">Expediente de salida</strong></p>
-              <p>Selecciona una baja de la lista para ver su detalle, entrevista y checklist</p>
+            <div class="text-center py-6 text-on-surface-variant">
+              <span class="material-symbols-outlined text-3xl block mb-2 opacity-40">meeting_room</span>
+              <p class="text-xs font-bold text-on-surface-variant">Expediente de salida</p>
+              <p class="text-xs mt-1">Selecciona una baja de la lista para ver su detalle, entrevista y checklist</p>
             </div>
           </div>
         </div>
 
-        <!-- HISTÓRICO DE BAJAS · flat -->
-        <div class="bcard b-hist">
-          <div class="card-hd">
-            <div class="card-title"><i class="ti ti-chart-bar" style="font-size:15px;color:var(--blue)"></i>Histórico de Bajas <span style="font-weight:500;color:var(--text4);font-size:12px">— últimos 12 meses</span></div>
+        <!-- HISTÓRICO -->
+        <div class="col-span-12 lg:col-span-6 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-base text-sky-600">bar_chart</span>
+            <h3 class="font-bold text-base text-primary">Histórico de bajas</h3>
+            <span class="text-xs text-on-surface-variant font-medium">— últimos 12 meses</span>
           </div>
-          <div class="hist-chart" id="hist-chart"></div>
-          <div class="hist-foot" id="hist-foot"></div>
+          <div class="flex items-end gap-1.5 h-40" id="hist-chart"></div>
+          <div class="flex gap-7 mt-4 pt-4 border-t border-outline-variant/10" id="hist-foot"></div>
         </div>
 
-        <!-- MOTIVOS DE SALIDA · flat -->
-        <div class="bcard b-motv">
-          <div class="card-hd">
-            <div class="card-title"><i class="ti ti-chart-donut" style="font-size:15px;color:var(--purple)"></i>Motivos de Salida</div>
+        <!-- MOTIVOS -->
+        <div class="col-span-12 lg:col-span-6 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-base text-purple-600">donut_large</span>
+            <h3 class="font-bold text-base text-primary">Motivos de salida</h3>
           </div>
           <div id="motivos-list"></div>
-          <div class="motivo-foot" id="motivo-foot"></div>
+          <div class="flex items-center justify-between gap-3 mt-3 pt-4 border-t border-outline-variant/10" id="motivo-foot"></div>
         </div>
 
-      </div><!-- /bento -->
-    </div><!-- /content -->
-  </div>
+      </div>
+    </div>
+  </main>
 </div>
 
 <!-- ══ MODAL: REGISTRAR BAJA ══ -->
-<div class="overlay" id="modal-baja">
-  <div class="modal">
-    <button class="modal-close" onclick="cerrarModal('modal-baja')"><i class="ti ti-x"></i></button>
-    <div class="modal-title" id="modal-baja-title">Registrar baja de empleado</div>
-    <div class="modal-desc">Completa los datos de la salida. El checklist de offboarding se genera automáticamente.</div>
-    <div class="form-group">
-      <label class="form-label">Empleado <span class="req">*</span></label>
-      <select class="form-control" id="baja-empleado"></select>
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-baja">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 custom-scrollbar">
+    <div class="flex justify-between items-center mb-2 pb-2 border-b border-outline-variant/10">
+      <h3 class="font-bold text-base text-primary" id="modal-baja-title">Registrar baja de empleado</h3>
+      <button onclick="cerrarModal('modal-baja')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Motivo de la baja <span class="req">*</span></label>
-      <div class="tipo-grid" id="tipo-grid">
-        <div class="tipo-opt sel" data-tipo="Renuncia" onclick="selTipo(this)"><i class="ti ti-user-check"></i><span>Renuncia</span></div>
-        <div class="tipo-opt" data-tipo="Despido" onclick="selTipo(this)"><i class="ti ti-user-x"></i><span>Despido</span></div>
-        <div class="tipo-opt" data-tipo="Jubilación" onclick="selTipo(this)"><i class="ti ti-beach"></i><span>Jubilación</span></div>
-        <div class="tipo-opt" data-tipo="Fin de contrato" onclick="selTipo(this)"><i class="ti ti-file-off"></i><span>Fin de contrato</span></div>
-        <div class="tipo-opt" data-tipo="Otro" onclick="selTipo(this)"><i class="ti ti-dots"></i><span>Otro</span></div>
+    <p class="text-xs text-on-surface-variant mb-4">Completa los datos de la salida. El checklist de offboarding se genera automáticamente.</p>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Empleado <span class="text-error">*</span></label>
+        <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="baja-empleado"></select>
       </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Motivo de la baja <span class="text-error">*</span></label>
+        <div class="grid grid-cols-5 gap-2" id="tipo-grid">
+          <div class="tipo-opt border-2 rounded-xl p-2.5 text-center cursor-pointer transition-all border-primary bg-primary/5" data-tipo="Renuncia" onclick="selTipo(this)">
+            <span class="material-symbols-outlined text-xl block mb-1 text-primary">how_to_reg</span>
+            <span class="text-[10px] font-bold text-primary">Renuncia</span>
+          </div>
+          <div class="tipo-opt border-2 rounded-xl p-2.5 text-center cursor-pointer transition-all border-outline-variant/30" data-tipo="Despido" onclick="selTipo(this)">
+            <span class="material-symbols-outlined text-xl block mb-1 text-on-surface-variant">person_remove</span>
+            <span class="text-[10px] font-bold text-on-surface-variant">Despido</span>
+          </div>
+          <div class="tipo-opt border-2 rounded-xl p-2.5 text-center cursor-pointer transition-all border-outline-variant/30" data-tipo="Jubilación" onclick="selTipo(this)">
+            <span class="material-symbols-outlined text-xl block mb-1 text-on-surface-variant">beach_access</span>
+            <span class="text-[10px] font-bold text-on-surface-variant">Jubilación</span>
+          </div>
+          <div class="tipo-opt border-2 rounded-xl p-2.5 text-center cursor-pointer transition-all border-outline-variant/30" data-tipo="Fin de contrato" onclick="selTipo(this)">
+            <span class="material-symbols-outlined text-xl block mb-1 text-on-surface-variant">description</span>
+            <span class="text-[10px] font-bold text-on-surface-variant">Fin contrato</span>
+          </div>
+          <div class="tipo-opt border-2 rounded-xl p-2.5 text-center cursor-pointer transition-all border-outline-variant/30" data-tipo="Otro" onclick="selTipo(this)">
+            <span class="material-symbols-outlined text-xl block mb-1 text-on-surface-variant">more_horiz</span>
+            <span class="text-[10px] font-bold text-on-surface-variant">Otro</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Fecha de salida <span class="text-error">*</span></label>
+        <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="baja-fecha" type="date">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Observaciones</label>
+        <textarea class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 min-h-[64px]" id="baja-obs" placeholder="Notas adicionales sobre la baja..."></textarea>
+      </div>
+      <p class="text-[10px] text-on-surface-variant flex items-center gap-1.5"><span class="material-symbols-outlined text-xs text-sky-600">auto_awesome</span>El checklist de offboarding (equipo, accesos, liquidación, entrevista) se marca luego desde el expediente.</p>
     </div>
-    <div class="form-group">
-      <label class="form-label">Fecha de salida <span class="req">*</span></label>
-      <input class="form-control" id="baja-fecha" type="date">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Observaciones</label>
-      <textarea class="form-control" id="baja-obs" placeholder="Notas adicionales sobre la baja..."></textarea>
-    </div>
-    <div class="form-hint">
-      <i class="ti ti-sparkles" style="font-size:13px;color:var(--blue)"></i>
-      El checklist de offboarding (equipo, accesos, liquidación, entrevista) se marca luego desde el expediente.
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="cerrarModal('modal-baja')">Cancelar</button>
-      <button class="btn btn-primary" id="btn-baja-guardar" onclick="guardarBaja()"><i class="ti ti-check"></i>Registrar Baja</button>
+    <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-outline-variant/10">
+      <button class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors" onclick="cerrarModal('modal-baja')">Cancelar</button>
+      <button class="px-4 py-2 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all active:scale-95" id="btn-baja-guardar" onclick="guardarBaja()">Registrar baja</button>
     </div>
   </div>
 </div>
 
 <!-- ══ MODAL: ENTREVISTA DE SALIDA ══ -->
-<div class="overlay" id="modal-entrevista">
-  <div class="modal modal-wide">
-    <button class="modal-close" onclick="cerrarModal('modal-entrevista')"><i class="ti ti-x"></i></button>
-    <div class="modal-title">Entrevista de Salida</div>
-    <div class="modal-desc" id="ent-desc">Registra la retroalimentación del empleado antes de su salida.</div>
-    <div class="form-group">
-      <label class="form-label">¿Por qué se va? <span class="req">*</span></label>
-      <textarea class="form-control" id="ent-motivo" placeholder="¿Cuál es la razón principal por la que deja la empresa?"></textarea>
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-entrevista">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 custom-scrollbar">
+    <div class="flex justify-between items-center mb-2 pb-2 border-b border-outline-variant/10">
+      <h3 class="font-bold text-base text-primary">Entrevista de salida</h3>
+      <button onclick="cerrarModal('modal-entrevista')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
     </div>
-    <div class="form-group">
-      <label class="form-label">¿Recomendaría la empresa?</label>
-      <select class="form-control" id="ent-recomienda">
-        <option value="Sí">Sí, la recomendaría</option>
-        <option value="No">No la recomendaría</option>
-      </select>
+    <p class="text-xs text-on-surface-variant mb-4" id="ent-desc">Registra la retroalimentación del empleado antes de su salida.</p>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">¿Por qué se va? <span class="text-error">*</span></label>
+        <textarea class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 min-h-[64px]" id="ent-motivo" placeholder="¿Cuál es la razón principal por la que deja la empresa?"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">¿Recomendaría la empresa?</label>
+        <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="ent-recomienda">
+          <option value="Sí">Sí, la recomendaría</option>
+          <option value="No">No la recomendaría</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">¿Qué mejoraría de la empresa?</label>
+        <textarea class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 min-h-[64px]" id="ent-sugerencias" placeholder="¿Qué mejoraría de la empresa?"></textarea>
+      </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">¿Qué mejoraría de la empresa?</label>
-      <textarea class="form-control" id="ent-sugerencias" placeholder="¿Qué mejoraría de la empresa?"></textarea>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="cerrarModal('modal-entrevista')">Cancelar</button>
-      <button class="btn btn-primary" id="btn-ent-guardar" onclick="guardarEntrevista()"><i class="ti ti-check"></i>Guardar Entrevista</button>
+    <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-outline-variant/10">
+      <button class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors" onclick="cerrarModal('modal-entrevista')">Cancelar</button>
+      <button class="px-4 py-2 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all active:scale-95" id="btn-ent-guardar" onclick="guardarEntrevista()">Guardar entrevista</button>
     </div>
   </div>
 </div>
 
 <!-- ══ MODAL: CONFIRMACIÓN ══ -->
-<div class="overlay" id="modal-confirm">
-  <div class="modal modal-sm" style="text-align:center">
-    <div style="width:52px;height:52px;border-radius:18px;background:#FEF1F1;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
-      <i class="ti ti-alert-triangle" style="font-size:24px;color:#DC2626"></i>
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-confirm">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xs shadow-2xl transition-all duration-300 text-center">
+    <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center text-xl mb-4 bg-red-50 text-red-600">
+      <span class="material-symbols-outlined">warning</span>
     </div>
-    <div class="modal-title" style="text-align:center" id="confirm-title">¿Confirmar acción?</div>
-    <p style="font-size:13px;color:var(--text3);margin:8px 0 18px" id="confirm-body"></p>
-    <div style="display:flex;gap:8px;justify-content:center">
-      <button class="btn" onclick="cerrarModal('modal-confirm')">Cancelar</button>
-      <button class="btn btn-danger-solid" id="confirm-ok"><i class="ti ti-trash"></i>Eliminar</button>
+    <h4 class="font-bold text-sm text-primary mb-1" id="confirm-title">¿Confirmar acción?</h4>
+    <p class="text-xs text-on-surface-variant leading-relaxed" id="confirm-body"></p>
+    <div class="flex justify-center gap-2 mt-5 pt-3 border-t border-outline-variant/10">
+      <button onclick="cerrarModal('modal-confirm')" class="px-4 py-1.5 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors">Cancelar</button>
+      <button id="confirm-ok" class="px-4 py-1.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all flex items-center gap-1 justify-center"><span class="material-symbols-outlined text-sm">delete</span>Eliminar</button>
     </div>
   </div>
 </div>
 
-<div id="toast-wrap"></div>
+<div id="toast-wrap" class="fixed bottom-6 right-6 z-[300] flex flex-col gap-2 pointer-events-none"></div>
 
 <!-- ══════════════ JAVASCRIPT ══════════════ -->
-<script type="module">
-// ── SUPABASE ──
-let db = null;
-
-async function cargarSupabase() {
-  try {
-    const mod = await import('../supabase-client.js');
-    db = mod.supabase;
-    if (!db) throw new Error('supabase-client.js no exporta "supabase"');
-  } catch (err) {
-    console.error('No se pudo cargar supabase-client.js:', err);
-    db = null;
-  }
-}
-
-// ── captura global de errores fatales ──
-window.addEventListener('error', (e) => {
-  console.error('Error fatal capturado:', e.error || e.message);
-  const st = document.getElementById('db-status');
-  if (st) {
-    st.classList.remove('hidden');
-    const txt = document.getElementById('stxt');
-    const dot = document.getElementById('sdot');
-    if (txt) txt.textContent = 'Error cargando el módulo — revisa la consola';
-    if (dot) dot.style.background = '#EF4444';
-  }
-});
-
-// ── ESTADO ──
-// "bajas" contiene las filas de la tabla real `salidas` (empleado_id, fecha_salida,
-// motivo, porque_se_va, mejoraria, recomendaria, observaciones y los 4 booleanos
-// de checklist). Ya no existen tablas separadas de entrevista/checklist.
-let empleados = [];
-let bajas = [];
-let filtroTipo = 'todos';
-let ordenActual = 'fecha-desc';
-let bajaSeleccionada = null;
-let perfilTab = 'info';
-let entrevistaBajaId = null;
-let cargando = true;
-const TIPOS = ['Renuncia','Despido','Jubilación','Fin de contrato','Otro'];
-let tipoBajaSel = 'Renuncia';
-
-// checklist de offboarding: 4 columnas booleanas reales de `salidas`
-const CHECKLIST_ITEMS = [
-  { key: 'equipo_entregado',    label: 'Equipo entregado',                 icon: 'ti-device-laptop' },
-  { key: 'accesos_revocados',   label: 'Accesos revocados',                icon: 'ti-lock' },
-  { key: 'liquidacion_firmada', label: 'Liquidación firmada',              icon: 'ti-file-check' },
-  { key: 'entrevista_realizada',label: 'Entrevista de salida realizada',   icon: 'ti-message-circle-check' },
-];
-function estadoOffboarding(b) {
-  const done = CHECKLIST_ITEMS.filter(it => b[it.key]).length;
-  if (done === 0) return 'Pendiente';
-  if (done === CHECKLIST_ITEMS.length) return 'Completado';
-  return 'En proceso';
-}
-
-// ── HELPERS ──
-const AV_COLORS = ['#8B5CF6','#3B82F6','#EC4899','#0EA5E9','#10B981','#F59E0B','#6366F1','#14B8A6','#EF4444','#F97316'];
-function avColor(id) { return AV_COLORS[(id||0) % AV_COLORS.length]; }
-function iniciales(nombre) { return (nombre||'??').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase(); }
-function fmtFecha(iso) { if(!iso) return '—'; const d=new Date(iso+'T12:00:00'); return d.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'}); }
-
-// fecha relativa: "hace 3 días" / "en 6 días" / "hoy"
-function fmtRel(iso) {
-  if(!iso) return '';
-  const d = new Date(iso+'T12:00:00');
-  const hoy = new Date(); hoy.setHours(12,0,0,0);
-  const dias = Math.round((d - hoy) / 86400000);
-  if (dias === 0) return 'hoy';
-  if (dias === 1) return 'mañana';
-  if (dias === -1) return 'ayer';
-  if (dias > 0) return dias > 60 ? `en ${Math.round(dias/30)} meses` : `en ${dias} días`;
-  const abs = -dias;
-  return abs > 60 ? `hace ${Math.round(abs/30)} meses` : `hace ${abs} días`;
-}
-
-function tipoBadge(tipo) {
-  const m = {'Renuncia':['b-blue','ti-user-check'],'Despido':['b-red','ti-user-x'],'Jubilación':['b-purple','ti-beach'],'Fin de contrato':['b-orange','ti-file-off'],'Otro':['b-gray','ti-dots']};
-  const [cls,ico] = m[tipo]||['b-gray','ti-user'];
-  return `<span class="badge ${cls}"><i class="ti ${ico}"></i>${tipo||'Sin especificar'}</span>`;
-}
-
-function offBadge(estado) {
-  const m = {'Pendiente':'b-yellow','En proceso':'b-orange','Completado':'b-green'};
-  return `<span class="badge ${m[estado]||'b-gray'}">${estado}</span>`;
-}
-
-function calcAntiguedad(fechaIngreso, fechaSalida) {
-  if (!fechaIngreso) return '—';
-  const ini = new Date(fechaIngreso+'T12:00:00');
-  const fin = fechaSalida ? new Date(fechaSalida+'T12:00:00') : new Date();
-  const diff = fin - ini;
-  const anios = Math.floor(diff / (365.25*24*60*60*1000));
-  const meses = Math.floor((diff % (365.25*24*60*60*1000)) / (30.44*24*60*60*1000));
-  if (anios > 0) return `${anios} año${anios>1?'s':''} ${meses} mes${meses!==1?'es':''}`;
-  return `${meses} mes${meses!==1?'es':''}`;
-}
-
-// contador animado para stats
-const statPrev = {};
-function animarNumero(id, target) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const from = statPrev[id] ?? 0;
-  statPrev[id] = target;
-  if (from === target) { el.textContent = target; return; }
-  const dur = 600, t0 = performance.now();
-  function tick(t) {
-    const p = Math.min((t - t0) / dur, 1);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(from + (target - from) * eased);
-    if (p < 1) requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
-
-// mini gráfico de barras: bajas de los últimos 6 meses (hero bento)
-function renderMiniChart() {
-  const box = document.getElementById('mini-chart');
-  if (!box) return;
-  const hoy = new Date();
-  const meses = [];
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(hoy.getFullYear(), hoy.getMonth()-i, 1);
-    meses.push({ y: d.getFullYear(), m: d.getMonth(), lbl: d.toLocaleDateString('es',{month:'narrow'}) });
-  }
-  const counts = meses.map(mm => bajas.filter(b => {
-    if (!b.fecha_salida) return false;
-    const d = new Date(b.fecha_salida+'T12:00:00');
-    return d.getMonth()===mm.m && d.getFullYear()===mm.y;
-  }).length);
-  const max = Math.max(...counts, 1);
-  box.innerHTML = meses.map((mm,i) =>
-    `<div class="mc-col" title="${counts[i]} baja${counts[i]!==1?'s':''} — ${mm.lbl.toUpperCase()}">
-      <div class="mc-bar" style="height:${Math.max(counts[i]/max*72, 5)}px"></div>
-      <span>${mm.lbl}</span>
-    </div>`).join('');
-}
-
-// gráfico grande: bajas de los últimos 12 meses (bento "Histórico de Bajas")
-function renderHistorico() {
-  const box = document.getElementById('hist-chart');
-  const foot = document.getElementById('hist-foot');
-  if (!box) return;
-  const hoy = new Date();
-  const meses = [];
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(hoy.getFullYear(), hoy.getMonth()-i, 1);
-    meses.push({ y: d.getFullYear(), m: d.getMonth(), lbl: d.toLocaleDateString('es',{month:'short'}).replace('.','') });
-  }
-  const counts = meses.map(mm => bajas.filter(b => {
-    if (!b.fecha_salida) return false;
-    const d = new Date(b.fecha_salida+'T12:00:00');
-    return d.getMonth()===mm.m && d.getFullYear()===mm.y;
-  }).length);
-  const max = Math.max(...counts, 1);
-  box.innerHTML = meses.map((mm,i) =>
-    `<div class="hist-col" title="${counts[i]} baja${counts[i]!==1?'s':''} — ${mm.lbl.toUpperCase()} ${mm.y}">
-      <div class="hist-bar" style="height:${Math.max(counts[i]/max*140, 4)}px"></div>
-      <span>${mm.lbl}</span>
-    </div>`).join('');
-
-  if (foot) {
-    const totalPeriodo = counts.reduce((a,b)=>a+b,0);
-    const promedioMes = (totalPeriodo/12).toFixed(1);
-    // si los 12 meses están en 0, indexOf(max) da -1 (max se fuerza a 1) → proteger
-    const hayDatos = counts.some(c => c > 0);
-    const picoIdx = counts.indexOf(max);
-    const mesPico = (hayDatos && picoIdx >= 0) ? meses[picoIdx].lbl.toUpperCase() : '—';
-    foot.innerHTML = `
-      <div><div class="hist-stat-lbl">Total período</div><div class="hist-stat-val">${totalPeriodo}</div></div>
-      <div><div class="hist-stat-lbl">Promedio mensual</div><div class="hist-stat-val">${promedioMes}</div></div>
-      <div><div class="hist-stat-lbl">Mes con más bajas</div><div class="hist-stat-val" style="font-size:16px">${mesPico}</div></div>`;
-  }
-}
-
-// desglose por motivo de salida (bento "Motivos de Salida")
-const MOTIVO_COLORS = {'Renuncia':'#2563EB','Despido':'#DC2626','Jubilación':'#7C3AED','Fin de contrato':'#EA580C','Otro':'#9AA4BB'};
-function renderMotivos() {
-  const box = document.getElementById('motivos-list');
-  if (!box) return;
-  const total = bajas.length;
-  if (!total) {
-    box.innerHTML = `<div class="empty-state" style="padding:20px 16px"><div class="es-ico"><i class="ti ti-chart-donut"></i></div><p>Sin bajas registradas todavía</p></div>`;
-    return;
-  }
-  const filas = TIPOS.map(t => ({ tipo: t, n: bajas.filter(b=>b.motivo===t).length }))
-    .filter(f => f.n > 0)
-    .sort((a,b) => b.n - a.n);
-
-  box.innerHTML = filas.map(f => {
-    const pct = Math.round(f.n/total*100);
-    const color = MOTIVO_COLORS[f.tipo] || '#9AA4BB';
-    return `<div class="motivo-row">
-      <span class="motivo-dot" style="background:${color}"></span>
-      <span class="motivo-lbl">${f.tipo}</span>
-      <div class="motivo-track"><div class="motivo-fill" style="width:${pct}%;background:${color}"></div></div>
-      <span class="motivo-pct">${f.n} · ${pct}%</span>
-    </div>`;
-  }).join('');
-
-  // % que recomendaría la empresa, calculado sobre las entrevistas de salida
-  // ya registradas (campo `recomendaria` de `salidas`)
-  const foot = document.getElementById('motivo-foot');
-  if (!foot) return;
-  const conEntrevista = bajas.filter(b => b.recomendaria);
-  if (!conEntrevista.length) {
-    foot.innerHTML = `<div class="motivo-foot-lbl" style="color:var(--text4);font-weight:600;text-transform:none;letter-spacing:normal">Aún no hay entrevistas de salida registradas</div>`;
-    return;
-  }
-  const recomiendan = conEntrevista.filter(b => (b.recomendaria||'').toLowerCase().startsWith('s')).length;
-  const pctRec = Math.round(recomiendan/conEntrevista.length*100);
-  const colorRec = pctRec>=70 ? 'var(--green)' : pctRec>=40 ? 'var(--amber)' : 'var(--red)';
-  foot.innerHTML = `
-    <div>
-      <div class="motivo-foot-lbl">Recomendarían la empresa</div>
-      <div class="motivo-foot-sub">${recomiendan} de ${conEntrevista.length} entrevistas de salida</div>
-    </div>
-    <div class="motivo-foot-val" style="color:${colorRec}">${pctRec}%</div>`;
-}
-
-// ── TIPO DE BAJA (segmentado) ──
-function selTipo(el) {
-  tipoBajaSel = el.dataset.tipo;
-  document.querySelectorAll('#tipo-grid .tipo-opt').forEach(o=>o.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-// ── FILTROS / BÚSQUEDA / ORDEN ──
-function filtrarPor(tipo) {
-  filtroTipo = tipo;
-  renderChips();
-  renderTabla();
-}
-
-function renderChips() {
-  const row = document.getElementById('filter-row');
-  if (!row) return;
-  const conteo = t => t==='todos' ? bajas.length : bajas.filter(b=>b.motivo===t).length;
-  const chip = (t, lbl) =>
-    `<div class="chip ${filtroTipo===t?'active':''}" onclick="filtrarPor('${t}')">${lbl}<span class="chip-n">${conteo(t)}</span></div>`;
-  row.innerHTML = `<span style="font-size:12px;color:var(--text3);font-weight:600">Tipo:</span>` +
-    chip('todos','Todos') + TIPOS.map(t=>chip(t,t)).join('');
-}
-
-let debounceTimer = null;
-function onBuscar() {
-  const inp = document.getElementById('search-input');
-  const clr = document.getElementById('search-clear');
-  if (clr) clr.style.display = inp && inp.value ? 'block' : 'none';
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(renderTabla, 160);
-}
-function limpiarBusqueda() {
-  const inp = document.getElementById('search-input');
-  if (inp) { inp.value=''; inp.focus(); }
-  onBuscar();
-}
-
-function cambiarOrden(v) { ordenActual = v; renderTabla(); }
-
-// ── TABLA ──
-function skeletonRows(n=4) {
-  return Array.from({length:n}).map(()=>`<tr style="cursor:default">
-    <td><div style="display:flex;align-items:center;gap:9px"><span class="sk sk-circle"></span><span><span class="sk sk-line" style="width:110px;display:block;margin-bottom:5px"></span><span class="sk sk-line" style="width:70px;display:block"></span></span></div></td>
-    <td><span class="sk sk-line" style="width:80px"></span></td>
-    <td><span class="sk sk-line" style="width:64px"></span></td>
-    <td><span class="sk sk-line" style="width:110px"></span></td>
-    <td></td>
-  </tr>`).join('');
-}
-
-function renderTabla() {
-  const tbody = document.getElementById('tbody');
-  if(!tbody) return;
-
-  if (cargando) { tbody.innerHTML = skeletonRows(); return; }
-
-  const sInp = document.getElementById('search-input');
-  const busqueda = (sInp ? sInp.value : '').toLowerCase().trim();
-
-  let lista = bajas.filter(b => {
-    const emp = empleados.find(e=>e.id===b.empleado_id);
-    const nombre = emp ? emp.nombre.toLowerCase() : '';
-    const matchT = filtroTipo==='todos' || b.motivo===filtroTipo;
-    const matchB = !busqueda || nombre.includes(busqueda) || (b.porque_se_va||'').toLowerCase().includes(busqueda);
-    return matchT && matchB;
-  });
-
-  const pctDe = b => Math.round(CHECKLIST_ITEMS.filter(it=>b[it.key]).length / CHECKLIST_ITEMS.length * 100);
-  const nombreDe = b => (empleados.find(e=>e.id===b.empleado_id)?.nombre)||'';
-
-  lista.sort((a,b) => {
-    switch (ordenActual) {
-      case 'fecha-asc': return new Date(a.fecha_salida)-new Date(b.fecha_salida);
-      case 'nombre':    return nombreDe(a).localeCompare(nombreDe(b),'es');
-      case 'progreso':  return pctDe(a)-pctDe(b);
-      default:          return new Date(b.fecha_salida)-new Date(a.fecha_salida);
-    }
-  });
-
-  const pill = document.getElementById('tbl-count');
-  if (pill) pill.textContent = lista.length;
-
-  if (!lista.length) {
-    const conBusqueda = busqueda || filtroTipo!=='todos';
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">
-      <i class="ti ${conBusqueda?'ti-filter-off':'ti-users-minus'}" style="font-size:24px;display:block;margin:0 auto 8px;color:#C6CFDF"></i>
-      ${conBusqueda ? 'Sin resultados con los filtros actuales' : 'Sin bajas registradas'}
-      ${conBusqueda ? '<br><button class="btn btn-sm" style="margin-top:10px" onclick="resetFiltros()"><i class=\"ti ti-restore\"></i>Limpiar filtros</button>' : ''}
-    </td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = lista.map(b => {
-    const emp = empleados.find(e=>e.id===b.empleado_id);
-    const nombre = emp ? emp.nombre : 'Empleado #'+b.empleado_id;
-    const cargo = emp ? emp.cargo : '';
-    const ini = iniciales(nombre);
-    const col = avColor(b.empleado_id);
-    const pct = pctDe(b);
-    const isSelected = bajaSeleccionada===b.id;
-
-    return `<tr onclick="seleccionarBaja(${b.id})" class="${isSelected?'selected':''}">
-      <td>
-        <div style="display:flex;align-items:center;gap:9px">
-          <div class="av" style="background:${col}">${ini}</div>
-          <div>
-            <div style="font-weight:600;font-size:13px;color:var(--text)">${nombre}</div>
-            <div style="font-size:11px;color:var(--text4);font-weight:500">${cargo}</div>
-          </div>
-        </div>
-      </td>
-      <td>${tipoBadge(b.motivo)}</td>
-      <td>
-        <div style="font-size:12px;font-weight:600;color:var(--text2)">${fmtFecha(b.fecha_salida)}</div>
-        <div style="font-size:10.5px;color:var(--text4)">${fmtRel(b.fecha_salida)}</div>
-      </td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px">
-          ${offBadge(estadoOffboarding(b))}
-          <div style="width:48px">
-            <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${pct===100?'var(--green)':'var(--blue)'}"></div></div>
-          </div>
-          <span style="font-size:10px;color:var(--text4);font-weight:600;font-variant-numeric:tabular-nums">${pct}%</span>
-        </div>
-      </td>
-      <td><button class="btn btn-sm" title="Ver expediente" onclick="event.stopPropagation();seleccionarBaja(${b.id})"><i class="ti ti-chevron-right"></i></button></td>
-    </tr>`;
-  }).join('');
-}
-
-function resetFiltros() {
-  filtroTipo = 'todos';
-  const inp = document.getElementById('search-input');
-  if (inp) inp.value = '';
-  onBuscar();
-  renderChips();
-  renderTabla();
-}
-
-// ── PERFIL / DETALLE ──
-function seleccionarBaja(id) {
-  if (bajaSeleccionada !== id) perfilTab = 'info';
-  bajaSeleccionada = id;
-  renderPerfil();
-  renderTabla();
-  if (window.innerWidth <= 1200) {
-    document.getElementById('perfil-card')?.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-}
-
-function ringSVG(pct) {
-  const r = 24, c = 2*Math.PI*r;
-  const off = c - (pct/100)*c;
-  const color = pct===100 ? 'var(--green)' : 'var(--blue)';
-  return `<div class="ring-wrap ${pct===100?'complete':''}" title="Progreso de offboarding">
-    <svg width="58" height="58" viewBox="0 0 58 58">
-      <circle class="ring-bg" cx="29" cy="29" r="${r}"></circle>
-      <circle class="ring-fg" cx="29" cy="29" r="${r}" stroke="${color}" stroke-dasharray="${c}" stroke-dashoffset="${off}"></circle>
-    </svg>
-    <div class="ring-txt">${pct}%</div>
-  </div>`;
-}
-
-function renderPerfil() {
-  const b = bajas.find(x=>x.id===bajaSeleccionada);
-  if (!b) return;
-
-  const emp = empleados.find(e=>e.id===b.empleado_id);
-  const nombre = emp ? emp.nombre : 'Empleado #'+b.empleado_id;
-  const cargo = emp ? emp.cargo : '—';
-  const depto = emp ? emp.departamento : '—';
-  const ini = iniciales(nombre);
-  const col = avColor(b.empleado_id);
-
-  const tieneEntrevista = !!b.porque_se_va;
-  const ckDone = CHECKLIST_ITEMS.filter(it=>b[it.key]).length;
-  const ckTotal = CHECKLIST_ITEMS.length;
-  const pct = Math.round((ckDone/ckTotal)*100);
-
-  const pBox = document.getElementById('perfil-content');
-  if(!pBox) return;
-
-  pBox.innerHTML = `
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div class="av av-xl" style="background:linear-gradient(135deg,${col},${col}CC)">${ini}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:16px;font-weight:700;margin-bottom:2px;letter-spacing:-.01em">${nombre}</div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500">${cargo} · ${depto}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${tipoBadge(b.motivo)}
-          ${offBadge(estadoOffboarding(b))}
-        </div>
-      </div>
-      ${ringSVG(pct)}
-    </div>
-    <div class="tabs">
-      <div class="tab ${perfilTab==='info'?'active':''}" onclick="cambiarTab('info')"><i class="ti ti-id" style="font-size:13px"></i> Información</div>
-      <div class="tab ${perfilTab==='entrevista'?'active':''}" onclick="cambiarTab('entrevista')"><i class="ti ti-message-circle" style="font-size:13px"></i> Entrevista ${tieneEntrevista?'✓':''}</div>
-      <div class="tab ${perfilTab==='checklist'?'active':''}" onclick="cambiarTab('checklist')"><i class="ti ti-checklist" style="font-size:13px"></i> Checklist ${ckDone}/${ckTotal}</div>
-    </div>
-    <div id="tab-content">${renderTabContent(b, emp, tieneEntrevista, pct)}</div>
-    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
-      ${!tieneEntrevista ? `<button class="btn btn-sm btn-blue-o" onclick="abrirEntrevista(${b.id})"><i class="ti ti-message-circle"></i>Entrevista de salida</button>` : ''}
-      <button class="btn btn-sm btn-danger" onclick="confirmarEliminar(${b.id})"><i class="ti ti-trash"></i>Eliminar baja</button>
-    </div>`;
-
-  requestAnimationFrame(()=>{
-    pBox.querySelectorAll('.rating-fill[data-w]').forEach(el=>{ el.style.width = el.dataset.w+'%'; });
-    pBox.querySelectorAll('.prog-bar[data-w]').forEach(el=>{ el.style.width = el.dataset.w+'%'; });
-  });
-}
-
-function cambiarTab(tab) {
-  perfilTab = tab;
-  renderPerfil();
-}
-
-function renderTabContent(b, emp, tieneEntrevista, pct) {
-  if (perfilTab === 'info') {
-    return `
-      <div class="profile-field"><span class="pf-lbl">Fecha de ingreso</span><span class="pf-val">${fmtFecha(emp?.fecha_ingreso)}</span></div>
-      <div class="profile-field"><span class="pf-lbl">Fecha de salida</span><span class="pf-val">${fmtFecha(b.fecha_salida)} <span style="color:var(--text4);font-weight:400">(${fmtRel(b.fecha_salida)})</span></span></div>
-      <div class="profile-field"><span class="pf-lbl">Antigüedad</span><span class="pf-val">${calcAntiguedad(emp?.fecha_ingreso, b.fecha_salida)}</span></div>
-      <div class="profile-field"><span class="pf-lbl">Tipo de baja</span><span class="pf-val">${b.motivo}</span></div>
-      <div class="profile-field"><span class="pf-lbl">Offboarding</span><span class="pf-val">${offBadge(estadoOffboarding(b))}</span></div>
-      ${b.observaciones ? `<div style="margin-top:12px;padding:12px 14px;background:#F6F8FC;border-radius:12px;font-size:12px;color:var(--text3)"><strong style="color:var(--text2)"><i class="ti ti-note" style="font-size:12px"></i> Observaciones:</strong><br>${b.observaciones}</div>` : ''}`;
-  }
-
-  if (perfilTab === 'entrevista') {
-    if (!tieneEntrevista) {
-      return `<div class="empty-state">
-        <div class="es-ico"><i class="ti ti-message-circle-off"></i></div>
-        <p>No se ha realizado entrevista de salida</p>
-        <button class="btn btn-sm btn-blue-o" style="margin-top:12px" onclick="abrirEntrevista(${b.id})"><i class="ti ti-message-circle"></i>Registrar entrevista</button>
-      </div>`;
-    }
-
-    const recomienda = (b.recomendaria||'').toLowerCase().startsWith('s');
-
-    return `
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">¿Por qué se va?</div>
-        <div style="padding:12px 14px;background:#F6F8FC;border-radius:12px;font-size:13px;color:var(--text2);font-weight:500">${b.porque_se_va||'—'}</div>
-      </div>
-      <div class="profile-field" style="margin-top:4px">
-        <span class="pf-lbl">¿Recomendaría la empresa?</span>
-        <span class="pf-val">${b.recomendaria ? (recomienda ? '<span class="badge b-green"><i class="ti ti-thumb-up"></i>Sí</span>' : '<span class="badge b-red"><i class="ti ti-thumb-down"></i>No</span>') : '—'}</span>
-      </div>
-      ${b.mejoraria ? `<div style="margin-top:10px"><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Qué mejoraría</div><div style="padding:12px 14px;background:#FEF9E7;border-radius:12px;font-size:12px;color:#92400E;font-style:italic;font-weight:500">"${b.mejoraria}"</div></div>` : ''}`;
-  }
-
-  if (perfilTab === 'checklist') {
-    return `
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        <div class="prog-wrap" style="flex:1"><div class="prog-bar" data-w="${pct}" style="background:${pct===100?'var(--green)':'var(--blue)'}"></div></div>
-        <span style="font-size:12px;font-weight:700;color:${pct===100?'var(--green)':'var(--blue)'};font-variant-numeric:tabular-nums">${pct}%</span>
-      </div>
-      ${pct===100 ? `<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#EEFBF2;border-radius:12px;margin-bottom:10px;font-size:12px;color:#15803D;font-weight:600"><i class="ti ti-confetti"></i>¡Offboarding completado!</div>` : ''}
-      ${CHECKLIST_ITEMS.map(it => `
-        <div class="check-item ${b[it.key]?'done':''}">
-          <div class="check-box ${b[it.key]?'checked':''}" onclick="toggleCheck(${b.id}, '${it.key}', ${!b[it.key]})" title="${b[it.key]?'Marcar pendiente':'Marcar completado'}">
-            ${b[it.key] ? '<i class="ti ti-check"></i>' : ''}
-          </div>
-          <i class="ti ${it.icon}" style="font-size:15px;color:var(--text4)"></i>
-          <span class="check-text">${it.label}</span>
-        </div>`).join('')}`;
-  }
-
-  return '';
-}
-
-// ── CONFETTI (al completar offboarding) ──
-function lanzarConfetti() {
-  const colores = ['#2563EB','#16A34A','#F59E0B','#EC4899','#8B5CF6','#F97316'];
-  for (let i=0;i<36;i++) {
-    const c = document.createElement('div');
-    c.className = 'confetti';
-    c.style.left = Math.random()*100+'vw';
-    c.style.background = colores[i%colores.length];
-    c.style.animationDuration = (1.4+Math.random()*1.4)+'s';
-    c.style.animationDelay = (Math.random()*.3)+'s';
-    c.style.width = c.style.height = (5+Math.random()*6)+'px';
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(), 3200);
-  }
-}
-
-// ── TOGGLE CHECKLIST (booleanos directos de la fila `salidas`) ──
-async function toggleCheck(bajaId, key, nuevoEstado) {
-  const b = bajas.find(x=>x.id===bajaId);
-  if (!b) return;
-  const antes = CHECKLIST_ITEMS.filter(it=>b[it.key]).length;
-
-  const { error } = await db.from('salidas').update({ [key]: nuevoEstado }).eq('id', bajaId);
-  if (error) { toast('Error: '+error.message,'err'); return; }
-  b[key] = nuevoEstado;
-  celebrarSiCompleto(b, antes);
-  await cargar();
-}
-
-function celebrarSiCompleto(b, antes) {
-  if (!b) return;
-  const done = CHECKLIST_ITEMS.filter(it=>b[it.key]).length;
-  if (done === CHECKLIST_ITEMS.length && antes < CHECKLIST_ITEMS.length) {
-    lanzarConfetti();
-    toast('¡Offboarding completado! 🎉','ok');
-  }
-}
-
-// ── MODAL BAJA ──
-function abrirModalBaja() {
-  try {
-    document.getElementById('baja-obs').value = '';
-    document.getElementById('baja-fecha').value = new Date().toISOString().split('T')[0];
-    document.getElementById('modal-baja-title').textContent = 'Registrar baja de empleado';
-    tipoBajaSel = 'Renuncia';
-    document.querySelectorAll('#tipo-grid .tipo-opt').forEach(o=>o.classList.toggle('sel', o.dataset.tipo==='Renuncia'));
-  } catch(e) {}
-  llenarSelectEmpleados();
-  abrirModal('modal-baja');
-}
-
-async function guardarBaja() {
-  const empId = Number(document.getElementById('baja-empleado').value);
-  const fecha = document.getElementById('baja-fecha').value;
-  if (!empId || !fecha) { toast('Completa empleado y fecha de salida','err'); return; }
-
-  const datos = {
-    empleado_id: empId,
-    motivo: tipoBajaSel,
-    fecha_salida: fecha,
-    observaciones: document.getElementById('baja-obs').value.trim() || null,
-  };
-
-  const btn = document.getElementById('btn-baja-guardar');
-  if(btn) btn.disabled = true;
-
-  const { data, error } = await db.from('salidas').insert([datos]).select();
-  if(btn) btn.disabled = false;
-  if (error) { toast('Error: '+error.message,'err'); return; }
-
-  toast('Baja registrada correctamente','ok');
-  bumpBadge();
-  cerrarModal('modal-baja');
-  await cargar();
-  if (data && data[0]) seleccionarBaja(data[0].id);
-}
-
-function bumpBadge() {
-  const el = document.getElementById('badge-bajas');
-  if (!el) return;
-  el.classList.add('bump');
-  setTimeout(()=>el.classList.remove('bump'), 350);
-}
-
-// ── MODAL ENTREVISTA ──
-function abrirEntrevista(bajaId) {
-  entrevistaBajaId = bajaId;
-  try {
-    document.getElementById('ent-motivo').value = '';
-    document.getElementById('ent-sugerencias').value = '';
-    document.getElementById('ent-recomienda').value = 'Sí';
-    const b = bajas.find(x=>x.id===bajaId);
-    const emp = empleados.find(e=>e.id===b?.empleado_id);
-    const desc = document.getElementById('ent-desc');
-    if (desc && emp) desc.textContent = `Retroalimentación de ${emp.nombre} antes de su salida.`;
-  } catch(e) {}
-  abrirModal('modal-entrevista');
-}
-
-async function guardarEntrevista() {
-  const motivo = document.getElementById('ent-motivo').value.trim();
-  if (!motivo) { toast('Indica por qué se va el empleado','err'); return; }
-
-  const datos = {
-    porque_se_va: motivo,
-    mejoraria: document.getElementById('ent-sugerencias').value.trim() || null,
-    recomendaria: document.getElementById('ent-recomienda').value,
-    entrevista_realizada: true
-  };
-
-  const btn = document.getElementById('btn-ent-guardar');
-  if(btn) btn.disabled = true;
-
-  const { error } = await db.from('salidas').update(datos).eq('id', entrevistaBajaId);
-  if(btn) btn.disabled = false;
-  if (error) { toast('Error: '+error.message,'err'); return; }
-  toast('Entrevista de salida registrada','ok');
-  perfilTab = 'entrevista';
-  cerrarModal('modal-entrevista');
-  await cargar();
-}
-
-// ── ELIMINAR BAJA ──
-function confirmarEliminar(bajaId) {
-  const b = bajas.find(x=>x.id===bajaId);
-  const emp = empleados.find(e=>e.id===b?.empleado_id);
-  document.getElementById('confirm-title').textContent = '¿Eliminar baja?';
-  document.getElementById('confirm-body').textContent = `Se eliminará el registro de baja de ${emp?.nombre || 'este empleado'}, junto con los datos de su entrevista y checklist. Esta acción no se puede deshacer.`;
-  document.getElementById('confirm-ok').onclick = () => eliminarBaja(bajaId);
-  abrirModal('modal-confirm');
-}
-
-async function eliminarBaja(bajaId) {
-  cerrarModal('modal-confirm');
-
-  const { error } = await db.from('salidas').delete().eq('id', bajaId);
-  if (error) { toast('Error: '+error.message,'err'); return; }
-  bajaSeleccionada = null;
-  toast('Baja eliminada correctamente','ok');
-  await cargar();
-  resetPerfil();
-}
-
-function resetPerfil() {
-  const pBox = document.getElementById('perfil-content');
-  if(pBox) pBox.innerHTML = `<div class="empty-state">
-    <div class="es-ico"><i class="ti ti-door-exit"></i></div>
-    <p><strong style="color:var(--text3)">Expediente de salida</strong></p>
-    <p>Selecciona una baja de la lista para ver su detalle, entrevista y checklist</p>
-  </div>`;
-}
-
-// ── SELECTS ──
-function llenarSelectEmpleados() {
-  const bajasIds = new Set(bajas.map(b=>b.empleado_id));
-  const disponibles = empleados.filter(e => !bajasIds.has(e.id) && (e.estado||'Activo')==='Activo');
-  const opts = disponibles.length
-    ? disponibles.map(e=>`<option value="${e.id}">${e.nombre} — ${e.cargo||''}</option>`).join('')
-    : '<option value="">No hay empleados disponibles</option>';
-  const sel = document.getElementById('baja-empleado');
-  if(sel) sel.innerHTML = opts;
-}
-
-// ── STATS ──
-function actualizarStats() {
-  const ahora = new Date();
-  const bajasMes = bajas.filter(b => {
-    if(!b.fecha_salida) return false;
-    const d = new Date(b.fecha_salida);
-    return d.getMonth()===ahora.getMonth() && d.getFullYear()===ahora.getFullYear();
-  });
-
-  const pendientes = bajas.filter(b => estadoOffboarding(b) !== 'Completado');
-  const entrevistasTotal = bajas.filter(b => b.entrevista_realizada).length;
-
-  const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-  animarNumero('st-total', bajas.length);
-  setTxt('st-total-sub', `${bajas.length} registrada${bajas.length!==1?'s':''} en el sistema`);
-  animarNumero('st-mes', bajasMes.length);
-  setTxt('st-mes-sub', bajasMes.length ? `${bajasMes.length} en ${ahora.toLocaleDateString('es',{month:'long'})}` : 'Ninguna este mes');
-
-  // comparativa vs mes anterior
-  const mesPrev = new Date(ahora.getFullYear(), ahora.getMonth()-1, 1);
-  const bajasPrev = bajas.filter(b => {
-    if(!b.fecha_salida) return false;
-    const d = new Date(b.fecha_salida);
-    return d.getMonth()===mesPrev.getMonth() && d.getFullYear()===mesPrev.getFullYear();
-  }).length;
-  const trendEl = document.getElementById('st-mes-trend');
-  if (trendEl) {
-    const diff = bajasMes.length - bajasPrev;
-    const nombrePrev = mesPrev.toLocaleDateString('es',{month:'long'});
-    trendEl.classList.remove('trend-up','trend-down','trend-flat');
-    if (diff > 0) {
-      trendEl.classList.add('trend-up');
-      trendEl.innerHTML = `<i class="ti ti-trending-up"></i>+${diff} vs ${nombrePrev} (${bajasPrev})`;
-    } else if (diff < 0) {
-      trendEl.classList.add('trend-down');
-      trendEl.innerHTML = `<i class="ti ti-trending-down"></i>${diff} vs ${nombrePrev} (${bajasPrev})`;
-    } else {
-      trendEl.classList.add('trend-flat');
-      trendEl.innerHTML = `<i class="ti ti-minus"></i>igual que ${nombrePrev} (${bajasPrev})`;
-    }
-    trendEl.style.visibility = 'visible';
-  }
-  animarNumero('st-entrevistas', entrevistasTotal);
-  setTxt('st-entrevistas-sub', `${entrevistasTotal} de salida realizada${entrevistasTotal!==1?'s':''}`);
-  animarNumero('st-pendientes', pendientes.length);
-  setTxt('st-pendientes-sub', `${pendientes.length} proceso${pendientes.length!==1?'s':''} sin completar`);
-  setTxt('badge-bajas', bajas.length);
-  renderMiniChart();
-}
-
-// ── AUTO-SELECCIÓN INICIAL ──
-// Al cargar con datos, muestra la baja más reciente en el expediente
-// (solo una vez; no interfiere al eliminar ni con realtime)
-let autoSelHecha = false;
-function autoSeleccionarPrimera() {
-  if (autoSelHecha || bajaSeleccionada !== null || !bajas.length) return;
-  autoSelHecha = true;
-  const primera = [...bajas].sort((a,b)=>new Date(b.fecha_salida)-new Date(a.fecha_salida))[0];
-  bajaSeleccionada = primera.id;
-  perfilTab = 'info';
-  renderPerfil();
-  renderTabla(); // re-render para marcar la fila seleccionada
-}
-
-// ── RENDER TODO ──
-function renderizarTodo() {
-  actualizarStats();
-  renderChips();
-  renderTabla();
-  renderHistorico();
-  renderMotivos();
-  if (bajaSeleccionada) renderPerfil();
-  autoSeleccionarPrimera();
-}
-
-function abrirModal(id) {
-  const el = document.getElementById(id);
-  if(el) {
-    el.classList.add('open');
-    setTimeout(()=>el.querySelector('input,select,textarea')?.focus(), 120);
-  }
-}
-function cerrarModal(id) { const el = document.getElementById(id); if(el) el.classList.remove('open'); }
-
-// ── INICIO ──
-async function iniciar() {
-  const dot = document.getElementById('sdot');
-  const txt = document.getElementById('stxt');
-  const st  = document.getElementById('db-status');
-
-  try {
-    if (!db) throw new Error("Cliente de Supabase no inicializado");
-
-    const { data, error } = await db.from('empleados').select('id').limit(1);
-    if (error) throw error;
-
-    if(dot) dot.style.background = '#22C55E';
-    if(txt) txt.textContent = 'Conectado a Supabase';
-    if(st) setTimeout(()=>st.classList.add('hidden'),2000);
-
-    await cargar();
-    suscribirRealtime();
-  } catch (err) {
-    console.error("Error de conexión con Supabase:", err);
-    if(dot) dot.style.background = '#EF4444';
-    if(txt) txt.textContent = 'Sin conexión a Supabase';
-    empleados = [];
-    bajas = [];
-    cargando = false;
-    renderizarTodo();
-  }
-}
-
-async function cargar() {
-  try {
-    const [e, s] = await Promise.all([
-      db.from('empleados').select('*'),
-      db.from('salidas').select('*').order('fecha_salida',{ascending:false}),
-    ]);
-
-    empleados = e.data || [];
-    bajas = s.data || [];
-
-    cargando = false;
-    renderizarTodo();
-  } catch(err) {
-    console.error("Error cargando colecciones:", err);
-    const dot = document.getElementById('sdot');
-    const txt = document.getElementById('stxt');
-    const st  = document.getElementById('db-status');
-    if(st) st.classList.remove('hidden');
-    if(dot) dot.style.background = '#EF4444';
-    if(txt) txt.textContent = 'Error cargando datos';
-    cargando = false;
-    renderizarTodo();
-  }
-}
-
-function suscribirRealtime() {
-  if(!db) return;
-  db.channel('salida')
-    .on('postgres_changes',{event:'*',schema:'public',table:'salidas'}, ()=>cargar())
-    .subscribe();
-}
-
-// ── EVENT LISTENERS ──
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.overlay').forEach(bg => {
-    bg.addEventListener('click', e => { if(e.target===bg) bg.classList.remove('open'); });
-  });
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));
-  if (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) {
-    e.preventDefault();
-    document.getElementById('search-input')?.focus();
-  }
-});
-
-function toast(msg, tipo='') {
-  const wrap = document.getElementById('toast-wrap');
-  if(!wrap) return;
-  const el = document.createElement('div');
-  el.className = `toast ${tipo==='ok'?'ok':tipo==='err'?'err':''}`;
-  el.innerHTML = `<i class="ti ${tipo==='ok'?'ti-circle-check':tipo==='err'?'ti-alert-circle':'ti-info-circle'}"></i>${msg}`;
-  wrap.appendChild(el);
-  setTimeout(()=>el.classList.add('show'),10);
-  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},3000);
-}
-
-// ── WINDOW EXPORTS (para onclick en HTML) ──
-window.renderTabla = renderTabla;
-window.filtrarPor = filtrarPor;
-window.seleccionarBaja = seleccionarBaja;
-window.cambiarTab = cambiarTab;
-window.toggleCheck = toggleCheck;
-window.abrirModalBaja = abrirModalBaja;
-window.guardarBaja = guardarBaja;
-window.abrirEntrevista = abrirEntrevista;
-window.guardarEntrevista = guardarEntrevista;
-window.confirmarEliminar = confirmarEliminar;
-window.cerrarModal = cerrarModal;
-window.selTipo = selTipo;
-window.onBuscar = onBuscar;
-window.limpiarBusqueda = limpiarBusqueda;
-window.cambiarOrden = cambiarOrden;
-window.resetFiltros = resetFiltros;
-
-// ── ARRANCAR ──
-renderChips();
-renderTabla(); // skeleton mientras carga
-(async () => {
-  await cargarSupabase();
-  await iniciar();
-})();
-</script>
+<script type="module" src="script.js"></script>
 </body>
 </html>

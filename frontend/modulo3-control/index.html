@@ -1,1140 +1,428 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TalentHub B2B - Control Diario</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.2.0/dist/tabler-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Control Diario · TalentHub B2B</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "tertiary-fixed-dim": "#c0c1ff", "on-tertiary-container": "#7073ff", "on-tertiary": "#ffffff",
+          "secondary-container": "#40c2fd", "surface-container": "#eceef0", "inverse-on-surface": "#eff1f3",
+          "on-background": "#191c1e", "on-secondary-fixed-variant": "#004c69", "surface-variant": "#e0e3e5",
+          "on-primary-fixed": "#131b2e", "inverse-surface": "#2d3133", "error": "#ba1a1a",
+          "on-tertiary-fixed-variant": "#2f2ebe", "surface-container-highest": "#e0e3e5", "primary-fixed": "#dae2fd",
+          "tertiary-container": "#07006c", "surface-bright": "#f7f9fb", "tertiary": "#000000",
+          "on-error": "#ffffff", "error-container": "#ffdad6", "outline": "#76777d",
+          "surface-container-lowest": "#ffffff", "inverse-primary": "#bec6e0", "tertiary-fixed": "#e1e0ff",
+          "on-secondary": "#ffffff", "on-tertiary-fixed": "#07006c", "surface-dim": "#d8dadc",
+          "primary-container": "#131b2e", "primary": "#000000", "on-secondary-container": "#004d6a",
+          "on-error-container": "#93000a", "on-primary": "#ffffff", "on-primary-fixed-variant": "#3f465c",
+          "secondary-fixed-dim": "#7bd0ff", "primary-fixed-dim": "#bec6e0", "secondary": "#00668a",
+          "on-surface-variant": "#45464d", "surface-container-high": "#e6e8ea", "outline-variant": "#c6c6cd",
+          "secondary-fixed": "#c4e7ff", "on-secondary-fixed": "#001e2c", "surface-container-low": "#f2f4f6",
+          "background": "#f7f9fb", "on-primary-container": "#7c839b", "surface-tint": "#565e74",
+          "surface": "#f7f9fb", "on-surface": "#191c1e"
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        spacing: { "table-row-height": "48px", "sidebar-width": "280px", "base": "8px", "container-padding": "24px", "bento-gap": "16px" },
+        fontFamily: { sans: ["Plus Jakarta Sans", "sans-serif"] }
+      }
+    }
+  }
+</script>
 <style>
-/* ═══════════════════════════════════════════════
-   MÓDULO 3 · CONTROL DIARIO — TalentHub B2B
-   Modern Flat + Glassmorphism · Bento UI
-   ═══════════════════════════════════════════════ */
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  /* Paleta Módulo 1 (Material You): primario negro, superficies neutras */
-  --bg:#F7F9FB;--surface:#FFFFFF;--border:#E0E3E5;
-  --glass-bg:rgba(255,255,255,.6);--glass-border:rgba(255,255,255,.75);
-  --glass-blur:blur(18px) saturate(1.3);
-  --text:#191C1E;--text2:#3D4348;--text3:#45464D;--text4:#8C9199;
-  --primary:#0B0D12;--primary-2:#2A3140;--primary-soft:rgba(19,27,46,.07);
-  --blue:#00668A;--blue-h:#004D6A;--blue-soft:#E5F1F7;
-  --green:#16A34A;--green-h:#15803D;--red:#BA1A1A;--red-h:#93000A;
-  --orange:#EA580C;--purple:#7C3AED;--amber:#F59E0B;
-  --radius:20px;
-  --shadow:0 6px 24px -6px rgba(19,27,46,.07),0 2px 8px -2px rgba(19,27,46,.04);
-  --shadow-md:0 14px 40px -8px rgba(19,27,46,.12),0 4px 12px -4px rgba(19,27,46,.06);
-  --shadow-lg:0 32px 80px -12px rgba(19,27,46,.20),0 12px 28px -8px rgba(19,27,46,.09);
-  --ease:cubic-bezier(.22,.68,0,1);
-}
-body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-::selection{background:#D8DEE7}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-.content::-webkit-scrollbar,.modal::-webkit-scrollbar,.sidebar::-webkit-scrollbar,.side-list::-webkit-scrollbar{width:8px}
-.content::-webkit-scrollbar-thumb,.modal::-webkit-scrollbar-thumb,.side-list::-webkit-scrollbar-thumb{background:#D4DBE8;border-radius:99px}
-
-/* ═══ LAYOUT ═══ */
-.app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:280px;background:rgba(255,255,255,.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid rgba(198,198,205,.3);box-shadow:0 1px 2px rgba(15,23,42,.04);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto;padding:24px 0;z-index:15}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
-.main::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(600px 420px at 12% -5%, rgba(19,27,46,.06), transparent 60%),
-             radial-gradient(520px 380px at 88% 8%, rgba(0,102,138,.05), transparent 60%),
-             radial-gradient(700px 460px at 55% 108%, rgba(19,27,46,.05), transparent 62%)}
-.content{flex:1;overflow-y:auto;padding:18px 26px 26px;position:relative;z-index:1}
-
-/* ═══ SIDEBAR (patrón Módulo 1) ═══ */
-.nav-svg{width:22px;height:22px;fill:currentColor;flex-shrink:0}
-.logo{padding:0 24px;margin-bottom:32px}
-.logo-mark{display:flex;align-items:center;gap:12px}
-.logo-ico{width:40px;height:40px;background:#000;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-ico .nav-svg{fill:#fff;width:20px;height:20px}
-.logo-title{font-size:18px;font-weight:700;color:#000;letter-spacing:-.02em;line-height:1.2}
-.logo-sub{font-size:12px;color:#45464D;opacity:.7;font-weight:500;margin-top:1px}
-.nav-section{flex:1;display:flex;flex-direction:column;gap:4px}
-.nav-item{display:flex;align-items:center;gap:12px;padding:12px 24px;cursor:pointer;color:#45464D;font-size:14px;font-weight:500;transition:all .2s var(--ease);text-decoration:none;border-left:4px solid transparent}
-.nav-item:hover{color:#000;background:rgba(230,232,234,.5)}
-.nav-item.active{color:#000;font-weight:700;border-left-color:#000;background:rgba(19,27,46,.08)}
-.nav-badge{margin-left:auto;background:#000;color:#fff;font-size:10px;padding:2px 8px;border-radius:99px;font-weight:700}
-.sb-footer{margin-top:auto;padding:24px 24px 0;border-top:1px solid rgba(198,198,205,.2)}
-.sb-config{display:flex;align-items:center;gap:12px;padding:8px;color:#45464D;font-size:14px;font-weight:500;text-decoration:none;cursor:pointer;transition:color .2s;border-radius:10px}
-.sb-config:hover{color:#000}
-.sb-user{display:flex;align-items:center;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(198,198,205,.14)}
-.user-av{width:32px;height:32px;border-radius:50%;background:#4F46E5;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
-.user-name{font-size:12px;color:#141B2E;font-weight:700}
-.user-role{font-size:10px;color:#45464D;font-weight:500}
-
-/* ═══ TOPBAR glass flotante ═══ */
-.topbar{margin:14px 26px 0;position:relative;z-index:10;background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:16px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;flex-shrink:0;box-shadow:var(--shadow)}
-.topbar-l{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text3);font-weight:500}
-.page-title{color:var(--text);font-weight:700;font-size:15px;letter-spacing:-.01em}
-.topbar-r{display:flex;align-items:center;gap:10px}
-.search-wrap{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid transparent;border-radius:12px;background:rgba(255,255,255,.65);transition:all .2s var(--ease)}
-.search-wrap:focus-within{background:#fff;border-color:#C6CCD9;box-shadow:0 4px 16px -4px rgba(19,27,46,.15)}
-.search-wrap input{border:none;outline:none;font-size:13px;color:var(--text2);width:180px;background:transparent;font-family:inherit;font-weight:500}
-.search-kbd{font-size:10px;color:var(--text4);border:1px solid var(--border);border-radius:5px;padding:1px 5px;background:rgba(255,255,255,.7);font-weight:600}
-.icon-btn{width:36px;height:36px;border-radius:12px;border:none;background:rgba(255,255,255,.65);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:16px;transition:all .18s var(--ease)}
-.icon-btn:hover{background:#fff;transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(19,27,46,.18)}
-.av-top{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
-
-/* ═══ BENTO ═══ */
-.bento{display:grid;gap:16px;grid-template-columns:repeat(6,1fr);
-  grid-template-areas:
-    "marc marc kpi1 kpi2 kpi3 kpi4"
-    "tbl  tbl  tbl  tbl  side side";
-  align-items:start}
-.b-marc{grid-area:marc}.b-kpi1{grid-area:kpi1}.b-kpi2{grid-area:kpi2}
-.b-kpi3{grid-area:kpi3}.b-kpi4{grid-area:kpi4}.b-tbl{grid-area:tbl}.b-side{grid-area:side}
-.bcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:transform .25s var(--ease),box-shadow .25s var(--ease);animation:rise .5s var(--ease) both}
-@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.bento>.bcard:nth-child(2){animation-delay:.05s}.bento>.bcard:nth-child(3){animation-delay:.1s}
-.bento>.bcard:nth-child(4){animation-delay:.15s}.bento>.bcard:nth-child(5){animation-delay:.2s}
-.bento>.bcard:nth-child(6){animation-delay:.25s}.bento>.bcard:nth-child(7){animation-delay:.3s}
-.stat-glass{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border)}
-.stat-glass:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
-
-/* KPI compactas */
-.stat-ico{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-bottom:10px}
-.ico-green{background:linear-gradient(135deg,#DCFCE7,#F0FDF4);color:var(--green)}
-.ico-red{background:linear-gradient(135deg,#FEE2E2,#FEF2F2);color:var(--red)}
-.ico-blue{background:linear-gradient(135deg,#DBEAFE,#EDF3FE);color:var(--blue)}
-.ico-purple{background:linear-gradient(135deg,#EDE9FE,#F5F3FF);color:var(--purple)}
-.ico-orange{background:linear-gradient(135deg,#FFEDD5,#FFF7ED);color:var(--orange)}
-.stat-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
-.stat-val{font-size:26px;font-weight:800;color:var(--text);line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.stat-sub{font-size:11.5px;color:var(--text4);margin-top:4px;font-weight:500}
-
-/* ═══ HERO MARCACIÓN ═══ */
-.reloj{font-size:34px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
-.reloj-fecha{font-size:12px;color:var(--text3);font-weight:600;margin-top:2px;text-transform:capitalize}
-.geo-ring{width:74px;height:74px;border-radius:50%;border:2px dashed rgba(19,27,46,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
-.geo-ring i{font-size:26px;color:var(--text)}
-.geo-ring.ok{border-color:rgba(22,163,74,.6)}.geo-ring.ok i{color:var(--green)}
-.geo-ring.bad{border-color:rgba(186,26,26,.6)}.geo-ring.bad i{color:var(--red)}
-.geo-ring::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(19,27,46,.14);animation:sonar 2.4s var(--ease) infinite}
-@keyframes sonar{0%{transform:scale(.85);opacity:1}100%{transform:scale(1.25);opacity:0}}
-.btn-marcar{width:100%;padding:13px;border-radius:14px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s var(--ease);color:#fff}
-.btn-marcar.entrada{background:linear-gradient(135deg,#15803D,#16A34A);box-shadow:0 10px 24px -8px rgba(22,163,74,.55)}
-.btn-marcar.salida{background:linear-gradient(135deg,#C2410C,#EA580C);box-shadow:0 10px 24px -8px rgba(234,88,12,.55)}
-.btn-marcar:hover{transform:translateY(-2px);filter:brightness(1.05)}
-.btn-marcar:disabled{opacity:.6;cursor:wait;transform:none}
-.geo-status{font-size:12px;font-weight:600;margin-top:10px;display:flex;align-items:center;gap:6px;color:var(--text3);min-height:18px}
-
-/* ═══ CARDS / TABLE ═══ */
-.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap}
-.card-title{font-size:14.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:-.01em}
-.count-pill{background:var(--primary-soft);color:var(--text);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px}
-.tbl-wrap{overflow-x:auto;margin:0 -8px}
-table{width:100%;border-collapse:separate;border-spacing:0 2px}
-th{text-align:left;padding:8px 12px;font-size:10.5px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
-td{padding:10px 12px;color:var(--text2);vertical-align:middle;font-size:13px}
-tbody tr{transition:all .18s var(--ease);animation:rowIn .3s var(--ease) both}
-tbody tr td:first-child{border-radius:12px 0 0 12px}
-tbody tr td:last-child{border-radius:0 12px 12px 0}
-@keyframes rowIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
-tbody tr:hover td{background:#F6F8FC}
-.empty-row td{text-align:center;padding:28px;color:var(--text4);font-size:13px}
-.sk{background:linear-gradient(90deg,#EDF1F8 25%,#F8FAFD 50%,#EDF1F8 75%);background-size:200% 100%;animation:shimmer 1.3s infinite;border-radius:6px;display:inline-block}
-@keyframes shimmer{to{background-position:-200% 0}}
-.sk-circle{width:32px;height:32px;border-radius:50%}.sk-line{height:11px}
-
-/* ═══ AVATAR / BADGES ═══ */
-.av{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:2.5px 9px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
-.badge i{font-size:11px}
-.b-gray{background:#F1F4F9;color:#5A6478}.b-blue{background:#E5F1F7;color:#00668A}
-.b-yellow{background:#FEF9E7;color:#92400E}.b-purple{background:#F5F3FF;color:#5B21B6}
-.b-green{background:#EEFBF2;color:#15803D}.b-red{background:#FEF1F1;color:#B91C1C}
-.b-orange{background:#FFF4EA;color:#C2410C}
-
-/* ═══ BUTTONS / CHIPS / TABS ═══ */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:11px;border:1px solid var(--border);background:#fff;color:var(--text2);font-size:13px;cursor:pointer;font-weight:600;transition:all .18s var(--ease);white-space:nowrap;font-family:inherit;justify-content:center}
-.btn:hover{background:#F2F4F6;border-color:#C6CCD9;transform:translateY(-2px);box-shadow:0 8px 20px -6px rgba(19,27,46,.12)}
-.btn:active{transform:translateY(0)}
-.btn-sm{padding:5px 11px;font-size:12px;border-radius:9px}
-.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent;box-shadow:0 8px 20px -6px rgba(19,27,46,.4)}
-.btn-primary:hover{background:linear-gradient(135deg,#000,var(--primary))}
-.btn-success-o{color:var(--green);border-color:#BBF7D0;background:#fff}
-.btn-success-o:hover{background:#EEFBF2}
-.btn-danger{color:var(--red);border-color:#F8D3D3;background:#fff}
-.btn-danger:hover{background:#FEF1F1}
-.btn-danger-solid{background:var(--red);color:#fff;border-color:var(--red)}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
-.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-.chip{padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;color:var(--text3);font-weight:600;transition:all .2s var(--ease);display:inline-flex;align-items:center;gap:6px}
-.chip .chip-n{font-size:10px;font-weight:800;background:#EFF2F9;color:var(--text3);border-radius:99px;padding:0 6px;min-width:18px;text-align:center}
-.chip:hover{border-color:#B9C0CE;color:#000;transform:translateY(-1px)}
-.chip.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 8px 20px -6px rgba(19,27,46,.4)}
-.chip.active .chip-n{background:rgba(255,255,255,.25);color:#fff}
-.tabs{display:flex;gap:2px;background:#EFF1F4;padding:3px;border-radius:12px;margin-bottom:14px}
-.tab{flex:1;text-align:center;padding:7px 10px;font-size:12.5px;color:var(--text3);cursor:pointer;border-radius:9px;font-weight:600;transition:all .2s var(--ease);white-space:nowrap}
-.tab:hover{color:var(--text)}
-.tab.active{color:#000;background:#fff;box-shadow:0 4px 14px -4px rgba(19,27,46,.15);font-weight:700}
-
-/* ═══ SIDE LIST ═══ */
-.side-list{max-height:430px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-.side-item{border:1px solid var(--border);border-radius:14px;padding:11px 13px;transition:all .18s var(--ease)}
-.side-item:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
-.si-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.si-nombre{font-weight:700;font-size:13px;flex:1}
-.si-rango{font-size:11.5px;color:var(--text3);font-weight:500}
-.si-obs{font-size:11.5px;color:var(--text4);margin-top:3px;font-style:italic}
-.si-actions{display:flex;gap:6px;margin-top:8px}
-
-/* ═══ MODALS glass ═══ */
-.overlay{position:fixed;inset:0;background:rgba(20,27,46,.35);backdrop-filter:blur(6px);z-index:100;align-items:center;justify-content:center;display:flex;opacity:0;pointer-events:none;transition:opacity .22s var(--ease)}
-.overlay.open{opacity:1;pointer-events:auto}
-.modal{background:rgba(255,255,255,.78);backdrop-filter:blur(24px) saturate(1.5);-webkit-backdrop-filter:blur(24px) saturate(1.5);border:1px solid rgba(255,255,255,.75);border-radius:24px;padding:26px;width:480px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:var(--shadow-lg);transform:translateY(16px) scale(.97);opacity:0;transition:all .28s var(--ease)}
-.overlay.open .modal{transform:translateY(0) scale(1);opacity:1}
-.modal-sm{width:400px}
-.modal-title{font-size:17px;font-weight:800;color:var(--text);margin-bottom:4px;letter-spacing:-.01em}
-.modal-desc{font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:500}
-.modal-close{position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:10px;border:none;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px;transition:all .18s var(--ease)}
-.modal-close:hover{background:#FEF1F1;color:var(--red);transform:rotate(90deg)}
-.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px}
-
-/* ═══ FORMS ═══ */
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-group{margin-bottom:13px}
-.form-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
-.req{color:var(--red)}
-.form-control{width:100%;padding:9px 12px;border:1px solid rgba(230,234,242,.9);border-radius:11px;font-size:13px;color:var(--text);background:rgba(255,255,255,.85);outline:none;transition:all .18s var(--ease);font-family:inherit;font-weight:500}
-.form-control:focus{border-color:#9AA4BB;background:#fff;box-shadow:0 0 0 4px rgba(19,27,46,.09)}
-select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239AA4BB'%3E%3Cpath stroke-linecap='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px;padding-right:30px}
-textarea.form-control{resize:vertical;min-height:60px}
-.form-hint{font-size:11px;color:var(--text4);margin-top:3px;display:flex;align-items:center;gap:5px;font-weight:500}
-/* KPI icono azul → tono secundario del módulo 1 */
-.ico-blue{background:linear-gradient(135deg,#D7EAF3,#E5F1F7);color:var(--blue)}
-
-/* ═══ TOAST / STATUS / EMPTY ═══ */
-#toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{background:rgba(20,27,46,.92);backdrop-filter:blur(10px);color:#fff;padding:11px 16px;border-radius:14px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;opacity:0;transform:translateX(24px);transition:all .3s var(--ease);max-width:340px;box-shadow:var(--shadow-lg)}
-.toast.show{opacity:1;transform:translateX(0)}
-.toast.ok{background:linear-gradient(135deg,rgba(21,128,61,.95),rgba(22,163,74,.92))}
-.toast.err{background:linear-gradient(135deg,rgba(185,28,28,.95),rgba(220,38,38,.92))}
-.toast.warn{background:linear-gradient(135deg,rgba(194,65,12,.95),rgba(234,88,12,.92))}
-#db-status{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow-md);z-index:50;transition:all .5s var(--ease)}
-#db-status.hidden{opacity:0;transform:translate(-50%,-16px);pointer-events:none}
-.sdot{width:7px;height:7px;border-radius:50%}
-.empty-state{text-align:center;padding:30px 16px;color:var(--text4)}
-.empty-state .es-ico{width:56px;height:56px;border-radius:20px;background:#F6F8FC;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-.empty-state .es-ico i{font-size:26px;color:#C6CFDF}
-.empty-state p{font-size:13px;margin-top:4px;font-weight:500}
-
-/* ═══ RESPONSIVE ═══ */
-@media(max-width:1200px){
-  .bento{grid-template-columns:repeat(2,1fr);
-    grid-template-areas:"marc marc" "kpi1 kpi2" "kpi3 kpi4" "tbl tbl" "side side"}
-}
-@media(max-width:900px){
-  .sidebar{width:64px;padding:16px 0}
-  .logo{padding:0 12px;margin-bottom:20px}
-  .logo-mark{justify-content:center}
-  .logo-title,.logo-sub,.user-info,.nav-badge,.sb-config span{display:none}
-  .nav-item span{display:none}
-  .nav-item{justify-content:center;padding:12px 0;border-left-width:3px}
-  .sb-footer{padding:14px 12px 0}
-  .sb-config,.sb-user{justify-content:center}
-  .search-wrap input{width:90px}
-  .topbar{margin:12px 14px 0}
-  .content{padding:14px}
-  .bento{grid-template-columns:1fr;grid-template-areas:"marc" "kpi1" "kpi2" "kpi3" "kpi4" "tbl" "side"}
-}
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+.glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.5); }
+.bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+.modal-overlay { background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(8px); transition: all 0.2s ease-out; }
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal-overlay:not(.open) { opacity: 0; pointer-events: none; }
+.modal-overlay.open > div { scale: 1; }
+.modal-overlay > div { scale: 0.95; }
 </style>
 </head>
-<body>
+<body class="bg-surface font-sans text-on-surface antialiased">
 
-<div id="db-status">
-  <div class="sdot" id="sdot" style="background:#F59E0B"></div>
-  <span id="stxt">Conectando...</span>
+<!-- INDICADOR DE ESTADO BASE DE DATOS -->
+<div id="db-status" class="fixed top-4 left-1/2 -translate-x-1/2 glass-card px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg z-[100] transition-opacity duration-500">
+  <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="status-dot"></div>
+  <span id="status-text" class="text-primary">Sincronizando ecosistema...</span>
 </div>
 
-<div class="app">
-
-  <!-- SIDEBAR (patrón Módulo 1) -->
-  <div class="sidebar">
-    <div class="logo">
-      <div class="logo-mark">
-        <div class="logo-ico"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M153-73q-33-33-33-81t33-81q33-33 81-33 14 0 24.5 2.5T280-258l85-106q-19-23-29-52.5t-5-61.5l-121-41q-15 25-39.5 39T114-466q-48 0-81-33T0-580q0-48 33-81t81-33q48 0 81 33t33 81v4l122 42q18-32 43.5-49t56.5-24v-129q-39-11-61.5-43T366-846q0-48 33-81t81-33q48 0 81 33t33 81q0 35-23 67t-61 43v129q31 7 57 24t44 49l121-42v-4q0-48 33-81t81-33q48 0 81 33t33 81q0 48-33 81t-81 33q-32 0-57-14t-39-39l-121 41q5 32-4.5 61.5T595-364l85 106q11-5 21.5-7.5T726-268q48 0 81 33t33 81q0 48-33 81t-81 33q-48 0-81-33t-33-81q0-20 5.5-36t15.5-31l-85-106q-32 17-68.5 17T411-327l-84 107q10 15 15.5 30.5T348-154q0 48-33 81t-81 33q-48 0-81-33Z"/></svg></div>
+<div class="flex min-h-screen">
+  <!-- ── SIDEBAR NAVIGATION ── -->
+  <aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-white/70 backdrop-blur-xl border-r border-outline-variant/30 shadow-sm flex flex-col py-6 z-50">
+    <div class="px-6 mb-8">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl">
+          <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">hub</span>
+        </div>
         <div>
-          <div class="logo-title">TalentHub B2B</div>
-          <div class="logo-sub">HR Intelligence</div>
+          <h1 class="font-bold text-lg text-primary tracking-tight">TalentHub B2B</h1>
+          <p class="text-xs font-medium text-on-surface-variant opacity-70">HR Intelligence</p>
         </div>
       </div>
     </div>
-    <div class="nav-section">
-      <a class="nav-item" href="../modulo1-reclutamiento/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M440.5-500Q378-500 334-544.06 290-588.13 290-650q0-63 44.06-106.5Q378.13-800 440-800q63 0 106.5 43.5t43.5 106q0 62.5-43.5 106.5t-106 44Zm-.5-60q38 0 64-26.44T530-650q0-38-26-64t-63.5-26q-37.5 0-64 26T350-650.5q0 37.5 26.44 64T440-560ZM898-20 758-160q-23 17-47.5 23.5t-50.07 6.5q-71.01 0-120.72-49.62Q490-229.24 490-300.12t49.62-120.38q49.62-49.5 120.5-49.5t120.38 49.71Q830-370.58 830-299.57q0 25.57-6.5 50.07T800-202L940-62l-42 42ZM738.5-221.5Q770-253 770-300t-31.5-78.5Q707-410 660-410t-78.5 31.5Q550-347 550-300t31.5 78.5Q613-190 660-190t78.5-31.5ZM120-160v-94q0-37 17.5-63t50.5-43q47-23 122.5-43.5T464-419q-8 13-15 28.5T438-360q-78-1-136 18.5T212-306q-14 8-23 21.5t-9 30.5v34h258q11 17 20 31.5t20 28.5H120Zm320-490Zm-2 430Z"/></svg><span>Reclutamiento</span></a>
-      <a class="nav-item" href="../modulo2-personal/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M0-240v-53q0-38.57 41.5-62.78Q83-380 150.38-380q12.16 0 23.39.5t22.23 2.15q-8 17.35-12 35.17-4 17.81-4 37.18v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 49 46.5t17 58.5v65H240Zm540 0v-65q0-19.86-3.5-37.43T765-377.27q11-1.73 22.17-2.23 11.17-.5 22.83-.5 67.5 0 108.75 23.77T960-293v53H780Zm-480-60h360v-6q0-37-50.5-60.5T480-390q-79 0-129.5 23.5T300-305v5ZM149.57-410q-28.57 0-49.07-20.56Q80-451.13 80-480q0-29 20.56-49.5Q121.13-550 150-550q29 0 49.5 20.5t20.5 49.93q0 28.57-20.5 49.07T149.57-410Zm660 0q-28.57 0-49.07-20.56Q740-451.13 740-480q0-29 20.56-49.5Q781.13-550 810-550q29 0 49.5 20.5t20.5 49.93q0 28.57-20.5 49.07T809.57-410ZM480-480q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Zm.35-60Q506-540 523-557.35t17-43Q540-626 522.85-643t-42.5-17q-25.35 0-42.85 17.15t-17.5 42.5q0 25.35 17.35 42.85t43 17.5ZM480-300Zm0-300Z"/></svg><span>Personal</span></a>
-      <div class="nav-item active"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M433-228 295-365l42-42 96 94 184-184 42 43-226 226ZM180-80q-24 0-42-18t-18-42v-620q0-24 18-42t42-18h65v-60h65v60h340v-60h65v60h65q24 0 42 18t18 42v620q0 24-18 42t-42 18H180Zm0-60h600v-430H180v430Zm0-490h600v-130H180v130Zm0 0v-130 130Z"/></svg><span>Control diario</span><span class="nav-badge" id="badge-hoy">0</span></div>
-      <a class="nav-item" href="../modulo4-desarrollo/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m123-240-43-43 292-291 167 167 241-241H653v-60h227v227h-59v-123L538-321 371-488 123-240Z"/></svg><span>Desarrollo</span></a>
-      <a class="nav-item" href="../modulo5-salida/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M180-120q-24 0-42-18t-18-42v-210h60v210h600v-600H180v210h-60v-210q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Zm233-167-45-45 118-118H120v-60h366L368-628l45-45 193 193-193 193Z"/></svg><span>Salida</span></a>
-      <a class="nav-item" href="../modulo6-reportes/index.html"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M284-277h60v-205h-60v205Zm332 0h60v-420h-60v420Zm-166 0h60v-118h-60v118Zm0-205h60v-60h-60v60ZM180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Zm0-60h600v-600H180v600Zm0-600v600-600Z"/></svg><span>Reportes</span></a>
-    </div>
-    <div class="sb-footer">
-      <a class="sb-config" onclick="abrirSede()"><svg class="nav-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m388-80-20-126q-19-7-40-19t-37-25l-118 54-93-164 108-79q-2-9-2.5-20.5T185-480q0-9 .5-20.5T188-521L80-600l93-164 118 54q16-13 37-25t40-18l20-127h184l20 126q19 7 40.5 18.5T669-710l118-54 93 164-108 77q2 10 2.5 21.5t.5 21.5q0 10-.5 21t-2.5 21l108 78-93 164-118-54q-16 13-36.5 25.5T592-206L572-80H388Zm48-60h88l14-112q33-8 62.5-25t53.5-41l106 46 40-72-94-69q4-17 6.5-33.5T715-480q0-17-2-33.5t-7-33.5l94-69-40-72-106 46q-23-26-52-43.5T538-708l-14-112h-88l-14 112q-34 7-63.5 24T306-642l-106-46-40 72 94 69q-4 17-6.5 33.5T245-480q0 17 2.5 33.5T254-413l-94 69 40 72 106-46q24 24 53.5 41t62.5 25l14 112Zm44-210q54 0 92-38t38-92q0-54-38-92t-92-38q-54 0-92 38t-38 92q0 54 38 92t92 38Zm0-130Z"/></svg><span>Configuración</span></a>
-      <div class="sb-user">
-        <div class="user-av">AG</div>
-        <div class="user-info">
-          <div class="user-name">Ana García</div>
-          <div class="user-role">Gerente RRHH</div>
+
+    <nav class="flex-1 space-y-1">
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo1-reclutamiento/index.html">
+        <span class="material-symbols-outlined">person_search</span>
+        <span class="text-sm">Reclutamiento</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo2-personal/index.html">
+        <span class="material-symbols-outlined">groups</span>
+        <span class="text-sm">Personal</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
+        <span class="material-symbols-outlined">event_available</span>
+        <span class="text-sm">Control diario</span>
+        <span class="ml-auto bg-primary text-white text-[10px] px-2 py-0.5 rounded-full" id="badge-hoy">0</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo4-desarrollo/index.html">
+        <span class="material-symbols-outlined">trending_up</span>
+        <span class="text-sm">Desarrollo</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo5-salida/index.html">
+        <span class="material-symbols-outlined">exit_to_app</span>
+        <span class="text-sm">Salida</span>
+      </a>
+      <a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high/50 transition-all duration-200" href="../modulo6-reportes/index.html">
+        <span class="material-symbols-outlined">analytics</span>
+        <span class="text-sm">Reportes</span>
+      </a>
+    </nav>
+
+    <div class="px-6 mt-auto pt-6 border-t border-outline-variant/20">
+      <div class="space-y-1">
+        <a class="flex items-center gap-3 px-2 py-2 text-on-surface-variant hover:text-primary text-sm transition-colors" onclick="abrirSede()">
+          <span class="material-symbols-outlined text-xl">settings</span>
+          <span>Configuración</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-3 mt-4 pt-4 border-t border-outline-variant/10">
+        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">AG</div>
+        <div>
+          <p class="font-bold text-xs">Ana García</p>
+          <p class="text-[10px] text-on-surface-variant">Gerente RRHH</p>
         </div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <!-- MAIN -->
-  <div class="main">
-    <div class="topbar">
-      <div class="topbar-l">
-        <i class="ti ti-home" style="font-size:14px"></i>
-        <span style="color:#C6CFDF">/</span>
-        <span class="page-title">Control Diario</span>
-      </div>
-      <div class="topbar-r">
-        <div class="search-wrap">
-          <i class="ti ti-search" style="font-size:14px;color:var(--text4)"></i>
-          <input id="search-input" placeholder="Buscar empleado..." oninput="renderTabla()">
-          <span class="search-kbd">/</span>
+  <!-- ── MAIN CONTENT CANVAS ── -->
+  <main class="ml-[280px] flex-1 min-h-screen flex flex-col">
+    <header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 flex justify-between items-center px-6 z-40">
+      <div class="flex items-center gap-4 flex-1">
+        <div class="relative w-full max-w-md">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
+          <input id="search-input" class="w-full pl-10 pr-4 py-1.5 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary/20 text-sm" placeholder="Buscar empleado..." oninput="renderTabla()">
         </div>
-        <button class="icon-btn" title="Configurar sede / geocerca" onclick="abrirSede()"><i class="ti ti-map-pin-cog"></i></button>
-        <div class="av-top">AG</div>
       </div>
-    </div>
+      <div class="flex items-center gap-4">
+        <button onclick="abrirSede()" title="Configurar sede / geocerca" class="material-symbols-outlined hover:bg-surface-container-low rounded-full p-2 cursor-pointer transition-all text-on-surface-variant">edit_location_alt</button>
+        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-4">
+          <div class="text-right">
+            <p class="font-bold text-xs">Admin HR</p>
+            <p class="text-[10px] text-on-surface-variant">Superuser</p>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">HR</div>
+        </div>
+      </div>
+    </header>
 
-    <div class="content">
-      <div class="bento">
+    <div class="pt-24 pb-12 px-6 max-w-[1600px] w-full mx-auto space-y-8 flex-1">
+      <div class="flex justify-between items-end">
+        <div>
+          <h2 class="font-bold text-2xl text-primary tracking-tight">Módulo de Control Diario</h2>
+          <p class="text-sm text-on-surface-variant mt-1">Marcación de asistencia móvil con Geofencing (GPS) vía Supabase.</p>
+        </div>
+      </div>
 
-        <!-- HERO MARCACIÓN 2x1 · glass -->
-        <div class="bcard stat-glass b-marc">
-          <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
-            <div style="flex:1">
-              <div class="reloj" id="reloj">--:--:--</div>
-              <div class="reloj-fecha" id="reloj-fecha">—</div>
+      <!-- ══ BENTO GRID ══ -->
+      <div class="bento-grid">
+
+        <!-- HERO MARCACIÓN -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="flex-1">
+              <div class="text-3xl font-extrabold tracking-tight tabular-nums text-primary" id="reloj">--:--:--</div>
+              <div class="text-xs font-semibold text-on-surface-variant mt-0.5 capitalize" id="reloj-fecha">—</div>
             </div>
-            <div class="geo-ring" id="geo-ring"><i class="ti ti-gps"></i></div>
-          </div>
-          <div class="form-group" style="margin-bottom:10px">
-            <select class="form-control" id="marc-empleado" onchange="actualizarBotonMarcar()"></select>
-          </div>
-          <button class="btn-marcar entrada" id="btn-marcar" onclick="marcar()"><i class="ti ti-fingerprint"></i><span id="btn-marcar-txt">Marcar Entrada</span></button>
-          <div class="geo-status" id="geo-status"><i class="ti ti-map-pin"></i><span>GPS listo — la marcación valida tu ubicación</span></div>
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <button class="btn btn-sm" style="flex:1" onclick="abrirManual()"><i class="ti ti-pencil"></i>Marcación manual</button>
-            <button class="btn btn-sm" style="flex:1" onclick="abrirSede()"><i class="ti ti-map-pin-cog"></i>Geocerca: <span id="sede-radio">—</span></button>
-          </div>
-        </div>
-
-        <!-- KPIs 1x1 · glass -->
-        <div class="bcard stat-glass b-kpi1">
-          <div class="stat-ico ico-green"><i class="ti ti-user-check"></i></div>
-          <div class="stat-label">Presentes</div>
-          <div class="stat-val" id="k-presentes">—</div>
-          <div class="stat-sub">en la empresa ahora</div>
-        </div>
-        <div class="bcard stat-glass b-kpi2">
-          <div class="stat-ico ico-red"><i class="ti ti-user-off"></i></div>
-          <div class="stat-label">Ausencias</div>
-          <div class="stat-val" id="k-ausentes">—</div>
-          <div class="stat-sub">activas hoy</div>
-        </div>
-        <div class="bcard stat-glass b-kpi3">
-          <div class="stat-ico ico-purple"><i class="ti ti-beach"></i></div>
-          <div class="stat-label">Vacaciones</div>
-          <div class="stat-val" id="k-vacaciones">—</div>
-          <div class="stat-sub">de vacaciones hoy</div>
-        </div>
-        <div class="bcard stat-glass b-kpi4">
-          <div class="stat-ico ico-orange"><i class="ti ti-map-pin-x"></i></div>
-          <div class="stat-label">Fuera de zona</div>
-          <div class="stat-val" id="k-fuera">—</div>
-          <div class="stat-sub">marcaciones a revisar</div>
-        </div>
-
-        <!-- TABLA 4 cols -->
-        <div class="bcard b-tbl" style="display:flex;flex-direction:column">
-          <div class="card-hd">
-            <div class="tabs" style="margin-bottom:0;flex:1;max-width:360px">
-              <div class="tab active" id="tab-marc" onclick="cambiarVista('marcaciones')">Marcaciones de hoy</div>
-              <div class="tab" id="tab-personal" onclick="cambiarVista('personal')">Estado del personal</div>
+            <div class="relative flex items-center justify-center w-16 h-16 rounded-full border-2 border-dashed border-outline-variant/50 flex-shrink-0" id="geo-ring">
+              <span class="absolute inset-0 rounded-full border border-outline-variant/40" style="animation:ping 2.4s cubic-bezier(0,0,0.2,1) infinite" id="geo-ring-ping"></span>
+              <span class="material-symbols-outlined text-xl relative z-10 text-on-surface-variant" id="geo-ring-icon">gps_fixed</span>
             </div>
-            <span class="count-pill" id="tbl-count">0</span>
           </div>
-          <div class="filter-row" id="filter-row"></div>
-          <div class="tbl-wrap" style="flex:1">
-            <table>
+          <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white mb-3" id="marc-empleado" onchange="actualizarBotonMarcar()"></select>
+          <button id="btn-marcar" onclick="marcar()" class="w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all text-white bg-green-600 hover:bg-green-700 shadow-lg shadow-green-600/20 active:scale-95 disabled:opacity-60 disabled:cursor-wait">
+            <span class="material-symbols-outlined text-lg">fingerprint</span>
+            <span id="btn-marcar-txt">Marcar Entrada</span>
+          </button>
+          <div class="flex items-center gap-1.5 text-xs font-medium text-on-surface-variant mt-2.5 min-h-[18px]" id="geo-status">
+            <span class="material-symbols-outlined text-sm">pin_drop</span><span>GPS listo — la marcación valida tu ubicación</span>
+          </div>
+          <div class="flex gap-2 mt-3">
+            <button onclick="abrirManual()" class="flex-1 flex items-center justify-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest text-primary text-[11px] font-bold px-3 py-2 rounded-xl transition-all">
+              <span class="material-symbols-outlined text-sm">edit</span>Manual
+            </button>
+            <button onclick="abrirSede()" class="flex-1 flex items-center justify-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest text-primary text-[11px] font-bold px-3 py-2 rounded-xl transition-all">
+              <span class="material-symbols-outlined text-sm">edit_location_alt</span>Geocerca: <span id="sede-radio">—</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
+          <div class="w-10 h-10 bg-green-50 rounded-2xl flex items-center justify-center text-green-600"><span class="material-symbols-outlined text-lg">how_to_reg</span></div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Presentes</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5" id="k-presentes">—</p>
+            <p class="text-[10px] text-on-surface-variant">en la empresa ahora</p>
+          </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
+          <div class="w-10 h-10 bg-red-50 rounded-2xl flex items-center justify-center text-red-600"><span class="material-symbols-outlined text-lg">person_off</span></div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Ausencias</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5" id="k-ausentes">—</p>
+            <p class="text-[10px] text-on-surface-variant">activas hoy</p>
+          </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
+          <div class="w-10 h-10 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600"><span class="material-symbols-outlined text-lg">beach_access</span></div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Vacaciones</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5" id="k-vacaciones">—</p>
+            <p class="text-[10px] text-on-surface-variant">de vacaciones hoy</p>
+          </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 lg:col-span-2 bg-white rounded-3xl p-5 shadow-sm border border-outline-variant/20 flex flex-col justify-center gap-3">
+          <div class="w-10 h-10 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600"><span class="material-symbols-outlined text-lg">location_off</span></div>
+          <div>
+            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Fuera de zona</p>
+            <p class="font-extrabold text-xl text-primary mt-0.5" id="k-fuera">—</p>
+            <p class="text-[10px] text-on-surface-variant">marcaciones a revisar</p>
+          </div>
+        </div>
+
+        <!-- TABLA -->
+        <div class="col-span-12 lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col">
+          <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+            <div class="flex bg-surface-container-high p-1 rounded-xl">
+              <button id="tab-marc" onclick="cambiarVista('marcaciones')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-primary">Marcaciones de hoy</button>
+              <button id="tab-personal" onclick="cambiarVista('personal')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-on-surface-variant">Estado del personal</button>
+            </div>
+            <span class="bg-primary/10 text-primary text-[11px] font-bold px-2.5 py-1 rounded-full" id="tbl-count">0</span>
+          </div>
+          <div class="flex items-center gap-1.5 flex-wrap mb-4" id="filter-row"></div>
+          <div class="overflow-x-auto custom-scrollbar flex-1">
+            <table class="w-full text-left border-collapse">
               <thead id="thead"></thead>
-              <tbody id="tbody"></tbody>
+              <tbody id="tbody" class="divide-y divide-outline-variant/10"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- PANEL LATERAL: AUSENCIAS / VACACIONES -->
-        <div class="bcard b-side">
-          <div class="tabs">
-            <div class="tab active" id="stab-aus" onclick="cambiarSideTab('ausencias')">Ausencias</div>
-            <div class="tab" id="stab-vac" onclick="cambiarSideTab('vacaciones')">Vacaciones</div>
+        <!-- PANEL LATERAL -->
+        <div class="col-span-12 lg:col-span-4 bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/20 flex flex-col">
+          <div class="flex bg-surface-container-high p-1 rounded-xl mb-4">
+            <button id="stab-aus" onclick="cambiarSideTab('ausencias')" class="flex-1 px-3 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-primary">Ausencias</button>
+            <button id="stab-vac" onclick="cambiarSideTab('vacaciones')" class="flex-1 px-3 py-1.5 text-xs font-bold rounded-lg transition-all text-on-surface-variant">Vacaciones</button>
           </div>
-          <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
-            <button class="btn btn-primary btn-sm" id="btn-side-add" onclick="abrirAusencia()"><i class="ti ti-plus"></i><span id="btn-side-add-txt">Registrar ausencia</span></button>
+          <div class="flex justify-end mb-3">
+            <button id="btn-side-add" onclick="abrirAusencia()" class="flex items-center gap-1.5 bg-primary hover:bg-black text-white text-[11px] font-bold px-3 py-2 rounded-xl transition-all active:scale-95">
+              <span class="material-symbols-outlined text-sm">add</span><span id="btn-side-add-txt">Registrar ausencia</span>
+            </button>
           </div>
-          <div class="side-list" id="side-list"></div>
+          <div class="space-y-2.5 max-h-[420px] overflow-y-auto custom-scrollbar" id="side-list"></div>
         </div>
 
-      </div><!-- /bento -->
+      </div>
     </div>
-  </div>
+  </main>
 </div>
 
 <!-- ══ MODAL: AUSENCIA ══ -->
-<div class="overlay" id="modal-ausencia">
-  <div class="modal">
-    <button class="modal-close" onclick="cerrarModal('modal-ausencia')"><i class="ti ti-x"></i></button>
-    <div class="modal-title">Registrar ausencia</div>
-    <div class="modal-desc">Incapacidades, permisos personales, faltas o feriados.</div>
-    <div class="form-group">
-      <label class="form-label">Empleado <span class="req">*</span></label>
-      <select class="form-control" id="aus-empleado"></select>
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-ausencia">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 custom-scrollbar">
+    <div class="flex justify-between items-center mb-2 pb-2 border-b border-outline-variant/10">
+      <h3 class="font-bold text-base text-primary">Registrar ausencia</h3>
+      <button onclick="cerrarModal('modal-ausencia')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Tipo <span class="req">*</span></label>
-      <select class="form-control" id="aus-tipo">
-        <option>Incapacidad</option>
-        <option>Personal</option>
-        <option>No justificada</option>
-        <option>Feriado</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Desde <span class="req">*</span></label>
-        <input class="form-control" id="aus-inicio" type="date">
+    <p class="text-xs text-on-surface-variant mb-4">Incapacidades, permisos personales, faltas o feriados.</p>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Empleado <span class="text-error">*</span></label>
+        <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="aus-empleado"></select>
       </div>
-      <div class="form-group">
-        <label class="form-label">Hasta <span class="req">*</span></label>
-        <input class="form-control" id="aus-fin" type="date">
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Tipo <span class="text-error">*</span></label>
+        <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="aus-tipo">
+          <option>Incapacidad</option>
+          <option>Personal</option>
+          <option>No justificada</option>
+          <option>Feriado</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Desde <span class="text-error">*</span></label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="aus-inicio" type="date">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Hasta <span class="text-error">*</span></label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="aus-fin" type="date">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Observaciones</label>
+        <textarea class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 min-h-[64px]" id="aus-obs" placeholder="Detalle o justificación..."></textarea>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Observaciones</label>
-      <textarea class="form-control" id="aus-obs" placeholder="Detalle o justificación..."></textarea>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="cerrarModal('modal-ausencia')">Cancelar</button>
-      <button class="btn btn-primary" id="btn-aus-guardar" onclick="guardarAusencia()"><i class="ti ti-check"></i>Guardar</button>
+    <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-outline-variant/10">
+      <button class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors" onclick="cerrarModal('modal-ausencia')">Cancelar</button>
+      <button class="px-4 py-2 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all active:scale-95" id="btn-aus-guardar" onclick="guardarAusencia()">Guardar</button>
     </div>
   </div>
 </div>
 
 <!-- ══ MODAL: VACACIONES ══ -->
-<div class="overlay" id="modal-vacaciones">
-  <div class="modal">
-    <button class="modal-close" onclick="cerrarModal('modal-vacaciones')"><i class="ti ti-x"></i></button>
-    <div class="modal-title">Solicitud de vacaciones</div>
-    <div class="modal-desc">Se crea en estado Pendiente hasta que RRHH la apruebe o rechace.</div>
-    <div class="form-group">
-      <label class="form-label">Empleado <span class="req">*</span></label>
-      <select class="form-control" id="vac-empleado"></select>
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-vacaciones">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl transition-all duration-300 custom-scrollbar">
+    <div class="flex justify-between items-center mb-2 pb-2 border-b border-outline-variant/10">
+      <h3 class="font-bold text-base text-primary">Solicitud de vacaciones</h3>
+      <button onclick="cerrarModal('modal-vacaciones')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Desde <span class="req">*</span></label>
-        <input class="form-control" id="vac-inicio" type="date" onchange="calcularDias()">
+    <p class="text-xs text-on-surface-variant mb-4">Se crea en estado Pendiente hasta que RRHH la apruebe o rechace.</p>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Empleado <span class="text-error">*</span></label>
+        <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="vac-empleado"></select>
       </div>
-      <div class="form-group">
-        <label class="form-label">Hasta <span class="req">*</span></label>
-        <input class="form-control" id="vac-fin" type="date" onchange="calcularDias()">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Desde <span class="text-error">*</span></label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="vac-inicio" type="date" onchange="calcularDias()">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Hasta <span class="text-error">*</span></label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="vac-fin" type="date" onchange="calcularDias()">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Días solicitados</label>
+        <input class="w-full rounded-xl border border-outline-variant/40 text-xs bg-surface-container-low font-bold" id="vac-dias" readonly value="0">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Comentario</label>
+        <textarea class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 min-h-[64px]" id="vac-comentario" placeholder="Motivo o nota para RRHH..."></textarea>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Días solicitados</label>
-      <input class="form-control" id="vac-dias" readonly value="0" style="background:#F6F8FC;font-weight:700">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Comentario</label>
-      <textarea class="form-control" id="vac-comentario" placeholder="Motivo o nota para RRHH..."></textarea>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="cerrarModal('modal-vacaciones')">Cancelar</button>
-      <button class="btn btn-primary" id="btn-vac-guardar" onclick="guardarVacaciones()"><i class="ti ti-check"></i>Enviar solicitud</button>
+    <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-outline-variant/10">
+      <button class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors" onclick="cerrarModal('modal-vacaciones')">Cancelar</button>
+      <button class="px-4 py-2 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all active:scale-95" id="btn-vac-guardar" onclick="guardarVacaciones()">Enviar solicitud</button>
     </div>
   </div>
 </div>
 
 <!-- ══ MODAL: MARCACIÓN MANUAL ══ -->
-<div class="overlay" id="modal-manual">
-  <div class="modal modal-sm">
-    <button class="modal-close" onclick="cerrarModal('modal-manual')"><i class="ti ti-x"></i></button>
-    <div class="modal-title">Marcación manual</div>
-    <div class="modal-desc">Para casos sin GPS (queda registrada sin ubicación).</div>
-    <div class="form-group">
-      <label class="form-label">Empleado <span class="req">*</span></label>
-      <select class="form-control" id="man-empleado"></select>
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-manual">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-sm shadow-2xl transition-all duration-300">
+    <div class="flex justify-between items-center mb-2 pb-2 border-b border-outline-variant/10">
+      <h3 class="font-bold text-base text-primary">Marcación manual</h3>
+      <button onclick="cerrarModal('modal-manual')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Tipo <span class="req">*</span></label>
-      <select class="form-control" id="man-tipo">
-        <option>Entrada</option>
-        <option>Salida</option>
-      </select>
+    <p class="text-xs text-on-surface-variant mb-4">Para casos sin GPS (queda registrada sin ubicación).</p>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Empleado <span class="text-error">*</span></label>
+        <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="man-empleado"></select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Tipo <span class="text-error">*</span></label>
+        <select class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20 bg-white" id="man-tipo">
+          <option>Entrada</option>
+          <option>Salida</option>
+        </select>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="cerrarModal('modal-manual')">Cancelar</button>
-      <button class="btn btn-primary" id="btn-man-guardar" onclick="guardarManual()"><i class="ti ti-check"></i>Registrar</button>
+    <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-outline-variant/10">
+      <button class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors" onclick="cerrarModal('modal-manual')">Cancelar</button>
+      <button class="px-4 py-2 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all active:scale-95" id="btn-man-guardar" onclick="guardarManual()">Registrar</button>
     </div>
   </div>
 </div>
 
 <!-- ══ MODAL: SEDE / GEOCERCA ══ -->
-<div class="overlay" id="modal-sede">
-  <div class="modal modal-sm">
-    <button class="modal-close" onclick="cerrarModal('modal-sede')"><i class="ti ti-x"></i></button>
-    <div class="modal-title">Sede y geocerca</div>
-    <div class="modal-desc">Punto de referencia contra el que se valida cada marcación GPS.</div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Latitud</label>
-        <input class="form-control" id="sede-lat" type="number" step="0.0000001">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Longitud</label>
-        <input class="form-control" id="sede-lng" type="number" step="0.0000001">
-      </div>
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-sede">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-sm shadow-2xl transition-all duration-300">
+    <div class="flex justify-between items-center mb-2 pb-2 border-b border-outline-variant/10">
+      <h3 class="font-bold text-base text-primary">Sede y geocerca</h3>
+      <button onclick="cerrarModal('modal-sede')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Radio permitido (metros)</label>
-      <input class="form-control" id="sede-radio-inp" type="number" min="10" step="10">
+    <p class="text-xs text-on-surface-variant mb-4">Punto de referencia contra el que se valida cada marcación GPS.</p>
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Latitud</label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="sede-lat" type="number" step="0.0000001">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-primary mb-1">Longitud</label>
+          <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="sede-lng" type="number" step="0.0000001">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-primary mb-1">Radio permitido (metros)</label>
+        <input class="w-full rounded-xl border border-outline-variant/40 text-xs focus:border-primary focus:ring-primary/20" id="sede-radio-inp" type="number" min="10" step="10">
+      </div>
+      <button onclick="usarMiUbicacion()" class="w-full flex items-center justify-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest text-primary text-xs font-bold px-3 py-2.5 rounded-xl transition-all">
+        <span class="material-symbols-outlined text-sm">my_location</span>Usar mi ubicación actual como sede
+      </button>
+      <p class="text-[10px] text-on-surface-variant flex items-center gap-1.5"><span class="material-symbols-outlined text-xs text-sky-600">info</span>Se guarda en este navegador (ideal para la demo en el aula).</p>
     </div>
-    <button class="btn" style="width:100%" onclick="usarMiUbicacion()"><i class="ti ti-current-location"></i>Usar mi ubicación actual como sede</button>
-    <div class="form-hint" style="margin-top:8px"><i class="ti ti-info-circle" style="color:var(--blue)"></i>Se guarda en este navegador (ideal para la demo en el aula).</div>
-    <div class="modal-footer">
-      <button class="btn" onclick="cerrarModal('modal-sede')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarSede()"><i class="ti ti-check"></i>Guardar</button>
+    <div class="flex gap-2 justify-end mt-6 pt-4 border-t border-outline-variant/10">
+      <button class="px-4 py-2 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors" onclick="cerrarModal('modal-sede')">Cancelar</button>
+      <button class="px-4 py-2 text-xs font-bold text-white bg-primary rounded-xl hover:bg-black transition-all active:scale-95" onclick="guardarSede()">Guardar</button>
     </div>
   </div>
 </div>
 
 <!-- ══ MODAL: CONFIRM ══ -->
-<div class="overlay" id="modal-confirm">
-  <div class="modal modal-sm" style="text-align:center">
-    <div style="width:52px;height:52px;border-radius:18px;background:#FEF1F1;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
-      <i class="ti ti-alert-triangle" style="font-size:24px;color:#DC2626"></i>
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center" id="modal-confirm">
+  <div class="bg-white rounded-3xl border border-outline-variant/20 p-6 w-full max-w-xs shadow-2xl transition-all duration-300 text-center">
+    <div class="w-12 h-12 rounded-full mx-auto flex items-center justify-center text-xl mb-4 bg-red-50 text-red-600">
+      <span class="material-symbols-outlined">warning</span>
     </div>
-    <div class="modal-title" style="text-align:center" id="confirm-title">¿Confirmar?</div>
-    <p style="font-size:13px;color:var(--text3);margin:8px 0 18px" id="confirm-body"></p>
-    <div style="display:flex;gap:8px;justify-content:center">
-      <button class="btn" onclick="cerrarModal('modal-confirm')">Cancelar</button>
-      <button class="btn btn-danger-solid" id="confirm-ok">Confirmar</button>
+    <h4 class="font-bold text-sm text-primary mb-1" id="confirm-title">¿Confirmar?</h4>
+    <p class="text-xs text-on-surface-variant leading-relaxed" id="confirm-body"></p>
+    <div class="flex justify-center gap-2 mt-5 pt-3 border-t border-outline-variant/10">
+      <button onclick="cerrarModal('modal-confirm')" class="px-4 py-1.5 text-xs font-bold text-on-surface-variant hover:bg-surface-container rounded-xl transition-colors">Cancelar</button>
+      <button id="confirm-ok" class="px-4 py-1.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all">Confirmar</button>
     </div>
   </div>
 </div>
 
-<div id="toast-wrap"></div>
+<div id="toast-wrap" class="fixed bottom-6 right-6 z-[300] flex flex-col gap-2 pointer-events-none"></div>
 
-<script type="module">
-// ── SUPABASE ──
-let db = null;
-async function cargarSupabase() {
-  try {
-    const mod = await import('../supabase-client.js');
-    db = mod.supabase;
-    if (!db) throw new Error('supabase-client.js no exporta "supabase"');
-  } catch (err) { console.error('No se pudo cargar supabase-client.js:', err); db = null; }
-}
-
-window.addEventListener('error', (e) => {
-  console.error('Error fatal capturado:', e.error || e.message);
-  const st = document.getElementById('db-status');
-  if (st) { st.classList.remove('hidden');
-    const t = document.getElementById('stxt'), d = document.getElementById('sdot');
-    if (t) t.textContent = 'Error cargando el módulo — revisa la consola';
-    if (d) d.style.background = '#EF4444'; }
-});
-
-// ── GEOCERCA (configurable; persiste en localStorage) ──
-// Ajusta estos valores por defecto a tu sede real / salón de clases
-const SEDE_DEFAULT = { lat: 9.0238, lng: -79.5300, radio: 150 };
-function getSede() {
-  try { const s = JSON.parse(localStorage.getItem('geofence_m3')); if (s && s.lat) return s; } catch(e) {}
-  return SEDE_DEFAULT;
-}
-function setSede(s) { localStorage.setItem('geofence_m3', JSON.stringify(s)); }
-
-// ── ESTADO ──
-let empleados = [];
-let asistencia = [];   // marcaciones de HOY
-let ausencias = [];
-let vacaciones = [];
-let vista = 'marcaciones';
-let sideTab = 'ausencias';
-let filtroMarc = 'todos';
-let modoDemoActivo = false;
-let cargando = true;
-
-const HOY = new Date().toISOString().split('T')[0];
-
-// ── HELPERS ──
-const AV_COLORS = ['#8B5CF6','#3B82F6','#EC4899','#0EA5E9','#10B981','#F59E0B','#6366F1','#14B8A6','#EF4444','#F97316'];
-const avColor = id => AV_COLORS[(id||0) % AV_COLORS.length];
-const iniciales = n => (n||'??').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
-const nombreDe = id => (empleados.find(e=>e.id===id)?.nombre) || ('Empleado #'+id);
-const cargoDe  = id => (empleados.find(e=>e.id===id)?.cargo) || '';
-const fmtHora  = iso => iso ? new Date(iso).toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}) : '—';
-const fmtFecha = iso => { if(!iso) return '—'; const d=new Date(iso+'T12:00:00'); return d.toLocaleDateString('es',{day:'2-digit',month:'short'}); };
-const rangoActivo = (ini,fin) => ini && fin && HOY >= ini && HOY <= fin;
-
-// Haversine: distancia en metros entre dos coordenadas GPS
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371e3, rad = Math.PI/180;
-  const dPhi = (lat2-lat1)*rad, dLam = (lon2-lon1)*rad;
-  const a = Math.sin(dPhi/2)**2 + Math.cos(lat1*rad)*Math.cos(lat2*rad)*Math.sin(dLam/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-// ── BADGES ──
-const tipoMarcBadge = t => t==='Entrada'
-  ? '<span class="badge b-green"><i class="ti ti-login-2"></i>Entrada</span>'
-  : '<span class="badge b-blue"><i class="ti ti-logout-2"></i>Salida</span>';
-const zonaBadge = m => m.lat==null
-  ? '<span class="badge b-gray"><i class="ti ti-pencil"></i>Manual</span>'
-  : (m.aprobado ? '<span class="badge b-green"><i class="ti ti-map-pin-check"></i>En zona</span>'
-                : '<span class="badge b-red"><i class="ti ti-map-pin-x"></i>Fuera de zona</span>');
-const ausBadge = t => ({'Incapacidad':'b-purple','Personal':'b-blue','No justificada':'b-red','Feriado':'b-green'})[t]||'b-gray';
-const vacBadge = e => ({'Pendiente':'b-yellow','Aprobado':'b-green','Rechazado':'b-red'})[e]||'b-gray';
-
-// ── RELOJ ──
-function tickReloj() {
-  const n = new Date();
-  const r = document.getElementById('reloj');
-  const f = document.getElementById('reloj-fecha');
-  if (r) r.textContent = n.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  if (f) f.textContent = n.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-}
-setInterval(tickReloj, 1000); tickReloj();
-
-// ── ESTADO DEL PERSONAL (derivado de las 3 tablas) ──
-function estadoEmpleado(emp) {
-  const vac = vacaciones.find(v => v.empleado_id===emp.id && v.estado==='Aprobado' && rangoActivo(v.fecha_inicio, v.fecha_fin));
-  if (vac) return { tipo:'Vacaciones', badge:'<span class="badge b-purple"><i class="ti ti-beach"></i>Vacaciones</span>', detalle:`hasta ${fmtFecha(vac.fecha_fin)}` };
-  const aus = ausencias.find(a => a.empleado_id===emp.id && rangoActivo(a.fecha_inicio, a.fecha_fin));
-  if (aus) return { tipo:'Ausente', badge:`<span class="badge ${ausBadge(aus.tipo)}"><i class="ti ti-user-off"></i>${aus.tipo}</span>`, detalle:`hasta ${fmtFecha(aus.fecha_fin)}` };
-  const marcas = asistencia.filter(m => m.empleado_id===emp.id).sort((a,b)=>new Date(a.fecha_hora)-new Date(b.fecha_hora));
-  const entrada = marcas.find(m=>m.tipo==='Entrada');
-  const ultima = marcas[marcas.length-1];
-  if (entrada && ultima && ultima.tipo==='Salida') {
-    const hrs = ((new Date(ultima.fecha_hora)-new Date(entrada.fecha_hora))/3600000).toFixed(1);
-    return { tipo:'Completo', badge:'<span class="badge b-blue"><i class="ti ti-clock-check"></i>Jornada completa</span>', detalle:`${fmtHora(entrada.fecha_hora)} → ${fmtHora(ultima.fecha_hora)} · ${hrs} h` };
-  }
-  if (entrada) return { tipo:'Presente', badge:'<span class="badge b-green"><i class="ti ti-user-check"></i>Presente</span>', detalle:`entró ${fmtHora(entrada.fecha_hora)}` };
-  return { tipo:'SinMarcar', badge:'<span class="badge b-yellow"><i class="ti ti-clock-question"></i>Sin marcar</span>', detalle:'' };
-}
-
-// ── KPIs ──
-function actualizarStats() {
-  const activos = empleados.filter(e=>(e.estado||'Activo')==='Activo');
-  const estados = activos.map(e=>estadoEmpleado(e));
-  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-  set('k-presentes', estados.filter(s=>s.tipo==='Presente').length);
-  set('k-ausentes', estados.filter(s=>s.tipo==='Ausente').length);
-  set('k-vacaciones', estados.filter(s=>s.tipo==='Vacaciones').length);
-  set('k-fuera', asistencia.filter(m=>m.aprobado===false).length);
-  set('badge-hoy', asistencia.length);
-  const sr = document.getElementById('sede-radio');
-  if (sr) sr.textContent = getSede().radio + ' m';
-}
-
-// ── VISTA PRINCIPAL (tabs) ──
-function cambiarVista(v) {
-  vista = v;
-  document.getElementById('tab-marc')?.classList.toggle('active', v==='marcaciones');
-  document.getElementById('tab-personal')?.classList.toggle('active', v==='personal');
-  renderChips(); renderTabla();
-}
-
-function renderChips() {
-  const row = document.getElementById('filter-row');
-  if (!row) return;
-  if (vista !== 'marcaciones') { row.innerHTML=''; return; }
-  const n = f => f==='todos' ? asistencia.length
-    : f==='fuera' ? asistencia.filter(m=>m.aprobado===false).length
-    : asistencia.filter(m=>m.tipo===f).length;
-  const chip = (f,lbl) => `<div class="chip ${filtroMarc===f?'active':''}" onclick="filtrarMarc('${f}')">${lbl}<span class="chip-n">${n(f)}</span></div>`;
-  row.innerHTML = chip('todos','Todas') + chip('Entrada','Entradas') + chip('Salida','Salidas') + chip('fuera','Fuera de zona');
-}
-function filtrarMarc(f) { filtroMarc = f; renderChips(); renderTabla(); }
-
-function skeletonRows(n=4) {
-  return Array.from({length:n}).map(()=>`<tr>
-    <td><div style="display:flex;align-items:center;gap:9px"><span class="sk sk-circle"></span><span class="sk sk-line" style="width:110px"></span></div></td>
-    <td><span class="sk sk-line" style="width:70px"></span></td>
-    <td><span class="sk sk-line" style="width:56px"></span></td>
-    <td><span class="sk sk-line" style="width:96px"></span></td>
-  </tr>`).join('');
-}
-
-function renderTabla() {
-  const thead = document.getElementById('thead');
-  const tbody = document.getElementById('tbody');
-  if (!thead || !tbody) return;
-  const busq = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
-
-  if (vista === 'marcaciones') {
-    thead.innerHTML = '<tr><th>Empleado</th><th>Tipo</th><th>Hora</th><th>Distancia</th><th>Validación GPS</th></tr>';
-    if (cargando) { tbody.innerHTML = skeletonRows(); return; }
-    let lista = asistencia.filter(m => {
-      const matchF = filtroMarc==='todos' || (filtroMarc==='fuera' ? m.aprobado===false : m.tipo===filtroMarc);
-      const matchB = !busq || nombreDe(m.empleado_id).toLowerCase().includes(busq);
-      return matchF && matchB;
-    }).sort((a,b)=>new Date(b.fecha_hora)-new Date(a.fecha_hora));
-    const pill = document.getElementById('tbl-count'); if (pill) pill.textContent = lista.length;
-    if (!lista.length) {
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="5"><i class="ti ti-fingerprint" style="font-size:24px;display:block;margin:0 auto 8px;color:#C6CFDF"></i>Sin marcaciones hoy todavía</td></tr>`;
-      return;
-    }
-    tbody.innerHTML = lista.map(m => `<tr>
-      <td><div style="display:flex;align-items:center;gap:9px">
-        <div class="av" style="background:${avColor(m.empleado_id)}">${iniciales(nombreDe(m.empleado_id))}</div>
-        <div><div style="font-weight:600;font-size:13px;color:var(--text)">${nombreDe(m.empleado_id)}</div>
-        <div style="font-size:11px;color:var(--text4);font-weight:500">${cargoDe(m.empleado_id)}</div></div></div></td>
-      <td>${tipoMarcBadge(m.tipo)}</td>
-      <td style="font-weight:600;font-variant-numeric:tabular-nums">${fmtHora(m.fecha_hora)}</td>
-      <td style="font-variant-numeric:tabular-nums">${m.distancia_m!=null ? Math.round(m.distancia_m)+' m' : '—'}</td>
-      <td>${zonaBadge(m)}</td>
-    </tr>`).join('');
-    return;
-  }
-
-  // vista: estado del personal
-  thead.innerHTML = '<tr><th>Empleado</th><th>Estado hoy</th><th>Detalle</th></tr>';
-  if (cargando) { tbody.innerHTML = skeletonRows(); return; }
-  let lista = empleados.filter(e => (e.estado||'Activo')==='Activo' && (!busq || e.nombre.toLowerCase().includes(busq)));
-  const pill = document.getElementById('tbl-count'); if (pill) pill.textContent = lista.length;
-  if (!lista.length) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="3">Sin empleados activos</td></tr>`;
-    return;
-  }
-  const orden = {'SinMarcar':0,'Ausente':1,'Presente':2,'Vacaciones':3,'Completo':4};
-  const conEstado = lista.map(e=>({e, s:estadoEmpleado(e)})).sort((a,b)=>orden[a.s.tipo]-orden[b.s.tipo]);
-  tbody.innerHTML = conEstado.map(({e,s}) => `<tr>
-    <td><div style="display:flex;align-items:center;gap:9px">
-      <div class="av" style="background:${avColor(e.id)}">${iniciales(e.nombre)}</div>
-      <div><div style="font-weight:600;font-size:13px;color:var(--text)">${e.nombre}</div>
-      <div style="font-size:11px;color:var(--text4);font-weight:500">${e.cargo||''}</div></div></div></td>
-    <td>${s.badge}</td>
-    <td style="font-size:12px;color:var(--text3)">${s.detalle}</td>
-  </tr>`).join('');
-}
-
-// ── PANEL LATERAL ──
-function cambiarSideTab(t) {
-  sideTab = t;
-  document.getElementById('stab-aus')?.classList.toggle('active', t==='ausencias');
-  document.getElementById('stab-vac')?.classList.toggle('active', t==='vacaciones');
-  const txt = document.getElementById('btn-side-add-txt');
-  const btn = document.getElementById('btn-side-add');
-  if (txt) txt.textContent = t==='ausencias' ? 'Registrar ausencia' : 'Solicitar vacaciones';
-  if (btn) btn.onclick = t==='ausencias' ? abrirAusencia : abrirVacaciones;
-  renderSide();
-}
-
-function renderSide() {
-  const box = document.getElementById('side-list');
-  if (!box) return;
-  if (sideTab === 'ausencias') {
-    if (!ausencias.length) { box.innerHTML = `<div class="empty-state"><div class="es-ico"><i class="ti ti-calendar-off"></i></div><p>Sin ausencias registradas</p></div>`; return; }
-    box.innerHTML = [...ausencias].sort((a,b)=>(b.fecha_inicio||'').localeCompare(a.fecha_inicio||'')).map(a => `
-      <div class="side-item">
-        <div class="si-top">
-          <div class="av" style="width:26px;height:26px;font-size:10px;background:${avColor(a.empleado_id)}">${iniciales(nombreDe(a.empleado_id))}</div>
-          <span class="si-nombre">${nombreDe(a.empleado_id)}</span>
-          <span class="badge ${ausBadge(a.tipo)}">${a.tipo}</span>
-        </div>
-        <div class="si-rango"><i class="ti ti-calendar" style="font-size:11px"></i> ${fmtFecha(a.fecha_inicio)} → ${fmtFecha(a.fecha_fin)} ${rangoActivo(a.fecha_inicio,a.fecha_fin)?'<span class="badge b-orange" style="margin-left:4px">Activa</span>':''}</div>
-        ${a.observaciones ? `<div class="si-obs">"${a.observaciones}"</div>` : ''}
-      </div>`).join('');
-    return;
-  }
-  if (!vacaciones.length) { box.innerHTML = `<div class="empty-state"><div class="es-ico"><i class="ti ti-beach"></i></div><p>Sin solicitudes de vacaciones</p></div>`; return; }
-  box.innerHTML = [...vacaciones].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')).map(v => `
-    <div class="side-item">
-      <div class="si-top">
-        <div class="av" style="width:26px;height:26px;font-size:10px;background:${avColor(v.empleado_id)}">${iniciales(nombreDe(v.empleado_id))}</div>
-        <span class="si-nombre">${nombreDe(v.empleado_id)}</span>
-        <span class="badge ${vacBadge(v.estado)}">${v.estado}</span>
-      </div>
-      <div class="si-rango"><i class="ti ti-calendar" style="font-size:11px"></i> ${fmtFecha(v.fecha_inicio)} → ${fmtFecha(v.fecha_fin)} · <strong>${v.dias||0} día${(v.dias||0)!==1?'s':''}</strong></div>
-      ${v.comentario ? `<div class="si-obs">"${v.comentario}"</div>` : ''}
-      ${v.estado==='Pendiente' ? `<div class="si-actions">
-        <button class="btn btn-sm btn-success-o" onclick="resolverVacacion(${v.id},'Aprobado')"><i class="ti ti-check"></i>Aprobar</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmarRechazo(${v.id})"><i class="ti ti-x"></i>Rechazar</button>
-      </div>` : ''}
-    </div>`).join('');
-}
-
-// ── MARCACIÓN GPS ──
-function siguienteTipo(empId) {
-  const marcas = asistencia.filter(m=>m.empleado_id===empId).sort((a,b)=>new Date(a.fecha_hora)-new Date(b.fecha_hora));
-  const ultima = marcas[marcas.length-1];
-  return ultima && ultima.tipo === 'Entrada' ? 'Salida' : 'Entrada';
-}
-
-function actualizarBotonMarcar() {
-  const empId = Number(document.getElementById('marc-empleado')?.value);
-  const btn = document.getElementById('btn-marcar');
-  const txt = document.getElementById('btn-marcar-txt');
-  if (!btn || !txt) return;
-  const tipo = empId ? siguienteTipo(empId) : 'Entrada';
-  txt.textContent = 'Marcar ' + tipo;
-  btn.classList.toggle('entrada', tipo==='Entrada');
-  btn.classList.toggle('salida', tipo==='Salida');
-}
-
-async function marcar() {
-  const empId = Number(document.getElementById('marc-empleado')?.value);
-  if (!empId) { toast('Selecciona un empleado','err'); return; }
-  const tipo = siguienteTipo(empId);
-  const btn = document.getElementById('btn-marcar');
-  const status = document.getElementById('geo-status');
-  const ring = document.getElementById('geo-ring');
-
-  if (!navigator.geolocation) { toast('Este navegador no soporta geolocalización — usa marcación manual','err'); return; }
-
-  if (btn) btn.disabled = true;
-  if (status) status.innerHTML = '<i class="ti ti-loader-2"></i><span>Obteniendo ubicación GPS...</span>';
-
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const sede = getSede();
-    const dist = haversine(pos.coords.latitude, pos.coords.longitude, sede.lat, sede.lng);
-    const dentro = dist <= sede.radio;
-
-    if (ring) { ring.classList.remove('ok','bad'); ring.classList.add(dentro?'ok':'bad'); }
-    if (status) status.innerHTML = dentro
-      ? `<i class="ti ti-map-pin-check" style="color:var(--green)"></i><span style="color:var(--green)">A ${Math.round(dist)} m de la sede — dentro de la zona</span>`
-      : `<i class="ti ti-map-pin-x" style="color:var(--red)"></i><span style="color:var(--red)">A ${Math.round(dist)} m — fuera de la zona (${sede.radio} m)</span>`;
-
-    const registro = {
-      empleado_id: empId,
-      tipo,
-      fecha_hora: new Date().toISOString(),
-      lat: +pos.coords.latitude.toFixed(7),
-      lng: +pos.coords.longitude.toFixed(7),
-      distancia_m: +dist.toFixed(2),
-      aprobado: dentro
-    };
-
-    if (esDemo()) {
-      asistencia.push({ id: Date.now(), ...registro });
-      toast(dentro ? `${tipo} registrada (demo) ✓` : `${tipo} registrada FUERA de zona (demo)`, dentro?'ok':'warn');
-      renderizarTodo();
-      if (btn) btn.disabled = false;
-      return;
-    }
-
-    const { error } = await db.from('asistencia').insert([registro]);
-    if (btn) btn.disabled = false;
-    if (error) { toast('Error: '+error.message,'err'); return; }
-    toast(dentro ? `${tipo} registrada correctamente ✓` : `${tipo} registrada, pero FUERA de la zona permitida`, dentro?'ok':'warn');
-    await cargar();
-  }, err => {
-    if (btn) btn.disabled = false;
-    if (status) status.innerHTML = '<i class="ti ti-gps-off" style="color:var(--red)"></i><span style="color:var(--red)">GPS denegado — permite la ubicación o usa marcación manual</span>';
-    toast('No se pudo obtener la ubicación','err');
-  }, { enableHighAccuracy: true, timeout: 12000 });
-}
-
-// ── MARCACIÓN MANUAL ──
-function abrirManual() { llenarSelect('man-empleado'); abrirModal('modal-manual'); }
-async function guardarManual() {
-  const empId = Number(document.getElementById('man-empleado').value);
-  const tipo = document.getElementById('man-tipo').value;
-  if (!empId) { toast('Selecciona un empleado','err'); return; }
-  const registro = { empleado_id: empId, tipo, fecha_hora: new Date().toISOString(), lat: null, lng: null, distancia_m: null, aprobado: true };
-  const btn = document.getElementById('btn-man-guardar'); if(btn) btn.disabled = true;
-  if (esDemo()) {
-    asistencia.push({ id: Date.now(), ...registro });
-    toast(`${tipo} manual registrada (demo)`,'ok');
-    renderizarTodo(); cerrarModal('modal-manual');
-    if(btn) btn.disabled = false; return;
-  }
-  const { error } = await db.from('asistencia').insert([registro]);
-  if(btn) btn.disabled = false;
-  if (error) { toast('Error: '+error.message,'err'); return; }
-  toast(`${tipo} manual registrada`,'ok');
-  cerrarModal('modal-manual'); await cargar();
-}
-
-// ── AUSENCIAS ──
-function abrirAusencia() {
-  llenarSelect('aus-empleado');
-  document.getElementById('aus-inicio').value = HOY;
-  document.getElementById('aus-fin').value = HOY;
-  document.getElementById('aus-obs').value = '';
-  abrirModal('modal-ausencia');
-}
-async function guardarAusencia() {
-  const empId = Number(document.getElementById('aus-empleado').value);
-  const ini = document.getElementById('aus-inicio').value;
-  const fin = document.getElementById('aus-fin').value;
-  if (!empId || !ini || !fin) { toast('Completa empleado y fechas','err'); return; }
-  if (fin < ini) { toast('La fecha final no puede ser anterior a la inicial','err'); return; }
-  const datos = { empleado_id: empId, tipo: document.getElementById('aus-tipo').value, fecha_inicio: ini, fecha_fin: fin, observaciones: document.getElementById('aus-obs').value.trim() || null };
-  const btn = document.getElementById('btn-aus-guardar'); if(btn) btn.disabled = true;
-  if (esDemo()) {
-    ausencias.push({ id: Date.now(), ...datos });
-    toast('Ausencia registrada (demo)','ok');
-    renderizarTodo(); cerrarModal('modal-ausencia');
-    if(btn) btn.disabled = false; return;
-  }
-  const { error } = await db.from('ausencias').insert([datos]);
-  if(btn) btn.disabled = false;
-  if (error) { toast('Error: '+error.message,'err'); return; }
-  toast('Ausencia registrada','ok');
-  cerrarModal('modal-ausencia'); await cargar();
-}
-
-// ── VACACIONES ──
-function abrirVacaciones() {
-  llenarSelect('vac-empleado');
-  document.getElementById('vac-inicio').value = '';
-  document.getElementById('vac-fin').value = '';
-  document.getElementById('vac-dias').value = '0';
-  document.getElementById('vac-comentario').value = '';
-  abrirModal('modal-vacaciones');
-}
-function calcularDias() {
-  const ini = document.getElementById('vac-inicio').value;
-  const fin = document.getElementById('vac-fin').value;
-  let dias = 0;
-  if (ini && fin && fin >= ini) dias = Math.round((new Date(fin) - new Date(ini))/86400000) + 1;
-  document.getElementById('vac-dias').value = dias;
-}
-async function guardarVacaciones() {
-  const empId = Number(document.getElementById('vac-empleado').value);
-  const ini = document.getElementById('vac-inicio').value;
-  const fin = document.getElementById('vac-fin').value;
-  const dias = Number(document.getElementById('vac-dias').value);
-  if (!empId || !ini || !fin || dias < 1) { toast('Completa empleado y un rango de fechas válido','err'); return; }
-  const datos = { empleado_id: empId, fecha_inicio: ini, fecha_fin: fin, dias, estado: 'Pendiente', comentario: document.getElementById('vac-comentario').value.trim() || null };
-  const btn = document.getElementById('btn-vac-guardar'); if(btn) btn.disabled = true;
-  if (esDemo()) {
-    vacaciones.push({ id: Date.now(), created_at: new Date().toISOString(), ...datos });
-    toast('Solicitud enviada (demo)','ok');
-    cambiarSideTab('vacaciones'); renderizarTodo(); cerrarModal('modal-vacaciones');
-    if(btn) btn.disabled = false; return;
-  }
-  const { error } = await db.from('vacaciones').insert([datos]);
-  if(btn) btn.disabled = false;
-  if (error) { toast('Error: '+error.message,'err'); return; }
-  toast('Solicitud de vacaciones enviada','ok');
-  cambiarSideTab('vacaciones');
-  cerrarModal('modal-vacaciones'); await cargar();
-}
-async function resolverVacacion(id, estado) {
-  if (esDemo()) {
-    const v = vacaciones.find(x=>x.id===id); if(v) v.estado = estado;
-    toast(`Solicitud ${estado.toLowerCase()} (demo)`, estado==='Aprobado'?'ok':'warn');
-    renderizarTodo(); return;
-  }
-  const { error } = await db.from('vacaciones').update({ estado }).eq('id', id);
-  if (error) { toast('Error: '+error.message,'err'); return; }
-  toast(`Solicitud ${estado.toLowerCase()}`, estado==='Aprobado'?'ok':'warn');
-  await cargar();
-}
-function confirmarRechazo(id) {
-  document.getElementById('confirm-title').textContent = '¿Rechazar solicitud?';
-  document.getElementById('confirm-body').textContent = 'La solicitud quedará marcada como Rechazada. El empleado podrá enviar una nueva.';
-  const ok = document.getElementById('confirm-ok');
-  ok.innerHTML = '<i class="ti ti-x"></i>Rechazar';
-  ok.onclick = () => { cerrarModal('modal-confirm'); resolverVacacion(id,'Rechazado'); };
-  abrirModal('modal-confirm');
-}
-
-// ── SEDE ──
-function abrirSede() {
-  const s = getSede();
-  document.getElementById('sede-lat').value = s.lat;
-  document.getElementById('sede-lng').value = s.lng;
-  document.getElementById('sede-radio-inp').value = s.radio;
-  abrirModal('modal-sede');
-}
-function guardarSede() {
-  const lat = parseFloat(document.getElementById('sede-lat').value);
-  const lng = parseFloat(document.getElementById('sede-lng').value);
-  const radio = parseInt(document.getElementById('sede-radio-inp').value);
-  if (isNaN(lat) || isNaN(lng) || isNaN(radio) || radio < 10) { toast('Valores inválidos','err'); return; }
-  setSede({ lat, lng, radio });
-  actualizarStats();
-  toast('Geocerca actualizada','ok');
-  cerrarModal('modal-sede');
-}
-function usarMiUbicacion() {
-  if (!navigator.geolocation) { toast('Sin soporte de geolocalización','err'); return; }
-  toast('Obteniendo tu ubicación...','');
-  navigator.geolocation.getCurrentPosition(pos => {
-    document.getElementById('sede-lat').value = pos.coords.latitude.toFixed(7);
-    document.getElementById('sede-lng').value = pos.coords.longitude.toFixed(7);
-    toast('Ubicación capturada — guarda para aplicar','ok');
-  }, () => toast('No se pudo obtener tu ubicación','err'), { enableHighAccuracy: true, timeout: 12000 });
-}
-
-// ── SELECTS ──
-function llenarSelect(id) {
-  const sel = document.getElementById(id);
-  if (!sel) return;
-  const activos = empleados.filter(e=>(e.estado||'Activo')==='Activo');
-  sel.innerHTML = activos.length
-    ? activos.map(e=>`<option value="${e.id}">${e.nombre} — ${e.cargo||''}</option>`).join('')
-    : '<option value="">Sin empleados activos</option>';
-}
-
-// ── RENDER TODO ──
-function renderizarTodo() {
-  actualizarStats();
-  renderChips();
-  renderTabla();
-  renderSide();
-  const selMarc = document.getElementById('marc-empleado');
-  const valorPrevio = selMarc ? selMarc.value : '';
-  llenarSelect('marc-empleado');
-  if (selMarc && valorPrevio) selMarc.value = valorPrevio;
-  actualizarBotonMarcar();
-}
-
-function esDemo() { return modoDemoActivo; }
-function abrirModal(id) { const el=document.getElementById(id); if(el){ el.classList.add('open'); setTimeout(()=>el.querySelector('input,select,textarea')?.focus(),120);} }
-function cerrarModal(id) { document.getElementById(id)?.classList.remove('open'); }
-
-// ── INICIO ──
-async function iniciar() {
-  const dot=document.getElementById('sdot'), txt=document.getElementById('stxt'), st=document.getElementById('db-status');
-  try {
-    if (!db) throw new Error('Cliente de Supabase no inicializado');
-    const { error } = await db.from('empleados').select('id').limit(1);
-    if (error) throw error;
-    if(dot) dot.style.background='#22C55E';
-    if(txt) txt.textContent='Conectado a Supabase';
-    if(st) setTimeout(()=>st.classList.add('hidden'),2000);
-    await cargar();
-    suscribirRealtime();
-  } catch (err) {
-    console.error('Fallo de conexión, activando fallback demo:', err);
-    modoDemoActivo = true;
-    if(dot) dot.style.background='#F59E0B';
-    if(txt) txt.textContent='Modo demo — Fallback activo';
-    if(st) setTimeout(()=>st.classList.add('hidden'),4000);
-    cargarDatosDemo(); cargando=false; renderizarTodo();
-  }
-}
-
-async function cargar() {
-  try {
-    const inicioHoy = HOY + 'T00:00:00';
-    const [e, a, au, va] = await Promise.all([
-      db.from('empleados').select('*'),
-      db.from('asistencia').select('*').gte('fecha_hora', inicioHoy).order('fecha_hora',{ascending:false}),
-      db.from('ausencias').select('*').order('fecha_inicio',{ascending:false}),
-      db.from('vacaciones').select('*').order('created_at',{ascending:false}),
-    ]);
-    empleados = e.data || [];
-    asistencia = a.data || [];
-    ausencias = au.data || [];
-    vacaciones = va.data || [];
-    if (empleados.length === 0) cargarDatosDemo();
-    cargando = false;
-    renderizarTodo();
-  } catch (err) {
-    console.error('Error cargando colecciones:', err);
-    modoDemoActivo = true;
-    cargarDatosDemo(); cargando = false; renderizarTodo();
-  }
-}
-
-function suscribirRealtime() {
-  if (!db) return;
-  db.channel('control-diario')
-    .on('postgres_changes',{event:'*',schema:'public',table:'asistencia'}, ()=>cargar())
-    .on('postgres_changes',{event:'*',schema:'public',table:'ausencias'}, ()=>cargar())
-    .on('postgres_changes',{event:'*',schema:'public',table:'vacaciones'}, ()=>cargar())
-    .subscribe();
-}
-
-// ── DATOS DEMO ──
-function cargarDatosDemo() {
-  empleados = [
-    {id:1,nombre:'Ana García',cargo:'Gerente RRHH',departamento:'RRHH',estado:'Activo'},
-    {id:2,nombre:'Carlos Mora',cargo:'Analista TI',departamento:'TI',estado:'Activo'},
-    {id:3,nombre:'Lucía Pérez',cargo:'Diseñadora',departamento:'Marketing',estado:'Activo'},
-    {id:4,nombre:'Roberto Sánchez',cargo:'Dev Backend',departamento:'TI',estado:'Activo'},
-    {id:5,nombre:'María Jiménez',cargo:'Contadora',departamento:'Finanzas',estado:'Activo'},
-    {id:6,nombre:'Diego Vargas',cargo:'Vendedor',departamento:'Comercial',estado:'Activo'},
-    {id:7,nombre:'Patricia López',cargo:'Asistente RRHH',departamento:'RRHH',estado:'Activo'},
-    {id:8,nombre:'Fernando Ruiz',cargo:'Supervisor',departamento:'Operaciones',estado:'Activo'},
-  ];
-  const h = (hh,mm) => { const d=new Date(); d.setHours(hh,mm,0,0); return d.toISOString(); };
-  asistencia = [
-    {id:1,empleado_id:1,tipo:'Entrada',fecha_hora:h(7,55),lat:9.0239,lng:-79.5301,distancia_m:18.4,aprobado:true},
-    {id:2,empleado_id:2,tipo:'Entrada',fecha_hora:h(8,2),lat:9.0241,lng:-79.5299,distancia_m:36.2,aprobado:true},
-    {id:3,empleado_id:4,tipo:'Entrada',fecha_hora:h(8,10),lat:9.0301,lng:-79.5220,distancia_m:1120.5,aprobado:false},
-    {id:4,empleado_id:5,tipo:'Entrada',fecha_hora:h(7,48),lat:null,lng:null,distancia_m:null,aprobado:true},
-    {id:5,empleado_id:2,tipo:'Salida',fecha_hora:h(12,5),lat:9.0240,lng:-79.5300,distancia_m:22.1,aprobado:true},
-  ];
-  const addDias = n => { const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; };
-  ausencias = [
-    {id:1,empleado_id:6,tipo:'Incapacidad',fecha_inicio:addDias(-1),fecha_fin:addDias(2),observaciones:'Certificado médico CSS por 4 días.'},
-    {id:2,empleado_id:8,tipo:'Personal',fecha_inicio:addDias(-6),fecha_fin:addDias(-6),observaciones:'Trámite personal aprobado por su supervisor.'},
-  ];
-  vacaciones = [
-    {id:1,empleado_id:3,fecha_inicio:addDias(-3),fecha_fin:addDias(4),dias:8,estado:'Aprobado',comentario:'Vacaciones anuales programadas.',created_at:new Date().toISOString()},
-    {id:2,empleado_id:7,fecha_inicio:addDias(10),fecha_fin:addDias(17),dias:8,estado:'Pendiente',comentario:'Viaje familiar.',created_at:new Date().toISOString()},
-  ];
-}
-
-// ── EVENTOS GLOBALES ──
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.overlay').forEach(bg => bg.addEventListener('click', e => { if(e.target===bg) bg.classList.remove('open'); }));
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(m=>m.classList.remove('open'));
-  if (e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) {
-    e.preventDefault(); document.getElementById('search-input')?.focus();
-  }
-});
-
-function toast(msg, tipo='') {
-  const wrap = document.getElementById('toast-wrap'); if(!wrap) return;
-  const el = document.createElement('div');
-  el.className = `toast ${tipo}`;
-  el.innerHTML = `<i class="ti ${tipo==='ok'?'ti-circle-check':tipo==='err'?'ti-alert-circle':tipo==='warn'?'ti-alert-triangle':'ti-info-circle'}"></i>${msg}`;
-  wrap.appendChild(el);
-  setTimeout(()=>el.classList.add('show'),10);
-  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300);},3200);
-}
-
-// ── EXPORTS (para onclick en HTML) ──
-window.marcar = marcar;
-window.actualizarBotonMarcar = actualizarBotonMarcar;
-window.cambiarVista = cambiarVista;
-window.cambiarSideTab = cambiarSideTab;
-window.filtrarMarc = filtrarMarc;
-window.renderTabla = renderTabla;
-window.abrirManual = abrirManual;
-window.guardarManual = guardarManual;
-window.abrirAusencia = abrirAusencia;
-window.guardarAusencia = guardarAusencia;
-window.abrirVacaciones = abrirVacaciones;
-window.guardarVacaciones = guardarVacaciones;
-window.calcularDias = calcularDias;
-window.resolverVacacion = resolverVacacion;
-window.confirmarRechazo = confirmarRechazo;
-window.abrirSede = abrirSede;
-window.guardarSede = guardarSede;
-window.usarMiUbicacion = usarMiUbicacion;
-window.cerrarModal = cerrarModal;
-
-// ── ARRANCAR ──
-renderTabla(); // skeleton mientras carga
-(async () => { await cargarSupabase(); await iniciar(); })();
-</script>
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
+<script type="module" src="script.js"></script>
 </body>
 </html>
