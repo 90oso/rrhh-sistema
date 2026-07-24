@@ -2,12 +2,13 @@ import { supabase } from '../supabase-client.js';
 const db = supabase;
 
 // ── GEOCERCA (configurable; persiste en localStorage) ──
-const SEDE_DEFAULT = { lat: 9.0238, lng: -79.5300, radio: 150 };
+// Sede por defecto: Universidad Tecnológica de Panamá — Campus Víctor Levi Sasso (Tocumen).
+const SEDE_DEFAULT = { lat: 9.0246, lng: -79.5312, radio: 400 };
 function getSede() {
-  try { const s = JSON.parse(localStorage.getItem('geofence_m3')); if (s && s.lat) return s; } catch (e) {}
+  try { const s = JSON.parse(localStorage.getItem('geofence_m3_utp')); if (s && s.lat) return s; } catch (e) {}
   return SEDE_DEFAULT;
 }
-function setSede(s) { localStorage.setItem('geofence_m3', JSON.stringify(s)); }
+function setSede(s) { localStorage.setItem('geofence_m3_utp', JSON.stringify(s)); }
 
 // ── ESTADO ──
 let empleados = [];
