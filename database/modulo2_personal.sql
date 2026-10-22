@@ -8,7 +8,9 @@
 -- Agregar columnas si no existen
 ALTER TABLE empleados
   ADD COLUMN IF NOT EXISTS telefono TEXT,
-  ADD COLUMN IF NOT EXISTS notas TEXT;
+  ADD COLUMN IF NOT EXISTS notas TEXT,
+  ADD COLUMN IF NOT EXISTS jefe_directo_id BIGINT REFERENCES empleados(id),
+  ADD COLUMN IF NOT EXISTS rol TEXT NOT NULL DEFAULT 'Empleado';
 
 -- Tabla de capacitaciones por empleado (alimenta Módulo 4)
 CREATE TABLE IF NOT EXISTS capacitaciones_empleado (
