@@ -29,6 +29,9 @@ CREATE TABLE IF NOT EXISTS empleados (
   cargo                TEXT,
   departamento         TEXT,
   jefe_directo         TEXT,
+  jefe_directo_id      BIGINT REFERENCES empleados(id),
+  rol                  TEXT NOT NULL DEFAULT 'Empleado'
+                       CHECK (rol IN ('Empleado','Gerente','RRHH','Admin')),
   tipo_contrato        TEXT DEFAULT 'Indefinido'
                        CHECK (tipo_contrato IN ('Indefinido','Temporal','Servicios')),
   salario_base         NUMERIC(12,2),

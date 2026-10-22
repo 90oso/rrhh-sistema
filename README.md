@@ -1,3 +1,19 @@
+# Suite RRHH · evaluación comercial
+
+El sistema existente, históricamente llamado TalentHub B2B, es un prototipo académico. **No está autorizado para tratar datos laborales reales ni para venderse como un SaaS seguro en su estado actual**: la autenticación con contraseña compartida, sesiones gestionadas por navegador y políticas RLS sin verificar son impedimentos críticos.
+
+## Demo comercial independiente
+
+[Probar `docs/index.html`](docs/index.html): empleados ficticios, pipeline de contratación, aprobación de permisos, búsqueda y exportación CSV; sin acceso a Supabase. Puede publicarse como página estática desde `/docs` cuando se integren los cambios a la rama principal.
+
+## Antes de un piloto con personas reales
+
+Implementar Supabase Auth, definir roles y autorizaciones basados en identidad verificada, aplicar RLS por organización en todas las tablas y comprobar con pruebas de acceso cruzado, registrar modificaciones sensibles, respaldos, borrado y documentación de privacidad. **Nunca usar `demo123` con empleados reales.**
+
+El nombre comercial es provisional: debe verificarse su disponibilidad antes de registrarlo o anunciarlo.
+
+---
+
 # TalentHub B2B — Sistema de RRHH
 
 Sistema web de Recursos Humanos con acceso por rol (Empleado, Gerente, RRHH, Admin), construido como un conjunto de módulos HTML/JS independientes que comparten un login único y una base de datos en **Supabase (PostgreSQL)**.
